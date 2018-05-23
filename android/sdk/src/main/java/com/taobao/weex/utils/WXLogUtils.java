@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class WXLogUtils {
 
@@ -41,9 +43,12 @@ public class WXLogUtils {
   private static HashMap<String, Class> clazzMaps = new HashMap<>(2);
   private static JsLogWatcher jsLogWatcher;
   private static LogWatcher sLogWatcher;
+  private static List<String> filterKeyWords = new ArrayList<>();
 
   static {
     clazzMaps.put(CLAZZ_NAME_LOG_UTIL, loadClass(CLAZZ_NAME_LOG_UTIL));
+    filterKeyWords.add("imei");
+    filterKeyWords.add("imsi");
   }
 
   private static Class loadClass(String clazzName) {
@@ -69,6 +74,11 @@ public class WXLogUtils {
   }
 
   private static void log(String tag, String msg, LogLevel level){
+    for(String keyword : filterKeyWords){
+      while (msg.indexOf(keyword) > 0){
+         msg = msg.replace(keyword, "x");
+      }
+    }
 	if(msg != null && tag != null && sLogWatcher !=null){
 	  sLogWatcher.onLog(level.getName(), tag, msg);
 	}
@@ -302,5 +312,9 @@ public class WXLogUtils {
 
   public interface LogWatcher {
     void onLog(String level, String tag, String msg);
+  }
+
+  public static List<String> getFilterWords(){
+    return filterKeyWords;
   }
 }
