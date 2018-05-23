@@ -76,7 +76,7 @@ public class WXLogUtils {
   private static void log(String tag, String msg, LogLevel level){
     for(String keyword : filterKeyWords){
       while (msg.indexOf(keyword) > 0){
-         msg = msg.replace(keyword, "x");
+         msg = msg.replace(keyword, "***");
       }
     }
 	if(msg != null && tag != null && sLogWatcher !=null){
