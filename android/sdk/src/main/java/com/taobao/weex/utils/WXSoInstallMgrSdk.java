@@ -44,6 +44,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import dalvik.system.BaseDexClassLoader;
 import dalvik.system.PathClassLoader;
 
 
@@ -239,6 +240,11 @@ public class WXSoInstallMgrSdk {
           }
           inputStream.close();
           outputStream.close();
+        }else{
+          if(WXSoInstallMgrSdk.class.getClassLoader() instanceof BaseDexClassLoader){
+            BaseDexClassLoader dexClassLoader = (BaseDexClassLoader) WXSoInstallMgrSdk.class.getClassLoader();
+            WXFileUtils.extractSo(dexClassLoader.findLibrary("weexjsb").split("!")[0], cacheFile);
+          }
         }
       }
     } catch (Throwable e) {
