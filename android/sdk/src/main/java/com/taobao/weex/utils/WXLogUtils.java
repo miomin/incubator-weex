@@ -47,8 +47,10 @@ public class WXLogUtils {
 
   static {
     clazzMaps.put(CLAZZ_NAME_LOG_UTIL, loadClass(CLAZZ_NAME_LOG_UTIL));
-    filterKeyWords.add("imei");
-    filterKeyWords.add("imsi");
+    filterKeyWords.add("imei=");
+    filterKeyWords.add("imsi=");
+    filterKeyWords.add("lng=");
+    filterKeyWords.add("lat=");
   }
 
   private static Class loadClass(String clazzName) {
@@ -74,9 +76,12 @@ public class WXLogUtils {
   }
 
   private static void log(String tag, String msg, LogLevel level){
-    for(String keyword : filterKeyWords){
-      while (msg.indexOf(keyword) > 0){
-         msg = msg.replace(keyword, "***");
+    if(!WXEnvironment.isApkDebugable()){
+      for(String keyword : filterKeyWords){
+        if(msg.indexOf(keyword) > 0){
+          msg = "****...";
+          break;
+        }
       }
     }
 	if(msg != null && tag != null && sLogWatcher !=null){
