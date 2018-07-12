@@ -30,6 +30,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.alibaba.fastjson.JSON;
@@ -274,7 +275,8 @@ public class WXBridgeManager implements Callback, BactchExecutor {
     }
 
     if (mWxDebugProxy != null) {
-      mWxDebugProxy.stop(false);
+      Log.e("DebugDebug","mWxDebugProxy will stop server");
+//      mWxDebugProxy.stop(false);
     }
     if (WXEnvironment.sDebugServerConnectable && (WXEnvironment.isApkDebugable() || WXEnvironment.sForceEnableDevTool)) {
       if (WXEnvironment.getApplication() != null) {
