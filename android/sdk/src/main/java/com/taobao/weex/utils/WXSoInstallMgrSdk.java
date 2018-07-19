@@ -214,7 +214,7 @@ public class WXSoInstallMgrSdk {
           newfile = new File(cacheFile + STARTUPSO);
         }
         if (newfile.exists()) {
-          return;
+          newfile.delete();
         }
 
         String path = "/data/data/" + pkgName + "/lib";
