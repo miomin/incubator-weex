@@ -34,6 +34,7 @@ const char *s_cacheDir;
 const char *g_jssSoPath = nullptr;
 const char *g_jssSoName = "libweexjss.so";
 bool s_start_pie = true;
+bool forkSuccess = false;
 
 static IPCSender *sSender;
 static std::unique_ptr<IPCHandler> sHandler;
@@ -297,9 +298,11 @@ namespace WeexCore {
                 return true;
             }
 
-            if (initFrameworkInSingleProcess(env, script, initFrameworkParams)) {
-                reportNativeInitStatus("-1011", "init Single Process Success");
-                return true;
+            if (!forkSuccess) {
+                if (initFrameworkInSingleProcess(env, script, initFrameworkParams)) {
+                    reportNativeInitStatus("-1011", "init Single Process Success");
+                    return true;
+                }
             }
         }
 

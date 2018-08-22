@@ -39,7 +39,7 @@ extern const char *s_cacheDir;
 extern const char *g_jssSoPath;
 extern const char *g_jssSoName;
 extern bool s_start_pie;
-
+extern bool forkSuccess;
 static void doExec(int fd, bool traceEnable, bool startupPie = true);
 
 static int copyFile(const char *SourceFile, const char *NewFile);
@@ -131,6 +131,7 @@ IPCSender *WeexJSConnection::start(IPCHandler *handler, bool reinit) {
     _exit(1);
   } else {
     printLogOnFile("fork success on main process and start m_impl->futexPageQueue->spinWaitPeer()");
+    forkSuccess = true;
     close(fd);
     m_impl->child = child;
     try {
