@@ -417,78 +417,85 @@ public abstract class AbstractEditComponent extends WXComponent<WXEditText> {
         String placeholder = WXUtils.getString(param, null);
         if (placeholder != null)
           setPlaceholder(placeholder);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.PLACEHOLDER_COLOR:
         String placeholder_color = WXUtils.getString(param, null);
         if (placeholder_color != null)
           setPlaceholderColor(placeholder_color);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.TYPE:
         String input_type = WXUtils.getString(param, null);
         if (input_type != null)
           setType(input_type);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.AUTOFOCUS:
         Boolean result = WXUtils.getBoolean(param, null);
         if (result != null)
           setAutofocus(result);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.COLOR:
         String color = WXUtils.getString(param, null);
         if (color != null)
           setColor(color);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.FONT_SIZE:
         String fontsize = WXUtils.getString(param, null);
         if (fontsize != null)
           setFontSize(fontsize);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.TEXT_ALIGN:
         String text_align = WXUtils.getString(param, null);
         if (text_align != null)
           setTextAlign(text_align);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.SINGLELINE:
         Boolean singLineResult = WXUtils.getBoolean(param, null);
         if (singLineResult != null)
           setSingleLine(singLineResult);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.LINES:
         Integer lines = WXUtils.getInteger(param, null);
         if (lines != null)
           setLines(lines);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.MAX_LENGTH:
         Integer maxlength = WXUtils.getInteger(param, null);
         if (maxlength != null)
           setMaxLength(maxlength);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.MAXLENGTH:
         Integer maxLength = WXUtils.getInteger(param, null);
         if (maxLength != null)
           setMaxLength(maxLength);
-        return true;
+        return setSelectionEnd();
       case Constants.Name.MAX:
         setMax(String.valueOf(param));
-        return true;
+        return setSelectionEnd();
       case Constants.Name.MIN:
         setMin(String.valueOf(param));
-        return true;
+        return setSelectionEnd();
       case Constants.Name.RETURN_KEY_TYPE:
         setReturnKeyType(String.valueOf(param));
-        return true;
+        return setSelectionEnd();
       case Constants.Name.KEEP_SELECTION_INDEX:
         boolean keepIndex = WXUtils.getBoolean(param, false);
         mKeepSelectionIndex = keepIndex;
-        return true;
+        return setSelectionEnd();
       case Constants.Name.ALLOW_COPY_PASTE:
         boolean allowCopyPaste = WXUtils.getBoolean(param, true);
         if (getHostView() != null) {
           getHostView().setAllowCopyPaste(allowCopyPaste);
         }
-        return true;
+        return setSelectionEnd();
     }
     return super.setProperty(key, param);
+  }
+
+  private boolean setSelectionEnd() {
+    if (mHost != null) {
+      mHost.setSelection(mHost.getText().length());
+    }
+    return true;
   }
 
   @WXComponentProp(name = Constants.Name.RETURN_KEY_TYPE)
