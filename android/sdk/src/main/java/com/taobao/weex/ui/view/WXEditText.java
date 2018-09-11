@@ -18,11 +18,20 @@
  */
 package com.taobao.weex.ui.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.Editable;
+import android.text.Spannable;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewParent;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.taobao.weex.ui.view.gesture.WXGesture;
 import com.taobao.weex.ui.view.gesture.WXGestureObservable;
@@ -97,5 +106,14 @@ public class WXEditText extends EditText implements WXGestureObservable {
 
   public void setAllowDisableMovement(boolean allow) {
     mAllowDisableMovement = allow;
+  }
+
+  @Override
+  public boolean onKeyUp(int keyCode, KeyEvent event) {
+    try {
+      return super.onKeyUp(keyCode, event);
+    } catch (Throwable e) {
+      return true;
+    }
   }
 }
