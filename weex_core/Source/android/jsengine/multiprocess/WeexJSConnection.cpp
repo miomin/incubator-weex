@@ -131,7 +131,6 @@ IPCSender *WeexJSConnection::start(IPCHandler *handler, bool reinit) {
     _exit(1);
   } else {
     printLogOnFile("fork success on main process and start m_impl->futexPageQueue->spinWaitPeer()");
-    forkSuccess = true;
     close(fd);
     m_impl->child = child;
     try {
