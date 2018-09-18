@@ -39,7 +39,6 @@ extern const char *s_cacheDir;
 extern const char *g_jssSoPath;
 extern const char *g_jssSoName;
 extern bool s_start_pie;
-extern bool forkSuccess;
 static void doExec(int fd, bool traceEnable, bool startupPie = true);
 
 static int copyFile(const char *SourceFile, const char *NewFile);
