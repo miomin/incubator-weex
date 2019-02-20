@@ -102,7 +102,7 @@ class JSCArray : public Array {
   JSCArray(JSContextRef ctx, JSObjectRef thiz);
   ~JSCArray();
 
-  JSObjectRef GetThisObject() { return thiz_; }
+  JSObjectRef GetThisObject() const { return thiz_; }
 
  private:
   JSContextRef context_;

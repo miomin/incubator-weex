@@ -40,7 +40,7 @@
 
 #include "third_party/js_api/engine_context.h"
 #include "third_party/js_api/runtime_vm.h"
-#include "third_party/js_api/runtime_object.h"
+#include "third_party/js_api/runtime_context.h"
 
 namespace unicorn {
 

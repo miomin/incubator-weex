@@ -65,7 +65,7 @@ void RuntimeContextAndroid::NotifyIdle() {
   // TODO(unicorn): we can do gc worker when idle
 }
 
-void RuntimeContextAndroid::Available() { return initialized_; }
+bool RuntimeContextAndroid::Available() { return initialized_; }
 
 void RuntimeContextAndroid::Destroy() {}
 

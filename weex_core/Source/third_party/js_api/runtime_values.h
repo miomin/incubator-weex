@@ -157,7 +157,7 @@ class Array {
   virtual ~Array();
 
   bool Empty() { return values_.empty(); }
-  size_t Size() { return values_.size(); }
+  size_t Size() const { return values_.size(); }
   RuntimeValues* Front() { return values_.front(); }
   RuntimeValues* Back() { return values_.back(); }
   void PushBack(RuntimeValues* value) { values_.push_back(value); }
