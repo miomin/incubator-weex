@@ -1,0 +1,118 @@
+# Copyright 2018 Taobao (China) Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("$flutter_root/testing/testing.gni")
+
+config("runtime_config") {
+  defines = []
+
+  include_dirs = [
+    "$flutter_root/unicorn/",
+  ]
+  if (use_jsc) {
+    defines += [ "USE_JSC", ]
+  }
+}
+
+source_set("runtime") {
+  defines = []
+
+  include_dirs = [
+    "$flutter_root/",
+    "$flutter_root/unicorn/",
+    "$flutter_root/unicron/third_party/",
+  ]
+
+  sources = [
+    "engine_context.h",
+    "runtime_context.h",
+    "runtime_controller.h",
+    "runtime_controller.cc",
+    "runtime_object.h",
+    "runtime_values.h",
+    "runtime_values.cc",
+    "runtime_vm.h",
+    "runtime_vm.cc",
+  ]
+
+  libs = []
+
+  public_configs = [ ":runtime_config" ]
+
+  if (is_android) {
+    sources += [
+      "runtime_context_android.h",
+      "runtime_context_android.cc",
+    ]
+  }
+
+  if (is_mac || is_ios) {
+    sources += [
+      "runtime_context_ios.h",
+      "runtime_context_ios.mm",
+    ]
+
+    libs = [
+      "JavaScriptCore.framework",
+    ]
+  }
+
+  if (use_jsc) {
+    sources += [
+      "jsc/engine_context_jsc.h",
+      "jsc/engine_context_jsc.cc",
+      "jsc/runtime_object_jsc.cc",
+      "jsc/runtime_values_jsc.h",
+      "jsc/runtime_values_jsc.cc",
+      "jsc/jsc_utils.h",
+      "jsc/jsc_utils.cc",
+      "jsc/vm_jsc.cc",
+    ]
+    defines += [ "USE_JSC", ]
+  } else {
+    sources += [
+      "v8/engine_context_v8.h",
+      "v8/engine_context_v8.cc",
+      "v8/runtime_object_v8.cc",
+      "v8/vm_v8.cc",
+    ]
+  }
+
+  deps = [
+    "$flutter_root/common:common",
+    "$flutter_root/flow:flow",
+    "$flutter_root/fml:fml",
+    "$flutter_root/lib/ui:ui",
+    "$flutter_root/runtime:unicorn_runtime",
+    "$flutter_root/unicorn/ui",
+  ]
+}
+
+executable("unicorn_runtime_unittests") {
+  testonly = true
+
+  defines = [ "USE_JSC", ]
+
+  sources = [
+    "runtime_unittest.cc",
+  ]
+
+  deps = [
+    "$flutter_root/unicorn/runtime:runtime",
+    "$flutter_root/third_party/txt",
+    "//third_party/skia",
+    "$flutter_root/testing",
+  ]
+
+}

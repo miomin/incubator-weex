@@ -58,6 +58,19 @@ include_directories(${WEEX_CORE_SOURCE_DIR}/include/wtf)
 #include_directories(${WEEX_CORE_SOURCE_DIR}/android/jsengine/dependence/WTF/)
 #include_directories(${WEEX_CORE_SOURCE_DIR}/android/jsengine/dependence/icu)
 
+set(JS_RUNTIME_API_SRCS
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_vm.cc
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_context_android.cc
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_values.cc
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/binding_macro.h
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/engine_context_jsc.cc
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/jsc_utils.cc
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/runtime_object_jsc.cc
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/runtime_values_jsc.cc
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/vm_jsc.cc
+        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/binding_macro_jsc.h
+        )
+
 set(${WEEXJSSERVER_NAME}_SOURCES
         weex_ipc_client.h
         weex_ipc_client.cpp
@@ -112,6 +125,7 @@ set(${WEEXJSSERVER_NAME}_SOURCES
 
         wson/wson_jsc.h
         wson/wson_jsc.cpp
+        ${JS_RUNTIME_API_SRCS}
 )
 link_directories(${LOCAL_LIBRARIES_DIR})
 SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" CACHE STRING "toolchain_exelinkflags" FORCE)
