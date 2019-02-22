@@ -24,36 +24,39 @@
 #define PROJECT_WEEX_BINDING_UTILS_H
 
 #include <js_runtime/runtime/runtime_values.h>
-#include <object/weex_global_object.h>
+
+class WeexGlobalObjectV2;
 
 namespace weex {
     namespace jsengine {
         class WeexBindingUtils {
         public:
             static unicorn::ScopeValues
-            atob(const std::unique_ptr<WeexGlobalObject> &nativeObject, const std::vector<unicorn::ScopeValues> &vars);
+            atob(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                 const std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues
-            btoa(const std::unique_ptr<WeexGlobalObject> &nativeObject, const std::vector<unicorn::ScopeValues> &vars);
+            btoa(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                 const std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues
-            nativeLog(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+            nativeLog(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                       const std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues
-            setNativeTimeout(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+            setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                              const std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues
-            setNativeInterval(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+            setNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                               const std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues
-            clearNativeTimeout(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+            clearNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues
-            clearNativeInterval(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+            clearNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                 const std::vector<unicorn::ScopeValues> &vars);
 
         };

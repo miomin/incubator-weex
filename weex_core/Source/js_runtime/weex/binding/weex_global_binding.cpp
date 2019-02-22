@@ -26,6 +26,7 @@
 #include "core/bridge/script_bridge.h"
 #include "js_runtime/weex/utils/weex_conversion_utils.h"
 #include <cstdlib>
+#include "js_runtime/weex/object/weex_global_object_v2.h"
 
 namespace weex {
     namespace jsengine {

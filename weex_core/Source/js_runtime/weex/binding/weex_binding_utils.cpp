@@ -23,28 +23,29 @@
 #include "weex_binding_utils.h"
 #include "js_runtime/utils/log_utils.h"
 #include "core/bridge/script_bridge.h"
+#include "js_runtime/weex/object/weex_global_object_v2.h"
 
 namespace weex {
     namespace jsengine {
         unicorn::ScopeValues
-        WeexBindingUtils::atob(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+        WeexBindingUtils::atob(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars) {
             LOG_TEST(" method :atob");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
-        WeexBindingUtils::btoa(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+        WeexBindingUtils::btoa(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars) {
             LOG_TEST(" method :btoa");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
-        unicorn::ScopeValues WeexBindingUtils::nativeLog(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+        unicorn::ScopeValues WeexBindingUtils::nativeLog(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                                          const std::vector<unicorn::ScopeValues> &vars) {
 
 
-            LOG_JS("[JS] enter native log :args->size %d",vars.size());
+            LOG_JS("[JS] enter native log :args->size %d", vars.size());
             if (vars.empty()) {
                 unicorn::RuntimeValues::MakeBool(true);
             }
@@ -59,33 +60,35 @@ namespace weex {
                 }
             }
 
-            LOG_JS("[JS] %s",logStr.c_str());
+            LOG_JS("[JS] %s", logStr.c_str());
             if (!logStr.empty()) {
-               // nativeObject->js_bridge()->core_side()->NativeLog(logStr.c_str());
+                // nativeObject->js_bridge()->core_side()->NativeLog(logStr.c_str());
             }
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
-        unicorn::ScopeValues WeexBindingUtils::setNativeTimeout(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+        unicorn::ScopeValues WeexBindingUtils::setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                                                 const std::vector<unicorn::ScopeValues> &vars) {
             LOG_TEST(" method :setNativeTimeout");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
-        unicorn::ScopeValues WeexBindingUtils::setNativeInterval(const std::unique_ptr<WeexGlobalObject> &nativeObject,
-                                                                 const std::vector<unicorn::ScopeValues> &vars) {
+        unicorn::ScopeValues
+        WeexBindingUtils::setNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                                            const std::vector<unicorn::ScopeValues> &vars) {
             LOG_TEST(" method :setNativeInterval");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
-        unicorn::ScopeValues WeexBindingUtils::clearNativeTimeout(const std::unique_ptr<WeexGlobalObject> &nativeObject,
-                                                                  const std::vector<unicorn::ScopeValues> &vars) {
+        unicorn::ScopeValues
+        WeexBindingUtils::clearNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                                             const std::vector<unicorn::ScopeValues> &vars) {
             LOG_TEST(" method :clearNativeTimeout");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
-        WeexBindingUtils::clearNativeInterval(const std::unique_ptr<WeexGlobalObject> &nativeObject,
+        WeexBindingUtils::clearNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                               const std::vector<unicorn::ScopeValues> &vars) {
             LOG_TEST(" method :clearNativeInterval");
             return unicorn::RuntimeValues::MakeUndefined();

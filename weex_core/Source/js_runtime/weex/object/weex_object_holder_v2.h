@@ -35,7 +35,7 @@ public:
 
     std::map<std::string, std::unique_ptr<WeexGlobalObjectV2>> m_jsInstanceGlobalObjectMap;
 
-    explicit WeexObjectHolderV2(TimerQueue *timeQueue, bool isMultiProgress);
+    explicit WeexObjectHolderV2(unicorn::RuntimeVM *vm, TimerQueue *timeQueue, bool isMultiProgress);
 
     void initFromIPCArguments(IPCArguments *arguments, size_t startCount, bool forAppContext);
 
@@ -51,6 +51,7 @@ public:
 
 private:
     bool isMultiProgress;
+    unicorn::RuntimeVM *vm;
 
 };
 

@@ -22,7 +22,7 @@
 
 #include "weex_instance_binding.h"
 #include "js_runtime/utils/log_utils.h"
-#include "android/jsengine/object/weex_global_object.h"
+#include "js_runtime/weex/object/weex_global_object_v2.h"
 #include "core/bridge/script_bridge.h"
 #include "weex_binding_utils.h"
 

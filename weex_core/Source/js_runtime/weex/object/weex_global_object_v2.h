@@ -43,22 +43,18 @@ public:
     std::unique_ptr<unicorn::RuntimeContext> context;
 
 public:
-    void makeWeexInstanceObject(const std::string &id, const std::string &name);
 
-    void makeWeexGlobalObject();
 
-    void makeAppWorkerObject();
+    void makeWeexInstanceObject(unicorn::RuntimeVM *vm, const std::string &id, const std::string &name);
+
+    void makeWeexGlobalObject(unicorn::RuntimeVM *vm);
+
+    void makeAppWorkerObject(unicorn::RuntimeVM *vm);
 
 
     void addExtraOptions(std::vector<INIT_FRAMEWORK_PARAMS *> &params);
 
-    void initWxEnvironment(std::vector<INIT_FRAMEWORK_PARAMS *> &params, bool forAppContext, bool isSave);
-
-    void initFunctionForContext();
-
-    void initFunctionForAppContext();
-
-    void initFunction();
+    void initWxEnvironment(std::vector<INIT_FRAMEWORK_PARAMS *> &params, bool isSave);
 
     inline WeexCore::ScriptBridge *js_bridge() { return script_bridge_; }
 
@@ -80,6 +76,8 @@ public:
 private:
     WeexCore::ScriptBridge *script_bridge_;
     WeexGlobalObjectType object_type_;
+    uint32_t function_id_;
+    std::map<uint32_t, unicorn::Function *> function_maps_;
 };
 
 

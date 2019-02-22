@@ -22,26 +22,73 @@
 
 #include "weex_object_holder_v2.h"
 
-WeexObjectHolderV2::WeexObjectHolderV2(TimerQueue *timeQueue, bool isMultiProgress) {
-
+WeexObjectHolderV2::WeexObjectHolderV2(unicorn::RuntimeVM *vm, TimerQueue *timeQueue,
+                                       bool isMultiProgress) {
+    this->vm = vm;
+    this->timeQueue = timeQueue;
+    this->isMultiProgress = isMultiProgress;
 }
 
-void WeexObjectHolderV2::initFromIPCArguments(IPCArguments *arguments, size_t startCount, bool forAppContext) {
 
+void WeexObjectHolderV2::initFromIPCArguments(IPCArguments *arguments, size_t startCount, bool forAppContext) {
+    size_t count = arguments->getCount();
+    std::vector<INIT_FRAMEWORK_PARAMS *> params;
+
+    for (size_t i = startCount; i < count; i += 2) {
+        if (arguments->getType(i) != IPCType::BYTEARRAY) {
+            continue;
+        }
+        if (arguments->getType(1 + i) != IPCType::BYTEARRAY) {
+            continue;
+        }
+        const IPCByteArray *ba = arguments->getByteArray(1 + i);
+
+        const IPCByteArray *ba_type = arguments->getByteArray(i);
+
+        auto init_framework_params = (INIT_FRAMEWORK_PARAMS *) malloc(sizeof(INIT_FRAMEWORK_PARAMS));
+
+        if (init_framework_params == nullptr) {
+            return;
+        }
+
+        memset(init_framework_params, 0, sizeof(INIT_FRAMEWORK_PARAMS));
+
+        init_framework_params->type = IPCByteArrayToWeexByteArray(ba_type);
+        init_framework_params->value = IPCByteArrayToWeexByteArray(ba);
+
+        params.push_back(init_framework_params);
+    }
+
+    initFromParams(params, forAppContext);
 }
 
 void WeexObjectHolderV2::initFromParams(std::vector<INIT_FRAMEWORK_PARAMS *> &params, bool forAppContext) {
-
+    if (forAppContext) {
+        LOGE("Create MiniApp worker Context");
+        globalObject = std::unique_ptr<WeexGlobalObjectV2>(this->createAppWorkerObject());
+    } else {
+        LOGE("Create global Context");
+        globalObject = std::unique_ptr<WeexGlobalObjectV2>(this->createWeexObject());
+    }
+    globalObject->initWxEnvironment(params, true);
 }
 
 WeexGlobalObjectV2 *WeexObjectHolderV2::createWeexObject() {
-    return NULL;
+    auto weex_object = new WeexGlobalObjectV2();
+    weex_object->makeWeexGlobalObject(this->vm);
+    return weex_object;
 }
 
 WeexGlobalObjectV2 *WeexObjectHolderV2::createInstancecObject(const std::string &id, const std::string &name) {
-    return NULL;
+    auto weex_object = new WeexGlobalObjectV2();
+    weex_object->makeWeexInstanceObject(this->vm, id, name);
+    weex_object->initWxEnvironment(globalObject.get()->m_initFrameworkParams, false);
+    return weex_object;
 }
 
 WeexGlobalObjectV2 *WeexObjectHolderV2::createAppWorkerObject() {
-    return NULL;
+    auto app_work_object = new WeexGlobalObjectV2();
+    app_work_object->makeAppWorkerObject(this->vm);
+    return app_work_object;
 }
+

@@ -24,9 +24,11 @@
 #define PROJECT_WEEX_GLOBAL_OBJECT_H
 
 
-#include <object/weex_global_object.h>
+
 #include "js_runtime/runtime/runtime_object.h"
 #include "js_runtime/runtime/binding_macro.h"
+
+class WeexGlobalObjectV2;
 
 namespace weex {
     namespace jsengine {
@@ -101,7 +103,7 @@ namespace weex {
             __updateComponentData(const std::vector<unicorn::ScopeValues> &vars);
 
         public:
-            std::unique_ptr<WeexGlobalObject> nativeObject;
+            std::unique_ptr<WeexGlobalObjectV2> nativeObject;
         };
     }
 }

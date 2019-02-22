@@ -32,10 +32,12 @@ namespace WeexCore {
 }
 class WeexRuntime {
 
-public:
-    WeexCore::ScriptBridge* script_bridge_;
+private:
     std::unique_ptr<WeexObjectHolder> weexObjectHolder;
     std::map<std::string, WeexObjectHolder *> appWorkerContextHolderMap;
+public:
+
+    WeexCore::ScriptBridge* script_bridge_;
 
     RefPtr<VM> m_globalVM;
 

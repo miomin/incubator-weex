@@ -24,13 +24,15 @@
 #define PROJECT_WEEX_RUNTIME_V2_H
 
 #include "android/jsengine/weex_runtime.h"
+#include "weex_object_holder_v2.h"
 
 
 class WeexRuntimeV2 : public WeexRuntime {
-public:
-    WeexRuntimeV2(TimerQueue *timeQueue, bool isMultiProgress);
 
-    WeexRuntimeV2(TimerQueue *timeQueue, WeexCore::ScriptBridge *script_bridge, bool isMultiProgress);
+public:
+    explicit WeexRuntimeV2(TimerQueue *timeQueue, bool isMultiProgress);
+
+    explicit WeexRuntimeV2(TimerQueue *timeQueue, WeexCore::ScriptBridge *script_bridge, bool isMultiProgress);
 
     bool hasInstanceId(String &id) override;
 
@@ -89,8 +91,23 @@ public:
 
     WeexObjectHolder *getLightAppObjectHolder(const String &instanceId) override;
 
-    void removeTimerFunction(const uint32_t timerFunction, JSGlobalObject *globalObject) override;
+    WeexObjectHolderV2 *getLightAppObjectHolderV2(const String &instanceId);
 
+    void removeTimerFunction(const uint32_t timerFunction, WeexGlobalObjectV2 *globalObject);
+
+protected:
+    int _initFrameworkWithScript(const String &source);
+
+    int _initAppFrameworkWithScript(const String &instanceId, const String &appFramework);
+
+    void _geJSRuntimeArgsFromWeexParams(std::vector<unicorn::ScopeValues> *obj, std::vector<VALUE_WITH_TYPE *> &params);
+
+
+protected:
+    std::unique_ptr<WeexObjectHolderV2> weex_object_holder_v2_;
+    std::map<std::string, WeexObjectHolderV2 *> app_worker_context_holder_map_v2_;
+    unicorn::RuntimeVM *vm_;
+    bool multi_process_flag_;
 };
 
 

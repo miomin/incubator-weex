@@ -24,6 +24,7 @@
 #include "app_context_binding.h"
 #include "weex_binding_utils.h"
 #include "core/bridge/script_bridge.h"
+#include "js_runtime/weex/object/weex_global_object_v2.h"
 
 namespace weex {
     namespace jsengine {
