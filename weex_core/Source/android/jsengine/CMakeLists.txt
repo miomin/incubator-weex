@@ -3,6 +3,24 @@
 #    cmake_policy(SET CMP0042 NEW)
 #endif ()
 
+cmake_minimum_required(VERSION 3.4.1)
+
+if(DEFINED ENV{WEEX_CORE_SOURCE_DIR})
+    message('WEEX_CORE_SOURCE_DIR has set')
+else()
+    message('rewrite WEEX_CORE_SOURCE_DIR')
+    set(WEEX_CORE_SOURCE_DIR ../..)
+endif()
+
+
+if(DEFINED ENV{ANDROID_PLATFORM})
+    message('ANDROID_PLATFORM has set')
+else()
+    message('rewrite ANDROID_PLATFORM')
+    set(ANDROID_PLATFORM " ")
+endif()
+
+
 set(PORT JSCOnly)
 add_definitions(-DPRINT_LOG_CACHEFILE=0)
 add_definitions(-DOS_ANDROID)
@@ -58,18 +76,62 @@ include_directories(${WEEX_CORE_SOURCE_DIR}/include/wtf)
 #include_directories(${WEEX_CORE_SOURCE_DIR}/android/jsengine/dependence/WTF/)
 #include_directories(${WEEX_CORE_SOURCE_DIR}/android/jsengine/dependence/icu)
 
+#set(JS_RUNTIME_API_SRCS
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_vm.cc
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_context_android.cc
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_values.cc
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/binding_macro.h
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/engine_context_jsc.cc
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/jsc_utils.cc
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/runtime_object_jsc.cc
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/runtime_values_jsc.cc
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/vm_jsc.cc
+#        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/binding_macro_jsc.h
+#        )
+
+
 set(JS_RUNTIME_API_SRCS
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_vm.cc
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_context_android.cc
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/runtime_values.cc
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/binding_macro.h
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/engine_context_jsc.cc
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/jsc_utils.cc
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/runtime_object_jsc.cc
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/runtime_values_jsc.cc
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/vm_jsc.cc
-        ${WEEX_CORE_SOURCE_DIR}/third_party/js_api/jsc/binding_macro_jsc.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/runtime_vm.cc
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/runtime_context_android.cc
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/runtime_values.cc
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/binding_macro.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/jsc/engine_context_jsc.cc
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/jsc/jsc_utils.cc
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/jsc/runtime_object_jsc.cc
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/jsc/runtime_values_jsc.cc
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/jsc/vm_jsc.cc
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/jsc/binding_macro_jsc.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/js_runtime_conversion.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/runtime/js_runtime_conversion.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/utils/log_utils.h
         )
+set(WEEX_BINDING
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_instance_binding.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_instance_binding.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_global_binding.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_global_binding.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/app_context_binding.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/app_context_binding.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_binding_utils.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_binding_utils.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/utils/weex_conversion_utils.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/utils/weex_conversion_utils.h
+        )
+
+set(JSON_SRC
+        ${WEEX_CORE_SOURCE_DIR}/third_party/json11/json11.hpp
+        ${WEEX_CORE_SOURCE_DIR}/third_party/json11/json11.cc
+        )
+set(WEEX_RUNTIME_V2
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/object/weex_runtime_v2.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/object/weex_runtime_v2.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/object/weex_object_holder_v2.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/object/weex_object_holder_v2.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/object/weex_global_object_v2.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/object/weex_global_object_v2.h
+        )
+
+
 
 set(${WEEXJSSERVER_NAME}_SOURCES
         weex_ipc_client.h
@@ -125,7 +187,12 @@ set(${WEEXJSSERVER_NAME}_SOURCES
 
         wson/wson_jsc.h
         wson/wson_jsc.cpp
+      #  ${JS_RUNTIME_API_SRCS}
         ${JS_RUNTIME_API_SRCS}
+        ${DOM_API_SRCS}
+        ${WEEX_BINDING}
+        ${JSON_SRC}
+        ${WEEX_RUNTIME_V2}
 )
 link_directories(${LOCAL_LIBRARIES_DIR})
 SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" CACHE STRING "toolchain_exelinkflags" FORCE)

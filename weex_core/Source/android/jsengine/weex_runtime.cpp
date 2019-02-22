@@ -917,6 +917,10 @@ void WeexRuntime::removeTimerFunction(const uint32_t timerFunction, JSGlobalObje
     go->removeTimer(timerFunction);
 }
 
+WeexRuntime::WeexRuntime() {
+
+}
+
 bool WeexRuntime::hasInstanceId(String &id) {
 
     auto iterator = appWorkerContextHolderMap.find(id.utf8().data());

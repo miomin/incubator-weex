@@ -1,0 +1,86 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+//
+// Created by 陈佩翰 on 2019/2/22.
+//
+
+#ifndef PROJECT_WEEX_GLOBAL_OBJECT_V2_H
+#define PROJECT_WEEX_GLOBAL_OBJECT_V2_H
+
+
+#include <include/WeexApiHeader.h>
+#include <task/timer_queue.h>
+#include <js_runtime/runtime/runtime_context.h>
+
+enum WeexGlobalObjectType {
+    WeexInstance,
+    WeexGlobal,
+    AppWorker
+};
+
+
+class WeexGlobalObjectV2 {
+public:
+    std::vector<INIT_FRAMEWORK_PARAMS *> m_initFrameworkParams;
+    std::string id = "";
+    TimerQueue *timeQueue = nullptr;
+    std::unique_ptr<unicorn::RuntimeContext> context;
+
+public:
+    void makeWeexInstanceObject(const std::string &id, const std::string &name);
+
+    void makeWeexGlobalObject();
+
+    void makeAppWorkerObject();
+
+
+    void addExtraOptions(std::vector<INIT_FRAMEWORK_PARAMS *> &params);
+
+    void initWxEnvironment(std::vector<INIT_FRAMEWORK_PARAMS *> &params, bool forAppContext, bool isSave);
+
+    void initFunctionForContext();
+
+    void initFunctionForAppContext();
+
+    void initFunction();
+
+    inline WeexCore::ScriptBridge *js_bridge() { return script_bridge_; }
+
+    void setScriptBridge(WeexCore::ScriptBridge *script_bridge);
+
+    // store js timer function
+    void addTimer(uint32_t function_id, unicorn::ScopeValues func);
+
+    void removeTimer(uint32_t function_id);
+
+    uint32_t genFunctionID();
+
+    unicorn::Function *getTimerFunction(uint32_t function_id);
+
+    inline WeexGlobalObjectType getObjectType() {
+        return this->object_type_;
+    }
+
+private:
+    WeexCore::ScriptBridge *script_bridge_;
+    WeexGlobalObjectType object_type_;
+};
+
+
+#endif //PROJECT_WEEX_GLOBAL_OBJECT_V2_H
