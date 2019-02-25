@@ -1,4 +1,9 @@
 cd ../android
+
+#rm -rf sdk/build/intermediates/bundles/debug/jni/*
+
+#./gradlew clean assembleDebug --info
+
 ./gradlew assembleDebug --info
 
 

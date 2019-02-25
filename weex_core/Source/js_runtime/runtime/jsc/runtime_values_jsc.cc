@@ -159,6 +159,20 @@ JSCMap::~JSCMap() {
 }
 
 /////////////////////////////////////////////////////////////////////////////
+std::unique_ptr<Array> Array::CreateFromNative(EngineContext* context,
+                                            ScopeValues thiz){
+   JSContextRef ctx = static_cast<JSContextRef>(context->GetContext());
+   JSObjectRef thiz_object = nullptr;
+   if (thiz->IsObject()) {
+        auto object = thiz->GetAsObject();
+        RuntimeObject* native_thiz = static_cast<RuntimeObject*>(object->GetDataPtr());
+        thiz_object = native_thiz->GetJSObject();
+   }
+   return JSCArray::Create(ctx, thiz_object);
+}
+
+
+
 /* class JSCArray implemention */
 std::unique_ptr<Array> JSCArray::Create(JSContextRef ctx, JSObjectRef thiz) {
   //LOG_TEST("JSCArray before Create");

@@ -100,7 +100,7 @@ protected:
 
     int _initAppFrameworkWithScript(const String &instanceId, const String &appFramework);
 
-    void _geJSRuntimeArgsFromWeexParams(std::vector<unicorn::ScopeValues> *obj, std::vector<VALUE_WITH_TYPE *> &params);
+    void _geJSRuntimeArgsFromWeexParams(unicorn::EngineContext* context,std::vector<unicorn::ScopeValues> *obj, std::vector<VALUE_WITH_TYPE *> &params);
 
 
 protected:

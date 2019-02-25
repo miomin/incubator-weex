@@ -73,6 +73,13 @@ public:
         WeexEnv::enableTrace_ = enableTrace_;
     }
 
+    void setUseRunTimeApi(bool use){
+        this->useRunTimeApi_ = use;
+    }
+
+    bool isUseRunTimeApi(){
+        return useRunTimeApi_;
+    }
 
     void initIPC();
 
@@ -102,6 +109,8 @@ private:
     volatile int ipcClientFd_;
     volatile int ipcServerFd_;
     volatile bool enableTrace_;
+
+    bool useRunTimeApi_ = false;
 };
 
 

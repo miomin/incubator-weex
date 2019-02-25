@@ -34,14 +34,14 @@ namespace unicorn {
     static JSClassRef kDefaultClass = nullptr;
 
     JSValueRef JSRuntimeConversion::RuntimeValueToJSRuntimeValue(EngineContext *ctx,
-                                                                        JSClassRef class_ref,
-                                                                        const RuntimeValues *value) {
+                                                                 JSClassRef class_ref,
+                                                                 const RuntimeValues *value) {
         return Conversion::RuntimeValueToJSValue(static_cast<JSGlobalContextRef>(ctx->GetContext()), class_ref, value);
     }
 
     ScopeValues JSRuntimeConversion::JSRunTimeValueToRuntimeValue(EngineContext *ctx,
-                                                                         JSObjectRef thiz,
-                                                                         JSValueRef value) {
+                                                                  JSObjectRef thiz,
+                                                                  JSValueRef value) {
         return Conversion::JSValueToRuntimeValue(static_cast<JSGlobalContextRef>(ctx->GetContext()), thiz, value);
     }
 
@@ -50,39 +50,39 @@ namespace unicorn {
                                                  JSClassRef class_ref,
                                                  const RuntimeValues *value) {
         if (value->IsUndefined()) {
-           // LOG_TEST("RuntimeValueToJSValue -> undefined");
+      //      LOG_TEST("RuntimeValueToJSValue -> undefined");
             return JSValueMakeUndefined(ctx);
         } else if (value->IsNull()) {
-         //   LOG_TEST("RuntimeValueToJSValue -> null");
+        //    LOG_TEST("RuntimeValueToJSValue -> null");
             return JSValueMakeNull(ctx);
         } else if (value->IsBool()) {
             bool b = false;
             value->GetAsBoolean(&b);
-            LOG_TEST("[Context] RuntimeValueToJSValue -> value %p on ctx:%p, bool :%d",value,ctx,b);
+       ///     LOG_TEST("[Context] RuntimeValueToJSValue -> value %p on ctx:%p, bool :%d", value, ctx, b);
             JSValueMakeBoolean(ctx, b);
         } else if (value->IsInt()) {
             int num = 0;
             value->GetAsInteger(&num);
-          //  LOG_TEST("RuntimeValueToJSValue -> int :%d",num);
+          //  LOG_TEST("RuntimeValueToJSValue -> int :%d", num);
             return JSValueMakeNumber(ctx, static_cast<double>(num));
         } else if (value->IsDouble()) {
             double num = 0.0;
             value->GetAsDouble(&num);
-           // LOG_TEST("RuntimeValueToJSValue -> double:%d",num);
+         //   LOG_TEST("RuntimeValueToJSValue -> double:%d", num);
             return JSValueMakeNumber(ctx, num);
         } else if (value->IsString()) {
             std::string tmp;
             value->GetAsString(&tmp);
-          //  LOG_TEST("RuntimeValueToJSValue -> string:%s",tmp.c_str());
+           // LOG_TEST("RuntimeValueToJSValue -> string:%s", tmp.c_str());
             JSStringRef str = JSStringCreateWithUTF8CString(tmp.c_str());
             return JSValueMakeString(ctx, str);
         } else if (value->IsJsonObject()) {
             const char *json_str = nullptr;
             value->GetAsUtf8JsonStr(&json_str);
-          //  LOG_TEST("RuntimeValueToJSValue -> json:%s",json_str);
+            //LOG_TEST("RuntimeValueToJSValue -> json:%s", json_str);
             return Conversion::ParserUtf8CharJsonToJValueJSContextRef(ctx, json_str);
         } else if (value->IsObject()) {
-          //  LOG_TEST("RuntimeValueToJSValue -> obj");
+           // LOG_TEST("RuntimeValueToJSValue -> obj");
             BaseObject *native_ob = value->GetAsObject();
             if (class_ref == nullptr) {
                 auto clz = native_ob->GetRuntimeClass();
@@ -103,7 +103,7 @@ namespace unicorn {
             JSObjectSetPrivate(js_obj, data);
             return js_obj;
         } else if (value->IsMap()) {
-          //  LOG_TEST("RuntimeValueToJSValue -> map");
+           // LOG_TEST("RuntimeValueToJSValue [start]-> map");
             const JSCMap *local = static_cast<const JSCMap *>(value->GetAsMap());
             auto &map = local->GetMap();
             JSObjectRef thiz = local->GetThisObject();
@@ -111,11 +111,13 @@ namespace unicorn {
                 thiz = JSObjectMake(ctx, nullptr, nullptr);
             }
             for (auto &iter : map) {
+            //    LOG_TEST("RuntimeValueToJSValue [map key]-> %s", iter.first.c_str());
                 JSStringRef str = JSStringCreateWithUTF8CString(iter.first.c_str());
                 JSValueRef value_ref = RuntimeValueToJSValue(ctx, nullptr, iter.second);
                 JSObjectSetProperty(ctx, thiz, str, value_ref, 0, nullptr);
                 JSStringRelease(str);
             }
+           // LOG_TEST("RuntimeValueToJSValue [end]-> map");
             return thiz;
         } else if (value->IsFunction()) {
            // LOG_TEST("RuntimeValueToJSValue -> func");
@@ -125,26 +127,37 @@ namespace unicorn {
         }
 // JSValueIsArray is only used in ios 9.0 or above, so we just enable
 // array in android now
-#if defined(OS_ANDROID)
+//#if defined(OS_ANDROID)
         else if (value->IsArray()) {
-            const JSCArray *local = static_cast<const JSCArray *>(value->GetAsArray());
-            JSObjectRef thiz = local->GetThisObject();
-            if (thiz == nullptr) {
-                thiz = JSObjectMake(ctx, nullptr, nullptr);
-            }
-            auto &array = local->GetArray();
-            size_t length = local->Size();
-            JSStringRef len_str = JSStringCreateWithUTF8CString("length");
-            JSObjectSetProperty(ctx, thiz, len_str, JSValueMakeNumber(ctx, length),
-                                0, nullptr);
-            JSStringRelease(len_str);
+          //  LOG_TEST("RuntimeValueToJSValue[start] -> array");
+            // const JSCArray *local = static_cast<const JSCArray *>(value->GetAsArray());
+//            JSObjectRef thiz = local->GetThisObject();
+//            if (thiz == nullptr) {
+//                thiz = JSObjectMake(ctx, nullptr, nullptr);
+//            }
+            auto &array = value->GetAsArray()->GetArray();
+            size_t length = array.size();
+            //           JSStringRef len_str = JSStringCreateWithUTF8CString("length");
+//            JSObjectSetProperty(ctx, thiz, len_str, JSValueMakeNumber(ctx, length),
+//                                0, nullptr);
+//            JSStringRelease(len_str);
+            JSValueRef args[length];
             for (size_t i = 0; i < length; i++) {
-                JSValueRef value_ref = RuntimeValueToJSValue(ctx, nullptr, array[i]);
-                JSObjectSetPropertyAtIndex(ctx, thiz, i, value_ref, nullptr);
+                args[i] = RuntimeValueToJSValue(ctx, nullptr, array[i]);
+                // JSObjectSetPropertyAtIndex(ctx, thiz, i, value_ref, nullptr);
             }
-            return thiz;
+            JSValueRef js_exception = nullptr;
+
+//            for (int i = 0; i < length; i++) {
+//                LOG_TEST("RuntimeValueToJSValue[item type: %d] ,onContext :%p", JSValueGetType(ctx, args[i]), ctx);
+//            }
+
+            JSObjectRef js_array = JSObjectMakeArray(ctx, length, args, &js_exception);
+            printJSValueRefException(ctx, js_exception);
+         //   LOG_TEST("RuntimeValueToJSValue[end] -> array");
+            return js_array;
         }
-#endif
+//#endif
 
         return JSValueMakeUndefined(ctx);
     }
@@ -154,7 +167,7 @@ namespace unicorn {
                                                   JSObjectRef thiz,
                                                   JSValueRef value) {
         if (JSValueIsNumber(ctx, value)) {
-          //  LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsNumber ");
+            //  LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsNumber ");
             double origin = JSValueToNumber(ctx, value, nullptr);
             if (origin == static_cast<int>(origin)) {
                 return ScopeValues(new RuntimeValues(static_cast<int>(origin)));
@@ -164,13 +177,13 @@ namespace unicorn {
             //LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsBoolean ");
             return ScopeValues(new RuntimeValues(JSValueToBoolean(ctx, value)));
         } else if (JSValueIsNull(ctx, value)) {
-           // LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsNull ");
+            // LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsNull ");
             return ScopeValues(new RuntimeValues(nullptr));
         } else if (JSValueIsUndefined(ctx, value)) {
-           // LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsUndefined ");
+            // LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsUndefined ");
             return ScopeValues(new RuntimeValues());
         } else if (JSValueIsString(ctx, value)) {
-          //  LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsString ");
+            //  LOG_TEST("[Conversion] JSValueToRuntimeValue JSValueIsString ");
             std::string result;
             if (Conversion::JSValueToStdString(ctx, value, &result)) {
                 return RuntimeValues::MakeString(result);
@@ -202,7 +215,7 @@ namespace unicorn {
             if (native_ob) {
                 return RuntimeValues::MakeCommonObject(native_ob, nullptr);
             } else if (JSObjectIsFunction(ctx, ob)) {
-                LOG_TEST("[Context][Conversion] JSValueToRuntimeValue JSObjectIsFunction context:%p ,func:%p",ctx,ob);
+                LOG_TEST("[Context][Conversion] JSValueToRuntimeValue JSObjectIsFunction context:%p ,func:%p", ctx, ob);
                 auto func = JSCFunction::Create(ctx, "", thiz, ob);
                 auto func_holder = RuntimeValues::MakeFunction(std::move(func));
                 return func_holder;
@@ -211,19 +224,19 @@ namespace unicorn {
                 JSUtils::GetPropertyNameArray(ctx, ob, properties);
                 //LOG_TEST("[Conversion]  JSCMap::Create");
                 auto jsc_map = JSCMap::Create(ctx, ob);
-               // LOG_TEST("[Conversion] JSValueToRuntimeValue else properties.size():%lu", properties.size());
+                // LOG_TEST("[Conversion] JSValueToRuntimeValue else properties.size():%lu", properties.size());
                 for (size_t i = 0; i < properties.size(); i++) {
-                  //  LOG_TEST("[Conversion] JSValueToRuntimeValue JSStringCreateWithUTF8CString name :%s",properties[i].c_str());
+                    //  LOG_TEST("[Conversion] JSValueToRuntimeValue JSStringCreateWithUTF8CString name :%s",properties[i].c_str());
                     JSStringRef str_ref = JSStringCreateWithUTF8CString(
                             properties[i].c_str());
                     JSValueRef val = JSObjectGetProperty(ctx, ob, str_ref, nullptr);
-                  //  LOG_TEST("[Conversion]  Conversion::JSValueToRuntimeValue(ctx, ob, val)");
+                    //  LOG_TEST("[Conversion]  Conversion::JSValueToRuntimeValue(ctx, ob, val)");
                     auto native = Conversion::JSValueToRuntimeValue(ctx, ob, val);
                     jsc_map->Insert(properties[i], native.release());
                 }
-               // LOG_TEST("[Conversion] map_holder = RuntimeValues::MakeMap(std::move(jsc_map)");
+                // LOG_TEST("[Conversion] map_holder = RuntimeValues::MakeMap(std::move(jsc_map)");
                 auto map_holder = RuntimeValues::MakeMap(std::move(jsc_map));
-              //  LOG_TEST("[Conversion] return map_holder");
+                //  LOG_TEST("[Conversion] return map_holder");
                 return map_holder;
             }
         }
@@ -271,7 +284,7 @@ namespace unicorn {
         JSValueRef jValue = JSValueMakeFromJSONString(ctx, jsonStrRef);
         if (jsonStrRef) {
             //   LOG_TEST("Conversion::ParserUtf8CharJson : release str");
-             JSStringRelease(jsonStrRef);
+            JSStringRelease(jsonStrRef);
         }
         return jValue;
     }

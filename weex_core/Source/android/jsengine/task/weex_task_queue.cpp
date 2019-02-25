@@ -27,6 +27,7 @@
 #include "android/jsengine/bridge/script/script_bridge_in_multi_process.h"
 #include "android/jsengine/bridge/script/core_side_in_multi_process.h"
 #include "android/jsengine/object/weex_env.h"
+#include "js_runtime/weex/object/weex_runtime_v2.h"
 
 void WeexTaskQueue::run(WeexTask *task) {
     task->timeCalculator->set_task_name(task->taskName());
@@ -111,7 +112,14 @@ static void *startThread(void *td) {
     self->isInitOk = true;
 
     if (self->weexRuntime == nullptr) {
-        self->weexRuntime = new WeexRuntime(new TimerQueue(self),WeexEnv::getEnv()->scriptBridge(), self->isMultiProgress);
+        bool  useRunTimeApi = true;
+        if (useRunTimeApi){
+            self->weexRuntime = new WeexRuntimeV2(new TimerQueue(self),WeexEnv::getEnv()->scriptBridge(), self->isMultiProgress);
+        } else{
+            self->weexRuntime = new WeexRuntime(new TimerQueue(self),WeexEnv::getEnv()->scriptBridge(), self->isMultiProgress);
+        }
+       //
+
         // init IpcClient in Js Thread
 //        if (self->isMultiProgress) {
 //            auto *client = new WeexIPCClient(WeexEnv::getEnv()->getIpcClientFd());

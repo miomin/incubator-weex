@@ -23,24 +23,29 @@
 #ifndef PROJECT_JSON_BINDING_UTILS_H
 #define PROJECT_JSON_BINDING_UTILS_H
 
-#include <include/WeexApiHeader.h>
+#include "include/WeexApiHeader.h"
+#include "js_runtime/runtime/runtime_context.h"
 //#include "js_runtime/dom/impl/weex_element.h"
 #include "third_party/json11/json11.hpp"
 #include "js_runtime/runtime/runtime_values.h"
+#include "android/jsengine/object/args.h"
 
 namespace weex {
     namespace jsengine {
         class WeexConversionUtils {
         public:
-          //  static json11::Json convertElementToJSon(const Element *element);
+            //  static json11::Json convertElementToJSon(const Element *element);
 
             static bool convertKVToJSon(const std::string &name, const ::std::string &value, std::string &result);
 
             static json11::Json RunTimeValuesOfObjectToJson(unicorn::RuntimeValues *vars);
 
-            static unicorn::ScopeValues WeexValueToRuntimeValue(VALUE_WITH_TYPE *weexValue);
+            static unicorn::ScopeValues
+            WeexValueToRuntimeValue(unicorn::EngineContext *context, VALUE_WITH_TYPE *weexValue);
 
-          //  static bool convertStyleToJSon(const std::string &name, StyleVale *value, std::string &result);
+            static void ConvertRunTimeVaueToWson(unicorn::RuntimeValues *value, Args &args);
+
+            //  static bool convertStyleToJSon(const std::string &name, StyleVale *value, std::string &result);
         };
 
     }

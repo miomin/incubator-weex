@@ -237,7 +237,7 @@ z
 )
 
 add_library(${WEEXJSSERVER_NAME} SHARED
-            ${${WEEXJSSERVER_NAME}_SOURCES})
+            ${${WEEXJSSERVER_NAME}_SOURCES} ../../js_runtime/weex/utils/wson_for_runtime.cpp ../../js_runtime/weex/utils/wson_for_runtime.h)
 
 
 target_link_libraries(${WEEXJSSERVER_NAME}

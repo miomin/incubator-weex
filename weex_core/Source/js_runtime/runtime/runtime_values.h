@@ -159,6 +159,9 @@ class Map {
 
 class Array {
  public:
+
+ static std::unique_ptr<Array> CreateFromNative(EngineContext* context,
+                                                   ScopeValues thiz);
   Array() = default;
   virtual ~Array();
 
@@ -168,6 +171,8 @@ class Array {
   RuntimeValues* Back() { return values_.back(); }
   void PushBack(RuntimeValues* value) { values_.push_back(value); }
   void PopBack() { values_.pop_back(); }
+
+  RuntimeValues* atIndex(size_t index) const { return values_[index];}
 
   RuntimeValues* operator[](size_t index) { return values_[index]; }
   const std::vector<RuntimeValues*>& GetArray() const { return values_; }

@@ -45,7 +45,7 @@ namespace weex {
                                                          const std::vector<unicorn::ScopeValues> &vars) {
 
 
-            LOG_JS("[JS] enter native log :args->size %d", vars.size());
+           // LOG_JS("[JS] enter native log :args->size %d", vars.size());
             if (vars.empty()) {
                 unicorn::RuntimeValues::MakeBool(true);
             }

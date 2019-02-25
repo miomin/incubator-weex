@@ -33,7 +33,7 @@ WeexRuntimeV2::WeexRuntimeV2(TimerQueue *timeQueue, bool isMultiProgress)
         LOGE("failed to init ICUEnv single process");
         // return false;
     }
-    LOGD("WeexRuntime is running and mode is %s", isMultiProgress ? "multiProcess" : "singleProcess");
+    LOGW("WeexRuntime is running and mode is %s", isMultiProgress ? "multiProcess" : "singleProcess");
     //todo if delete ,will crash
     WTF::initializeMainThread();
     initHeapTimer();
@@ -86,7 +86,7 @@ int WeexRuntimeV2::initAppFramework(const String &instanceId, const String &appF
                                     std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
 
     auto pHolder = getLightAppObjectHolderV2(instanceId);
-    LOGD("Weex jsserver initAppFramework %s", instanceId.utf8().data());
+    LOGW("Weex jsserver initAppFramework %s", instanceId.utf8().data());
     if (pHolder == nullptr) {
         auto holder = new WeexObjectHolderV2(this->vm_, weex_object_holder_v2_->timeQueue, multi_process_flag_);
         holder->initFromParams(params, true);
@@ -117,7 +117,7 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
         final_instanceId = instanceId;
     }
 
-    LOGD("createAppContext get_context_fun_name = %s", get_context_fun_name.utf8().data());
+    LOGW("createAppContext get_context_fun_name = %s", get_context_fun_name.utf8().data());
 
     // new a global object
     // --------------------------------------------------
@@ -148,7 +148,7 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
         LOGE("WeexRuntime: createAppContext failed , exception :%s", jsException.c_str());
         return static_cast<int32_t>(false);
     }
-    LOGD("WeexRuntime: try convert funcRetValue to obj");
+    LOGW("WeexRuntime: try convert funcRetValue to obj");
     JSRunTimeObject fucRetJSObject = worker_globalObject->context->GetEngineContext()->toObjectFromValue(funcRet);
     if (nullptr == fucRetJSObject) {
         LOGE("WeexRuntime: CreateAppContext get funcRet obj failed");
@@ -186,10 +186,10 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
             return static_cast<int32_t>(false);
         }
     } else {
-        LOGD("WeexRuntime: createAppContext app.js is empty!");
+        LOGW("WeexRuntime: createAppContext app.js is empty!");
         return static_cast<int32_t>(false);
     }
-    LOGD("WeexRuntime: createAppContext complete!");
+    LOGW("WeexRuntime: createAppContext complete!");
     return static_cast<int32_t>(true);
 }
 
@@ -208,7 +208,7 @@ int WeexRuntimeV2::callJSOnAppContext(const String &instanceId, const String &fu
         return static_cast<int32_t>(false);
     }
     std::string runFunc = std::string(func.utf8().data());
-    LOGD("WeexRuntime callJSOnAppContext func is %s", runFunc.c_str());
+    LOGW("WeexRuntime callJSOnAppContext func is %s", runFunc.c_str());
 
     // Get Worker global object
     auto appWorkerHolder = getLightAppObjectHolderV2(instanceId);
@@ -222,7 +222,7 @@ int WeexRuntimeV2::callJSOnAppContext(const String &instanceId, const String &fu
     }
 
     std::vector<unicorn::ScopeValues> args;
-    _geJSRuntimeArgsFromWeexParams(&args, params);
+    _geJSRuntimeArgsFromWeexParams(worker_globalObject->context->GetEngineContext(),&args, params);
 
     std::string jsException;
     worker_globalObject->context->GetEngineContext()->callJavaScriptFunc(
@@ -238,7 +238,7 @@ int WeexRuntimeV2::callJSOnAppContext(const String &instanceId, const String &fu
         LOGE("callJSOnAppContext error on instance %s ,func:%s", instanceId.utf8().data(), runFunc.c_str());
         return static_cast<int32_t>(false);
     }
-    LOGD("WeexRuntime callJSOnAppContext func complete: %s", runFunc.c_str());
+    LOGW("WeexRuntime callJSOnAppContext func complete: %s", runFunc.c_str());
     return static_cast<int32_t>(true);
 }
 
@@ -248,7 +248,7 @@ int WeexRuntimeV2::destroyAppContext(const String &instanceId) {
         return static_cast<int32_t>(false);
     }
 
-    LOGD("Weex jsserver IPCJSMsg::DESTORYAPPCONTEXT end1 %s", instanceId.utf8().data());
+    LOGW("Weex jsserver IPCJSMsg::DESTORYAPPCONTEXT end1 %s", instanceId.utf8().data());
     std::map<std::string, WeexGlobalObject *>::iterator it_find_instance;
     auto objectMap = appWorkerObjectHolder->m_jsInstanceGlobalObjectMap;
     it_find_instance = objectMap.find(instanceId.utf8().data());
@@ -294,26 +294,26 @@ int WeexRuntimeV2::exeJS(const String &instanceId, const String &nameSpace, cons
     std::string runFunc = std::string(func.utf8().data());
     std::string instance_id_str = std::string(instanceId.utf8().data());
 
-    LOGD("WeexRuntime exeJS func is %s", runFunc.c_str());
-
     WeexGlobalObjectV2 *globalObject = nullptr;
 
     if (runFunc == "callJS") {
-        globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str].get();
-        if (globalObject == NULL) {
+        globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str];
+        if (globalObject == nullptr) {
+            LOGW("----------->[global] exeJS func:%s", runFunc.c_str());
             globalObject = weex_object_holder_v2_->globalObject.get();
         } else {
             runFunc = std::string("__WEEX_CALL_JAVASCRIPT__");
+            LOGW("----------->[instance][%s] exeJS func:%s", instance_id_str.c_str(),runFunc.c_str());
         }
     } else {
         globalObject = weex_object_holder_v2_->globalObject.get();
+        LOGW("----------->[global] exeJS func:%s", runFunc.c_str());
     }
 
     std::vector<unicorn::ScopeValues> args;
-    _geJSRuntimeArgsFromWeexParams(&args, params);
+    _geJSRuntimeArgsFromWeexParams(globalObject->context->GetEngineContext(),&args, params);
 
     std::string jsException;
-    LOGD("-----------> exeJS func:%s ", runFunc.c_str());
     globalObject->context->GetEngineContext()->callJavaScriptFunc(
             nullptr,
             runFunc,
@@ -336,7 +336,7 @@ WeexRuntimeV2::exeJSWithResult(const String &instanceId, const String &nameSpace
     std::string instance_id_str = std::string(instanceId.utf8().data());
     std::string runFunc = std::string(func.utf8().data());
 
-    LOGD("WeexRuntime exeJSWithResult func is %s", runFunc.c_str());
+    LOGW("WeexRuntime exeJSWithResult func is %s", runFunc.c_str());
 
     std::unique_ptr<WeexJSResult> returnResult;
     returnResult.reset(new WeexJSResult);
@@ -346,8 +346,8 @@ WeexRuntimeV2::exeJSWithResult(const String &instanceId, const String &nameSpace
     // fix instanceof Object error
     // if function is callJs should us Instance object to call __WEEX_CALL_JAVASCRIPT__
     if (runFunc == "callJS") {
-        globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str].get();
-        if (globalObject == NULL) {
+        globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str];
+        if (globalObject == nullptr) {
             globalObject = weex_object_holder_v2_->globalObject.get();
         } else {
             runFunc = std::string("__WEEX_CALL_JAVASCRIPT__");
@@ -357,7 +357,7 @@ WeexRuntimeV2::exeJSWithResult(const String &instanceId, const String &nameSpace
     }
 
     std::vector<unicorn::ScopeValues> args;
-    _geJSRuntimeArgsFromWeexParams(&args, params);
+    _geJSRuntimeArgsFromWeexParams(globalObject->context->GetEngineContext(),&args, params);
 
     std::string jsException;
     auto values = globalObject->context->GetEngineContext()->callJavaScriptFunc(
@@ -388,7 +388,7 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
                               const String &initData, const String &extendsApi,
                               std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
 
-    LOGE("WeexRuntime: create createInstance  Context");
+    LOGW("WeexRuntime: create createInstance  Context");
 
 
     WeexGlobalObjectV2 *impl_globalObject = weex_object_holder_v2_->globalObject.get();
@@ -398,23 +398,14 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
         globalObject = impl_globalObject;
     } else {
         std::string instance_id_str = std::string(instanceId.utf8().data());
-        auto *temp_object = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str].get();
+        auto *temp_object = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str];
 
-        if (temp_object == NULL) {
-            // new a global object
-            // --------------------------------------------------
-//            if (weexLiteAppObjectHolder.get() != nullptr) {
-//                VM &vm_global = *weexLiteAppObjectHolder->m_globalVM.get();
-//                JSLockHolder locker_global(&vm_global);
-//            }
-
-            //temp_object = weexObjectHolder->cloneWeexObject(true, false);
+        if (temp_object == nullptr) {
             temp_object = weex_object_holder_v2_->createInstancecObject(instance_id_str, instance_id_str);
-            //VM &vm = temp_object->vm();
-            //JSLockHolder locker(&vm);
             temp_object->addExtraOptions(params);
             temp_object->id = instance_id_str;
             temp_object->setScriptBridge(script_bridge_);
+            temp_object->timeQueue = weex_object_holder_v2_->timeQueue;
 
             std::string opts_str = std::string(opts.utf8().data());
             std::string init_data_str = std::string(initData.utf8().data());
@@ -448,9 +439,8 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
             auto vueJSValue = impl_globalObject->context->GetEngineContext()->GetPropertyValueFromObject("Vue",
                                                                                                          fucRetJSObject);
             if (nullptr != vueJSValue) {
-                LOGD("WeexRuntime: get vue's prototype from funcRet succeed, try set vue's prototype to newContext's globalObject prototypet");
+                LOGW("WeexRuntime:  try set vue's prototype to newContext's globalObject prototypet");
                 auto vueObject = impl_globalObject->context->GetEngineContext()->toObjectFromValue(vueJSValue);
-                //todo set instance context globalobject value
                 if (!temp_object->context->GetEngineContext()->SetObjectPrototypeFromValue(vueObject, nullptr)) {
                     LOGE("WeexRuntime: failed ====> set vue's prototype to newContext's globalObject prototype");
                 }
@@ -458,7 +448,7 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
                 LOGE("WeexRuntime: get vue's prototype from funcRet falied");
             }
 
-            LOGD("WeexRuntime:   set newContext's globalObject value from  funcRet's type");
+            LOGW("WeexRuntime:   set newContext's globalObject value from  funcRet's type");
             std::vector<std::string> nameArray;
 
             if (!impl_globalObject->context->GetEngineContext()->GetObjectPropertyNameArray(fucRetJSObject,
@@ -467,6 +457,12 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
                 return static_cast<int32_t>(false);
             }
 
+
+            LOGW("WeexRuntime:   get fucRetJSObject properties name array failed,globalContext:%p,instance context:%p",
+                 impl_globalObject->context->GetEngineContext()->GetContext(),
+                 temp_object->context->GetEngineContext()->GetContext()
+            );
+
             for (auto propertyName : nameArray) {
                 auto propertyValue = impl_globalObject->context->GetEngineContext()->GetPropertyValueFromObject(
                         propertyName, fucRetJSObject);
@@ -474,10 +470,11 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
                     LOGE("WeexRuntime:   get fucRetJSObject properties value failed, name:%s", propertyName.c_str());
                     return static_cast<int32_t>(false);
                 }
+                LOGE("WeexRuntime:  set newContext properties name:%s", propertyName.c_str());
                 temp_object->context->GetEngineContext()->setObjectValue(nullptr, propertyName, propertyValue);
             }
-            weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str] = std::unique_ptr<WeexGlobalObjectV2>(temp_object);
-            LOGE("create Instance instanceId.utf8().data() %s", instance_id_str.c_str());
+            weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str] = temp_object;
+            LOGW("create Instance succeed :%s", instance_id_str.c_str());
 
         }
         globalObject = temp_object;
@@ -506,7 +503,7 @@ std::unique_ptr<WeexJSResult> WeexRuntimeV2::exeJSOnInstance(const String &insta
     returnResult.reset(new WeexJSResult);
 
     // JSGlobalObject *globalObject = weexObjectHolder->m_jsInstanceGlobalObjectMap[instanceId.utf8().data()];
-    WeexGlobalObjectV2 *globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str].get();
+    WeexGlobalObjectV2 *globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str];
     if (globalObject == nullptr) {
         //   globalObject = weexObjectHolder->m_globalObject.get();
         globalObject = weex_object_holder_v2_->globalObject.get();
@@ -533,7 +530,7 @@ std::unique_ptr<WeexJSResult> WeexRuntimeV2::exeJSOnInstance(const String &insta
 int WeexRuntimeV2::destroyInstance(const String &instanceId) {
     std::string instance_id_str = std::string(instanceId.utf8().data());
     // LOGE("IPCJSMsg::DESTORYINSTANCE");
-    auto *globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str].get();
+    auto *globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str];
     if (globalObject == nullptr) {
         return static_cast<int32_t>(true);
     }
@@ -596,7 +593,7 @@ int WeexRuntimeV2::_initFrameworkWithScript(const String &source) {
 }
 
 int WeexRuntimeV2::_initAppFrameworkWithScript(const String &instanceId, const String &appFramework) {
-    LOGD("WeexRuntime _initAppFramework implements %s", instanceId.utf8().data());
+    LOGW("WeexRuntime _initAppFramework implements %s", instanceId.utf8().data());
     auto appWorkerObjectHolder = getLightAppObjectHolderV2(instanceId);
     if (appWorkerObjectHolder == nullptr) {
         LOGE("WeexRuntime _initAppFramework implements appWorkerHolder is null");
@@ -616,7 +613,7 @@ int WeexRuntimeV2::_initAppFrameworkWithScript(const String &instanceId, const S
         return static_cast<int32_t>(false);
     }
 
-    LOGD("WeexRuntime _initAppFramework implements complete");
+    LOGW("WeexRuntime _initAppFramework implements complete");
     return static_cast<int32_t>(true);
 }
 
@@ -635,10 +632,10 @@ WeexObjectHolder *WeexRuntimeV2::getLightAppObjectHolder(const String &instanceI
     return nullptr;
 }
 
-void WeexRuntimeV2::_geJSRuntimeArgsFromWeexParams(std::vector<unicorn::ScopeValues> *obj,
+void WeexRuntimeV2::_geJSRuntimeArgsFromWeexParams(unicorn::EngineContext* context,std::vector<unicorn::ScopeValues> *obj,
                                                    std::vector<VALUE_WITH_TYPE *> &params) {
     for (unsigned int i = 0; i < params.size(); i++) {
         VALUE_WITH_TYPE *paramsObject = params[i];
-        obj->push_back(weex::jsengine::WeexConversionUtils::WeexValueToRuntimeValue(paramsObject));
+        obj->push_back(weex::jsengine::WeexConversionUtils::WeexValueToRuntimeValue(context,paramsObject));
     }
 }

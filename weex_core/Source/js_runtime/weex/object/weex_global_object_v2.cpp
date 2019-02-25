@@ -46,7 +46,7 @@ WeexGlobalObjectV2::makeWeexInstanceObject(unicorn::RuntimeVM *vm, const std::st
     //global object not support bind static method for globalObject now cause jsruntime
     weex::jsengine::WeexInstanceBinding::CreateClassRef(nullptr);
     context = unicorn::RuntimeContext::Create(vm, weex::jsengine::WeexInstanceBinding::s_jsclass_WeexInstanceBinding);
-    LOGD("[Context] makeWeexInstanceObject context ptr:%p", context->GetEngineContext()->GetContext());
+    LOGW("[Context] makeWeexInstanceObject context ptr:%p", context->GetEngineContext()->GetContext());
     context->GetEngineContext()->SetName(id);
     auto globalObjectBinding = new weex::jsengine::WeexInstanceBinding(context->GetEngineContext(), nullptr);
     globalObjectBinding->nativeObject.reset(this);
@@ -132,7 +132,7 @@ WeexGlobalObjectV2::initWxEnvironment(std::vector<INIT_FRAMEWORK_PARAMS *> &para
 
         //LOGE("initWxEnvironment and value is %s", value.utf8().data());
         // addString(vm, WXEnvironment, param->type->content, WTFMove(value));
-        LOGE("initWxEnvironment initWxEnvironment  key:%s ,vaule: %s", type.utf8().data(), value.utf8().data());
+        //LOGD("initWxEnvironment initWxEnvironment  key:%s ,vaule: %s", type.utf8().data(), value.utf8().data());
         wxEnvironment->Insert(std::string(type.utf8().data()),
                               new unicorn::RuntimeValues(std::string(value.utf8().data())));
         //free(params);

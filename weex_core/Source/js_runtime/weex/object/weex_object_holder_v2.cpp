@@ -70,6 +70,7 @@ void WeexObjectHolderV2::initFromParams(std::vector<INIT_FRAMEWORK_PARAMS *> &pa
         LOGE("Create global Context");
         globalObject = std::unique_ptr<WeexGlobalObjectV2>(this->createWeexObject());
     }
+    globalObject->timeQueue = this->timeQueue;
     globalObject->initWxEnvironment(params, true);
 }
 

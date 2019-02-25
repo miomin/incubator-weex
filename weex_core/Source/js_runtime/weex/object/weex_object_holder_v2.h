@@ -33,7 +33,7 @@ class WeexObjectHolderV2 {
 public:
     std::unique_ptr<WeexGlobalObjectV2> globalObject;
 
-    std::map<std::string, std::unique_ptr<WeexGlobalObjectV2>> m_jsInstanceGlobalObjectMap;
+    std::map<std::string, WeexGlobalObjectV2*> m_jsInstanceGlobalObjectMap;
 
     explicit WeexObjectHolderV2(unicorn::RuntimeVM *vm, TimerQueue *timeQueue, bool isMultiProgress);
 

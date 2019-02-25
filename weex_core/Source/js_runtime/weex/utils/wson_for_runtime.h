@@ -17,25 +17,22 @@
  * under the License.
  */
 //
-// Created by 陈佩翰 on 2019/1/17.
+// Created by 陈佩翰 on 2019/2/25.
 //
 
-#ifndef WEEXCORE_LOG_UTILS_H
-#define WEEXCORE_LOG_UTILS_H
-
-#ifndef CLOSE_RUN_TIME_LOG
-#include "base/utils/log_utils.h"
-
-#define LOG_TEST(...) LOGW(__VA_ARGS__)
-#define LOG_JS(...)  LOGI(__VA_ARGS__)
-#define LOG_JS_ERROR(...) LOGE(__VA_ARGS__)
-
-#else
-#define LOG_TEST(...)
-#define LOG_JS(...)
-#endif
+#ifndef PROJECT_WSON_FOR_RUNTIME_H
+#define PROJECT_WSON_FOR_RUNTIME_H
 
 
+#include "js_runtime/runtime/runtime_values.h"
+#include "js_runtime/runtime/runtime_context.h"
+
+namespace wson {
+    unicorn::ScopeValues toRunTimeValueFromWson(unicorn::EngineContext *context, void *data, int length);
+
+    wson_buffer *runTimeValueToWson(unicorn::RuntimeValues *value);
+
+}
 
 
-#endif //WEEXCORE_LOG_UTILS_H
+#endif //PROJECT_WSON_FOR_RUNTIME_H

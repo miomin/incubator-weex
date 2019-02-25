@@ -38,11 +38,11 @@ RenderManager *RenderManager::g_pInstance = nullptr;
 
 bool RenderManager::CreatePage(const std::string& page_id, const char *data) {
     
-#if RENDER_LOG
+//#if RENDER_LOG
   wson_parser parser(data);
   LOGD("[RenderManager] CreatePage >>>> pageId: %s, dom data: %s",
        pageId.c_str(), parser.toStringUTF8().c_str());
-#endif
+//#endif
 
   RenderPage *page = new RenderPage(page_id);
   pages_.insert(std::pair<std::string, RenderPage *>(page_id, page));
