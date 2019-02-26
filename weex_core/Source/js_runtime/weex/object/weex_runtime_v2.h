@@ -36,12 +36,12 @@ public:
 
     bool hasInstanceId(String &id) override;
 
-    int initFramework(IPCArguments *arguments) override;
+    //int initFramework(IPCArguments *arguments) override;
 
     int initFramework(const String &script, std::vector<INIT_FRAMEWORK_PARAMS *> &params) override;
 
-    int initAppFrameworkMultiProcess(const String &instanceId, const String &appFramework,
-                                     IPCArguments *arguments) override;
+//    int initAppFrameworkMultiProcess(const String &instanceId, const String &appFramework,
+//                                     IPCArguments *arguments) override;
 
     int
     initAppFramework(const String &instanceId, const String &appFramework,
@@ -51,7 +51,7 @@ public:
 
     std::unique_ptr<WeexJSResult> exeJSOnAppWithResult(const String &instanceId, const String &jsBundle) override;
 
-    int callJSOnAppContext(IPCArguments *arguments) override;
+   // int callJSOnAppContext(IPCArguments *arguments) override;
 
     int
     callJSOnAppContext(const String &instanceId, const String &func, std::vector<VALUE_WITH_TYPE *> &params) override;
