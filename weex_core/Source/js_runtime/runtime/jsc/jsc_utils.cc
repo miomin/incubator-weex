@@ -215,7 +215,7 @@ namespace unicorn {
             if (native_ob) {
                 return RuntimeValues::MakeCommonObject(native_ob, nullptr);
             } else if (JSObjectIsFunction(ctx, ob)) {
-                LOG_TEST("[Context][Conversion] JSValueToRuntimeValue JSObjectIsFunction context:%p ,func:%p", ctx, ob);
+                //LOG_JS_RUNTIME("[Context][Conversion] JSValueToRuntimeValue JSObjectIsFunction context:%p ,func:%p", ctx, ob);
                 auto func = JSCFunction::Create(ctx, "", thiz, ob);
                 auto func_holder = RuntimeValues::MakeFunction(std::move(func));
                 return func_holder;
@@ -304,7 +304,6 @@ namespace unicorn {
         result.resize(bytes_written - 1);
         if (!result.empty()) {
             LOG_JS_ERROR("[JS_ERROR] : %s", result.c_str());
-            LOG_JS_ERROR("[JS_ERROR][WeexRuntime] : %s", result.c_str());
         }
         JSStringRelease(str);
     }

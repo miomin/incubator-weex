@@ -2201,7 +2201,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
           String module = iter.next();
           if (module != null) {
             WXModuleManager.resetModuleState(module, true);
-            WXLogUtils.e("[WXBridgeManager]invokeRegisterModules METHOD_REGISTER_MODULES success module:" + module);
+           // WXLogUtils.e("[WXBridgeManager]invokeRegisterModules METHOD_REGISTER_MODULES success module:" + module);
           }
         }
       } catch (Throwable e) {

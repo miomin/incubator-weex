@@ -30,14 +30,14 @@ namespace weex {
         unicorn::ScopeValues
         WeexBindingUtils::atob(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST(" method :atob");
+            LOG_WEEX_BINDING(" method :atob");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::btoa(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST(" method :btoa");
+            LOG_WEEX_BINDING(" method :btoa");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
@@ -56,7 +56,7 @@ namespace weex {
                     vars[i]->GetAsString(&logItem);
                     logStr.append(logItem);
                 } else {
-                    LOG_TEST("log arg is not str, not supprot ,arg index:%d", i);
+                    LOG_WEEX_BINDING("log arg is not str, not supprot ,arg index:%d", i);
                 }
             }
 
@@ -69,28 +69,28 @@ namespace weex {
 
         unicorn::ScopeValues WeexBindingUtils::setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                                                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST(" method :setNativeTimeout");
+            LOG_WEEX_BINDING(" method :setNativeTimeout");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::setNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                             const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST(" method :setNativeInterval");
+            LOG_WEEX_BINDING(" method :setNativeInterval");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::clearNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                              const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST(" method :clearNativeTimeout");
+            LOG_WEEX_BINDING(" method :clearNativeTimeout");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::clearNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                               const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST(" method :clearNativeInterval");
+            LOG_WEEX_BINDING(" method :clearNativeInterval");
             return unicorn::RuntimeValues::MakeUndefined();
         }
     }

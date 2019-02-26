@@ -75,7 +75,7 @@ namespace weex {
         unicorn::ScopeValues AppWorkerBinding::__dispatch_message__(
                 const std::vector<unicorn::ScopeValues> &vars) {
 
-            LOGE("WeexRuntime: __dispatch_message__");
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__");
 
             std::string client_id;
             std::string data;
@@ -83,13 +83,13 @@ namespace weex {
             std::string vm_id;
 
             vars[0]->GetAsString(&client_id);
-            LOGE("WeexRuntime: __dispatch_message__ client_id is %s", client_id.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ client_id is %s", client_id.c_str());
             WeexConversionUtils::RunTimeValuesOfObjectToJson(vars[1].get()).dump(data);
-            LOGE("WeexRuntime: __dispatch_message__ data is %s", data.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ data is %s", data.c_str());
             vars[2]->GetAsString(&callback);
-            LOGE("WeexRuntime: __dispatch_message__ callback is %s", callback.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ callback is %s", callback.c_str());
             vm_id = this->nativeObject->id;
-            LOGE("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
 
             this->nativeObject->js_bridge()->core_side()->DispatchMessage(client_id.c_str(), data.c_str(),
                                                                           data.length(),
@@ -101,18 +101,18 @@ namespace weex {
         unicorn::ScopeValues
         AppWorkerBinding::__dispatch_message_sync__(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOGE("WeexRuntime: __dispatch_message_sync__");
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message_sync__");
 
             std::string client_id;
             std::string data;
             std::string vm_id;
 
             vars[0]->GetAsString(&client_id);
-            LOGE("WeexRuntime: __dispatch_message_sync__ client_id is %s", client_id.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message_sync__ client_id is %s", client_id.c_str());
             WeexConversionUtils::RunTimeValuesOfObjectToJson(vars[1].get()).dump(data);
-            LOGE("WeexRuntime: __dispatch_message_sync__ data is %s", data.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message_sync__ data is %s", data.c_str());
             vm_id = this->nativeObject->id;
-            LOGE("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
 
             auto result = this->nativeObject->js_bridge()->core_side()->DispatchMessageSync(client_id.c_str(),
                                                                                             data.c_str(), data.length(),
@@ -123,15 +123,15 @@ namespace weex {
 
         unicorn::ScopeValues
         AppWorkerBinding::postMessage(const std::vector<unicorn::ScopeValues> &vars) {
-            LOGE("WeexRuntime: postMessage");
+            LOG_WEEX_BINDING("WeexRuntime: postMessage");
 
             std::string data;
             std::string vm_id;
 
             WeexConversionUtils::RunTimeValuesOfObjectToJson(vars[0].get()).dump(data);
-            LOGE("WeexRuntime: postMessage data is %s", data.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: postMessage data is %s", data.c_str());
             vm_id = this->nativeObject->id;
-            LOGE("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
 
             this->nativeObject->js_bridge()->core_side()->PostMessage(vm_id.c_str(), data.c_str(), data.length());
 

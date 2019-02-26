@@ -69,11 +69,11 @@ namespace weex {
         WeexInstanceBinding::WeexInstanceBinding(unicorn::EngineContext *context, const OpaqueJSContext *js_ctx)
                 : RuntimeObject(context, js_ctx) {
             SetJSClass(WeexInstanceBinding::s_jsclass_WeexInstanceBinding);
-            LOG_TEST("WeexInstanceBinding init");
+            LOG_WEEX_BINDING("WeexInstanceBinding init");
         }
 
         WeexInstanceBinding::~WeexInstanceBinding() {
-            LOG_TEST("WeexInstanceBinding delete");
+            LOG_WEEX_BINDING("WeexInstanceBinding delete");
 
         }
 
@@ -94,13 +94,13 @@ namespace weex {
 
         unicorn::ScopeValues WeexInstanceBinding::callGCanvasLinkNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexInstanceBinding method :callGCanvasLinkNative");
+            LOG_WEEX_BINDING("WeexInstanceBinding method :callGCanvasLinkNative");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues WeexInstanceBinding::callT3DLinkNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexInstanceBinding method :callT3DLinkNative");
+            LOG_WEEX_BINDING("WeexInstanceBinding method :callT3DLinkNative");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
@@ -126,13 +126,13 @@ namespace weex {
 
         unicorn::ScopeValues
         WeexInstanceBinding::console(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexInstanceBinding method :console");
+            LOG_WEEX_BINDING("WeexInstanceBinding method :console");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues WeexInstanceBinding::__updateComponentData(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexInstanceBinding method :__updateComponentData");
+            LOG_WEEX_BINDING("WeexInstanceBinding method :__updateComponentData");
             return unicorn::RuntimeValues::MakeUndefined();
         }
     }

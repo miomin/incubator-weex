@@ -23,19 +23,40 @@
 #ifndef WEEXCORE_LOG_UTILS_H
 #define WEEXCORE_LOG_UTILS_H
 
-#ifndef CLOSE_RUN_TIME_LOG
 #include "base/utils/log_utils.h"
 
-#define LOG_TEST(...) LOGW(__VA_ARGS__)
-#define LOG_JS(...)  LOGI(__VA_ARGS__)
-#define LOG_JS_ERROR(...) LOGE(__VA_ARGS__)
-
+#ifdef LOG_JS_RUNTIME_DEBUG
+#define LOG_JS_RUNTIME(...) __android_log_print(ANDROID_LOG_DEBUG,"[JS_RUNTIME]", __VA_ARGS__)
 #else
-#define LOG_TEST(...)
-#define LOG_JS(...)
+#define LOG_JS_RUNTIME(...) ((void)0)
 #endif
 
 
+#ifdef LOG_WEEX_RUNTIME_DEBUG
+#define LOG_RUNTIME(...) __android_log_print(ANDROID_LOG_DEBUG,"[WEEX_RUNTIME]", __VA_ARGS__)
+#else
+#define LOG_RUNTIME(...) ((void)0)
+#endif
+
+#ifdef LOG_CONVERSION_DEBUG
+#define LOG_CONVERSION(...)  __android_log_print(ANDROID_LOG_DEBUG,"[CONVERSION]", __VA_ARGS__)
+#else
+#define LOG_CONVERSION(...)  ((void)0)
+#endif
+
+#ifdef LOG_WEEX_BINDING_DEBUG
+#define LOG_WEEX_BINDING(...) __android_log_print(ANDROID_LOG_DEBUG,"[WEEX_BINDING]", __VA_ARGS__)
+#else
+#define LOG_WEEX_BINDING(...) ((void)0)
+#endif
+
+#ifdef LOG_JS_DEBUG
+#define LOG_JS(...)  LOGI(__VA_ARGS__)
+#else
+#define LOG_JS(...)  ((void)0)
+#endif
+
+#define LOG_JS_ERROR(...) LOGE(__VA_ARGS__)
 
 
 #endif //WEEXCORE_LOG_UTILS_H

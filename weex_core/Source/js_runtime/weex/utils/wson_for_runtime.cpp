@@ -28,14 +28,7 @@
 #include "wson_for_runtime.h"
 
 
-//#ifdef log_test
-
 #include "js_runtime/utils/log_utils.h"
-
-//#else
-//#define LOGW
-//#define LOGE
-//#endif
 
 
 namespace wson {
@@ -45,29 +38,29 @@ namespace wson {
         uint8_t type = wson_next_type(buffer);
         switch (type) {
             case WSON_UINT8_STRING_TYPE: {
-                LOGW("[toRunTimeValueFromWson][string][start]");
+                LOG_CONVERSION("[toRunTimeValueFromWson][string][start]");
                 int size = wson_next_uint(buffer);
                 uint8_t *utf8 = wson_next_bts(buffer, size);
                 std::string string_utf_8 = std::string(reinterpret_cast<char *>(utf8));
-                LOGW("[toRunTimeValueFromWson][string][end] :%s", string_utf_8.c_str());
+                LOG_CONVERSION("[toRunTimeValueFromWson][string][end] :%s", string_utf_8.c_str());
                 return new unicorn::RuntimeValues(string_utf_8);
             }
             case WSON_STRING_TYPE:
             case WSON_NUMBER_BIG_INT_TYPE:
             case WSON_NUMBER_BIG_DECIMAL_TYPE: {
-                LOGW("[toRunTimeValueFromWson][string_utf_16][start]");
+                LOG_CONVERSION("[toRunTimeValueFromWson][string_utf_16][start]");
                 uint32_t length = wson_next_uint(buffer);
                 UChar *destination;
                 WTF::String s = WTF::String::createUninitialized(length / sizeof(UChar), destination);
                 void *src = wson_next_bts(buffer, length);
                 memcpy(destination, src, length);
                 std::string string_utf_8 = std::string(s.utf8().data());
-                LOGW("[toRunTimeValueFromWson][string_utf_16][end] :%s", s.utf8().data());
+                LOG_CONVERSION("[toRunTimeValueFromWson][string_utf_16][end] :%s", s.utf8().data());
                 return new unicorn::RuntimeValues(string_utf_8);
             }
                 break;
             case WSON_ARRAY_TYPE: {
-                LOGW("[toRunTimeValueFromWson][array][start]");
+                LOG_CONVERSION("[toRunTimeValueFromWson][array][start]");
                 uint32_t length = wson_next_uint(buffer);
                 auto runtime_array = unicorn::Array::CreateFromNative(context, unicorn::RuntimeValues::MakeNull());
                 for (uint32_t i = 0; i < length; i++) {
@@ -77,12 +70,12 @@ namespace wson {
                         break;
                     }
                 }
-                LOGW("[toRunTimeValueFromWson][array][end]");
+                LOG_CONVERSION("[toRunTimeValueFromWson][array][end]");
                 return new unicorn::RuntimeValues(std::move(runtime_array));
             }
                 break;
             case WSON_MAP_TYPE: {
-                LOGW("[toRunTimeValueFromWson][map][start]");
+                LOG_CONVERSION("[toRunTimeValueFromWson][map][start]");
                 uint32_t length = wson_next_uint(buffer);
                 std::unique_ptr<unicorn::Map> runtime_map = unicorn::Map::CreateFromNative(context,
                                                                                            unicorn::RuntimeValues::MakeNull());
@@ -95,14 +88,14 @@ namespace wson {
                         void *name = wson_next_bts(buffer, propertyLength);
                         memcpy(destination, name, propertyLength);
                         std::string name_utf_8 = std::string(name_utf_16.utf8().data());
-                        LOGW("[toRunTimeValueFromWson][map][itemkey] :%s", name_utf_8.c_str());
+                        LOG_CONVERSION("[toRunTimeValueFromWson][map][itemkey] :%s", name_utf_8.c_str());
                         runtime_map->Insert(name_utf_8, convertWsonToRuntimeValue(context, buffer));
 
                     } else {
                         break;
                     }
                 }
-                LOGW("[toRunTimeValueFromWson][map][end]");
+                LOG_CONVERSION("[toRunTimeValueFromWson][map][end]");
                 return new unicorn::RuntimeValues(std::move(runtime_map));
             }
                 break;
@@ -148,8 +141,10 @@ namespace wson {
         wson_buffer *buffer = wson_buffer_from(data, length);
         auto ret = convertWsonToRuntimeValue(context, buffer);
 
+#ifdef LOG_CONVERSION_SWITCH
         wson_parser parser((char *) buffer->data);
-        LOGE("[WeexValueToRuntimeValue][wson] :%s", parser.toStringUTF8().c_str());
+        LOG_CONVERSION("[WeexValueToRuntimeValue][wson] :%s", parser.toStringUTF8().c_str());
+#endif
 
 
 
@@ -242,7 +237,7 @@ namespace wson {
                 if (item.second->IsUndefined() || item.second->IsNull() || item.second->IsFunction() ||
                     item.second->IsObject()) {
                     undefinedOrFunctionSize++;
-                    LOGE("[wson]putValuesToWson data type not match ,type :%d ", item.second->GetType());
+                    LOG_CONVERSION("[wson]putValuesToWson data type not match ,type :%d ", item.second->GetType());
                 }
             }
             wson_push_type_map(buffer, map_size - undefinedOrFunctionSize);

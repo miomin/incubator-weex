@@ -24,18 +24,19 @@
 #include <js_runtime/weex/binding/weex_instance_binding.h>
 #include <js_runtime/weex/binding/app_context_binding.h>
 #include "weex_global_object_v2.h"
+#include "js_runtime/utils/log_utils.h"
 
 void WeexGlobalObjectV2::makeWeexGlobalObject(unicorn::RuntimeVM *vm) {
     this->object_type_ = WeexGlobal;
     weex::jsengine::WeexGlobalBinding::CreateClassRef(nullptr);
     context = unicorn::RuntimeContext::Create(vm, weex::jsengine::WeexGlobalBinding::s_jsclass_WeexGlobalBinding);
-    LOGD("[Context] makeWeexGlobalObject context ptr:%p", context->GetEngineContext()->GetContext());
+    LOG_RUNTIME("[Context] makeWeexGlobalObject context ptr:%p", context->GetEngineContext()->GetContext());
     auto globalObjectBinding = new weex::jsengine::WeexGlobalBinding(context->GetEngineContext(), nullptr);
     auto globalJSObject = context->GetEngineContext()->GetGlobalObjectInContext();
     context->GetEngineContext()->BindDataToObject(globalJSObject, globalObjectBinding);
     globalObjectBinding->SetJSObject(globalJSObject);
     globalObjectBinding->nativeObject.reset(this);
-    LOGD("WeexGlobalObject make binding:%p,native this:%p", globalObjectBinding, this);
+    LOG_RUNTIME("WeexGlobalObject make binding:%p,native this:%p", globalObjectBinding, this);
     //binding dom api
     //weex::jsengine::DomManager::BindingDomApi(context->GetEngineContext(), std::string("global"),std::string("weex_global_context"));
 }
@@ -46,7 +47,7 @@ WeexGlobalObjectV2::makeWeexInstanceObject(unicorn::RuntimeVM *vm, const std::st
     //global object not support bind static method for globalObject now cause jsruntime
     weex::jsengine::WeexInstanceBinding::CreateClassRef(nullptr);
     context = unicorn::RuntimeContext::Create(vm, weex::jsengine::WeexInstanceBinding::s_jsclass_WeexInstanceBinding);
-    LOGW("[Context] makeWeexInstanceObject context ptr:%p", context->GetEngineContext()->GetContext());
+    LOG_RUNTIME("[Context] makeWeexInstanceObject context ptr:%p", context->GetEngineContext()->GetContext());
     context->GetEngineContext()->SetName(id);
     auto globalObjectBinding = new weex::jsengine::WeexInstanceBinding(context->GetEngineContext(), nullptr);
     globalObjectBinding->nativeObject.reset(this);

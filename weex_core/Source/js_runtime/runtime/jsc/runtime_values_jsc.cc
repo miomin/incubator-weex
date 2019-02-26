@@ -78,7 +78,7 @@ JSCFunction::JSCFunction(JSContextRef ctx, std::string name, JSObjectRef thiz,
                           thiz_(thiz),
                           function_(function),
                           is_from_native_(false) {
-  LOG_TEST("JSCFunction constructor,ctx:%p, thiz:%p,func:%p",context_,thiz_,function_);
+ // LOG_JS_RUNTIME("JSCFunction constructor,ctx:%p, thiz:%p,func:%p",context_,thiz_,function_);
   JSGlobalContextRef global_ctx = JSContextGetGlobalContext(ctx);
   EngineContext* context =
         RuntimeVM::GetEngineContext(static_cast<const void*>(global_ctx));
@@ -115,7 +115,7 @@ std::unique_ptr<RuntimeValues> JSCFunction::Call(JSContextRef cur_context,size_t
 
 
 
-    LOG_TEST("[Context] JSCFunction Call func: cur_ctx:%p,self_context:%p thiz:%p,",cur_context,context_,thiz_);
+//    LOG_TEST("[Context] JSCFunction Call func: cur_ctx:%p,self_context:%p thiz:%p,",cur_context,context_,thiz_);
     argv_js[i] = Conversion::RuntimeValueToJSValue(cur_context, nullptr,
                                                    argv[i].get());
   }

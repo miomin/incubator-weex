@@ -21,6 +21,7 @@
 //
 
 #include "weex_object_holder_v2.h"
+#include "js_runtime/utils/log_utils.h"
 
 WeexObjectHolderV2::WeexObjectHolderV2(unicorn::RuntimeVM *vm, TimerQueue *timeQueue,
                                        bool isMultiProgress) {
@@ -64,10 +65,10 @@ void WeexObjectHolderV2::initFromIPCArguments(IPCArguments *arguments, size_t st
 
 void WeexObjectHolderV2::initFromParams(std::vector<INIT_FRAMEWORK_PARAMS *> &params, bool forAppContext) {
     if (forAppContext) {
-        LOGE("Create MiniApp worker Context");
+        LOG_RUNTIME("Create MiniApp worker Context");
         globalObject = std::unique_ptr<WeexGlobalObjectV2>(this->createAppWorkerObject());
     } else {
-        LOGE("Create global Context");
+        LOG_RUNTIME("Create global Context");
         globalObject = std::unique_ptr<WeexGlobalObjectV2>(this->createWeexObject());
     }
     globalObject->timeQueue = this->timeQueue;

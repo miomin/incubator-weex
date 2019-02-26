@@ -111,7 +111,7 @@ namespace weex {
 
         json11::Json WeexConversionUtils::RunTimeValuesOfObjectToJson(unicorn::RuntimeValues *vars) {
             if (nullptr == vars || vars->IsNull() || vars->IsUndefined()) {
-                LOGW("arg is not object, json return null json str");
+                LOG_CONVERSION("arg is not object, json return null json str");
                 return json11::Json(nullptr);
             }
 
@@ -156,19 +156,19 @@ namespace weex {
             // LOGE("WeexRuntime: WeexValueToRuntimeValue type is %d", paramsObject->type);
             switch (paramsObject->type) {
                 case ParamsType::DOUBLE: {
-                    LOG_TEST("WeexValueToRuntimeValue double :%d",paramsObject->value.doubleValue);
+                    LOG_CONVERSION("WeexValueToRuntimeValue double :%d",paramsObject->value.doubleValue);
                     return unicorn::RuntimeValues::MakeDouble(paramsObject->value.doubleValue);
                 }
                 case ParamsType::STRING: {
                     WeexString *ipcstr = paramsObject->value.string;
                     const String &string2String = weexString2String(ipcstr);
-                    LOG_TEST("WeexValueToRuntimeValue string :%s", std::string(string2String.utf8().data()).c_str());
+                    LOG_CONVERSION("WeexValueToRuntimeValue string :%s", std::string(string2String.utf8().data()).c_str());
                     return unicorn::RuntimeValues::MakeString(std::string(string2String.utf8().data()).c_str());
                 }
                 case ParamsType::JSONSTRING: {
                     const WeexString *ipcJsonStr = paramsObject->value.string;
                     const String &string = weexString2String(ipcJsonStr);
-                    LOG_TEST("WeexValueToRuntimeValue JSONSTRING :%s", std::string(string.utf8().data()).c_str());
+                    LOG_CONVERSION("WeexValueToRuntimeValue JSONSTRING :%s", std::string(string.utf8().data()).c_str());
                     return unicorn::RuntimeValues::MakeObjectFromJsonStr(std::string(string.utf8().data()).c_str());
                 }
                 case ParamsType::BYTEARRAY: {
@@ -180,14 +180,14 @@ namespace weex {
 //                obj->append(o);
                     //  obj->push_back(unicorn::RuntimeValues::MakeObjectFromWson(static_cast<void *>(array->content),array->length));
                   //  LOG_TEST("WeexValueToRuntimeValue wson bbyte array");
-                    LOG_TEST("WeexValueToRuntimeValue wson");
+                    LOG_CONVERSION("WeexValueToRuntimeValue wson");
                     const WeexByteArray *array = paramsObject->value.byteArray;
                     return wson::toRunTimeValueFromWson(context, (void *) array->content, array->length);
                 }
                 default:
                     //obj->append(jsUndefined());
                     //  break;
-                    LOG_TEST("WeexValueToRuntimeValue undefine");
+                    LOG_CONVERSION("WeexValueToRuntimeValue undefine");
                     return unicorn::RuntimeValues::MakeUndefined();
             }
         }

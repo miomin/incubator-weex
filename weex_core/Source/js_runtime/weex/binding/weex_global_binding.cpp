@@ -110,13 +110,13 @@ namespace weex {
 
 
         WeexGlobalBinding::~WeexGlobalBinding() {
-            LOG_TEST("WeexGlobalBinding delete");
+            LOG_WEEX_BINDING("WeexGlobalBinding delete");
         }
 
         WeexGlobalBinding::WeexGlobalBinding(unicorn::EngineContext *context, const OpaqueJSContext *js_ctx)
                 : RuntimeObject(context, js_ctx) {
             SetJSClass(WeexGlobalBinding::s_jsclass_WeexGlobalBinding);
-            LOG_TEST("WeexGlobalBinding init");
+            LOG_WEEX_BINDING("WeexGlobalBinding init");
         }
 
         unicorn::ScopeValues
@@ -127,7 +127,7 @@ namespace weex {
             vars[0]->GetAsString(&id_js);
             vars[1]->GetAsString(&task_str);
             vars[2]->GetAsString(&callback_str);
-            LOG_TEST("WeexGlobalBinding callNative id_js:%s,task_str:%s,callback_str:%s",
+            LOG_WEEX_BINDING("WeexGlobalBinding callNative id_js:%s,task_str:%s,callback_str:%s",
                      id_js.c_str(), task_str.c_str(), callback_str.c_str());
 
             this->nativeObject->js_bridge()->core_side()->CallNative(id_js.c_str(), task_str.c_str(),
@@ -147,7 +147,7 @@ namespace weex {
             vars[1]->GetAsString(&module);
             vars[2]->GetAsString(&method);
 
-            LOGW("WeexRuntime: callNativeModule %s %s", module.c_str(), method.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: callNativeModule %s %s", module.c_str(), method.c_str());
             WeexConversionUtils::ConvertRunTimeVaueToWson(vars[3].get(), argument);
             WeexConversionUtils::ConvertRunTimeVaueToWson(vars[4].get(), options);
 
@@ -182,7 +182,7 @@ namespace weex {
             vars[1]->GetAsString(&module);
             vars[2]->GetAsString(&method);
 
-            LOGW("WeexRuntime: callNativeComponent %s %s", module.c_str(), method.c_str());
+            LOG_WEEX_BINDING("WeexRuntime: callNativeComponent %s %s", module.c_str(), method.c_str());
 
             WeexConversionUtils::ConvertRunTimeVaueToWson(vars[3].get(), argument);
             WeexConversionUtils::ConvertRunTimeVaueToWson(vars[4].get(), options);
@@ -202,7 +202,7 @@ namespace weex {
 
         unicorn::ScopeValues WeexGlobalBinding::setTimeoutNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :setTimeoutNative");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :setTimeoutNative");
             std::string callback_str;
             int time;
             vars[0]->GetAsString(&callback_str);
@@ -210,7 +210,7 @@ namespace weex {
 
             std::string time_str = std::to_string(time);
 
-            LOG_TEST("WeexGlobalBinding method :setTimeoutNative ,callback:%s, time:%d", callback_str.c_str(), time);
+            LOG_WEEX_BINDING("WeexGlobalBinding method :setTimeoutNative ,callback:%s, time:%d", callback_str.c_str(), time);
 
             nativeObject->js_bridge()->core_side()->SetTimeout(
                     callback_str.c_str(),
@@ -226,13 +226,13 @@ namespace weex {
 
         unicorn::ScopeValues WeexGlobalBinding::notifyTrimMemory(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :notifyTrimMemory");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :notifyTrimMemory");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexGlobalBinding::markupState(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :markupState");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :markupState");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
@@ -248,7 +248,7 @@ namespace weex {
 
         unicorn::ScopeValues WeexGlobalBinding::callGCanvasLinkNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callGCanvasLinkNative");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callGCanvasLinkNative");
             std::string id_str;
             int type;
             std::string arg_str;
@@ -265,30 +265,30 @@ namespace weex {
 
         unicorn::ScopeValues
         WeexGlobalBinding::setIntervalWeex(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :setIntervalWeex");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :setIntervalWeex");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues WeexGlobalBinding::clearIntervalWeex(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :clearIntervalWeex");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :clearIntervalWeex");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callT3DLinkNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callT3DLinkNative");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callT3DLinkNative");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues WeexGlobalBinding::__updateComponentData(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :__updateComponentData");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :__updateComponentData");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callCreateBody(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callCreateBody");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callCreateBody");
             ////    base::debug::TraceScope traceScope("weex", "callCreateBody");
             Args pageId;
             std::string page_id;
@@ -304,7 +304,7 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callUpdateFinish(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callUpdateFinish");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callUpdateFinish");
             ////    base::debug::TraceScope traceScope("weex", "functionCallUpdateFinish");
 ////
 ////    Args idChar;
@@ -338,14 +338,14 @@ namespace weex {
             std::string page_id;
             vars[0]->GetAsString(&page_id);
 
-            LOGE("[WeexGlobalBinding] [sendCreateFinish] doc:%s, ", page_id.c_str());
+            LOG_WEEX_BINDING("[WeexGlobalBinding] [sendCreateFinish] doc:%s, ", page_id.c_str());
 
             nativeObject->js_bridge()->core_side()->CreateFinish(page_id.c_str());
             return unicorn::RuntimeValues::MakeInt(0);
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callRefreshFinish(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callRefreshFinish");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callRefreshFinish");
 
 
             ////    base::debug::TraceScope traceScope("weex", "functionCallRefreshFinish");
@@ -377,7 +377,7 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callUpdateAttrs(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callUpdateAttrs");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callUpdateAttrs");
             ////    base::debug::TraceScope traceScope("weex", "functionCallUpdateAttrs");
 ////
 ////    Args instanceId;
@@ -411,7 +411,7 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callUpdateStyle(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callUpdateStyle");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callUpdateStyle");
 
             ////    base::debug::TraceScope traceScope("weex", "functionCallUpdateStyle");
 ////
@@ -482,7 +482,7 @@ namespace weex {
 
             std::string index_str = std::to_string(index);
 
-            LOGE("[WeexGlobalBinding] [AddElementAction] doc:%s,parent:%s,index:%s", page_id.c_str(),
+            LOG_WEEX_BINDING("[WeexGlobalBinding] [AddElementAction] doc:%s,parent:%s,index:%s", page_id.c_str(),
                  parent_ref.c_str(),
                  index_str.c_str());
 
@@ -495,7 +495,7 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callRemoveElement(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callRemoveElement");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callRemoveElement");
 
             //    base::debug::TraceScope traceScope("weex", "functionCallRemoveElement");
 //
@@ -518,7 +518,7 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callMoveElement(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callMoveElement");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callMoveElement");
 
 //    base::debug::TraceScope traceScope("weex", "functionCallMoveElement");
 //
@@ -560,7 +560,7 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callAddEvent(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callAddEvent");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callAddEvent");
 
 //    base::debug::TraceScope traceScope("weex", "functionCallAddEvent");
 //
@@ -594,7 +594,7 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callRemoveEvent(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_TEST("WeexGlobalBinding method :callRemoveEvent");
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callRemoveEvent");
             //    base::debug::TraceScope traceScope("weex", "functionCallRemoveEvent");
 //
 //    Args idChar;
