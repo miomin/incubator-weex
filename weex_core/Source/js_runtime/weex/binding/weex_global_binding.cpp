@@ -148,8 +148,8 @@ namespace weex {
             vars[2]->GetAsString(&method);
 
             LOGW("WeexRuntime: callNativeModule %s %s", module.c_str(), method.c_str());
-            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[3].get(),argument);
-            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[4].get(),options);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[3].get(), argument);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[4].get(), options);
 
 
             auto result = this->nativeObject->js_bridge()->core_side()->CallNativeModule(
@@ -184,8 +184,8 @@ namespace weex {
 
             LOGW("WeexRuntime: callNativeComponent %s %s", module.c_str(), method.c_str());
 
-            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[3].get(),argument);
-            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[4].get(),options);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[3].get(), argument);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[4].get(), options);
 
 
             this->nativeObject->js_bridge()->core_side()->CallNativeComponent(
@@ -202,22 +202,9 @@ namespace weex {
 
         unicorn::ScopeValues WeexGlobalBinding::setTimeoutNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
-            // return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars);
             LOG_TEST("WeexGlobalBinding method :setTimeoutNative");
-            //    base::debug::TraceScope traceScope("weex", "setTimeoutNative");
-//
-//    Args callbackChar;
-//    Args timeChar;
-//    getStringArgsFromState(state, 0, callbackChar);
-//    getStringArgsFromState(state, 1, timeChar);
-//
-//    WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
-//    globalObject->js_bridge()->core_side()->SetTimeout(callbackChar.getValue(), timeChar.getValue());
-            //        return JSValue::encode(jsNumber(0));
-            //
             std::string callback_str;
             int time;
-
             vars[0]->GetAsString(&callback_str);
             vars[1]->GetAsInteger(&time);
 
@@ -304,15 +291,6 @@ namespace weex {
             LOG_TEST("WeexGlobalBinding method :callCreateBody");
             ////    base::debug::TraceScope traceScope("weex", "callCreateBody");
             Args pageId;
-////    Args domStr;
-////    getStringArgsFromState(state, 0, pageId);
-////    getWsonArgsFromState(state, 1, domStr);
-////
-////
-////    WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
-////
-////    globalObject->js_bridge()->core_side()->CreateBody(pageId.getValue(), domStr.getValue(), domStr.getLength());
-//    return JSValue::encode(jsNumber(0));
             std::string page_id;
             Args dom_str;
             vars[0]->GetAsString(&page_id);
@@ -343,16 +321,16 @@ namespace weex {
 //    return JSValue::encode(jsUndefined());
 
             std::string page_id;
-            std::string task_str;
-            std::string call_back_str;
+            Args task_str;
+            Args call_back_str;
 
             vars[0]->GetAsString(&page_id);
-            vars[1]->GetAsString(&task_str);
-            vars[2]->GetAsString(&call_back_str);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[1].get(), task_str);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[1].get(), call_back_str);
 
-            auto res = nativeObject->js_bridge()->core_side()->UpdateFinish(page_id.c_str(), task_str.c_str(),
-                                                                            task_str.length(), call_back_str.c_str(),
-                                                                            call_back_str.length());
+            auto res = nativeObject->js_bridge()->core_side()->UpdateFinish(page_id.c_str(), task_str.getValue(),
+                                                                            task_str.getLength(), call_back_str.getValue(),
+                                                                            call_back_str.getLength());
             return unicorn::RuntimeValues::MakeInt(res);
         }
 
@@ -421,7 +399,7 @@ namespace weex {
 
             vars[0]->GetAsString(&page_id);
             vars[1]->GetAsString(&node_ref);
-            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[2].get(),dom_attrs);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[2].get(), dom_attrs);
 
             nativeObject->js_bridge()->core_side()->UpdateAttrs(
                     page_id.c_str(),
@@ -457,10 +435,11 @@ namespace weex {
 
             vars[0]->GetAsString(&page_id);
             vars[1]->GetAsString(&node_ref);
-            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[2].get(),dom_styles);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[2].get(), dom_styles);
 
 
-            nativeObject->js_bridge()->core_side()->UpdateStyle(page_id.c_str(), node_ref.c_str(), dom_styles.getValue(),
+            nativeObject->js_bridge()->core_side()->UpdateStyle(page_id.c_str(), node_ref.c_str(),
+                                                                dom_styles.getValue(),
                                                                 dom_styles.getLength());
 
             return unicorn::RuntimeValues::MakeInt(0);

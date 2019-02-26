@@ -3264,13 +3264,16 @@ TaskCenter.prototype.send = function send (type, params, args, options) {
 
   switch (type) {
     case 'dom': {
-      nativeLog(("[callDOM]-->1(" + (this.instanceId) + "," + (this.type) + "," + action + ") " + (JSON.stringify(args))));
+      nativeLog(("[callDOM]-->(" + (this.instanceId) + "," + (this.type) + "," + action + ") " + (JSON.stringify(args))));
       return this[action](this.instanceId, args)
     }
     case 'component':
       return this.componentHandler(this.instanceId, ref, method, args, Object.assign({ component: component }, options))
     default: {
-      return global.callNativeModule(this.instanceId, module, method, args, options)
+      nativeLog("[jsfm][callNativeModule]--> page:" + this.instanceId + ",module:" + module+ ",method:"+method + ",args:"+JSON.stringify(args)+", options:"+JSON.stringify(options));
+      let ret =  global.callNativeModule(this.instanceId, module, method, args, options);
+      nativeLog("[jsfm][callNativeModule][result] :"+JSON.stringify(ret));
+      return ret;
       //return this.moduleHandler(this.instanceId, module, method, args, options)
     }
   }
@@ -3287,7 +3290,10 @@ TaskCenter.prototype.callComponent = function callComponent (ref, method, args, 
 };
 
 TaskCenter.prototype.callModule = function callModule (module, method, args, options) {
-  return global.callNativeModule(this.instanceId, module, method, args, options)
+   nativeLog("[jsfm][callNativeModule]--> page:" + this.instanceId + ",module:" + module+ ",method:"+method + ",args:"+JSON.stringify(args)+", options:"+JSON.stringify(options));
+  let ret = global.callNativeModule(this.instanceId, module, method, args, options);
+   nativeLog("[jsfm][callNativeModule][result] :"+JSON.stringify(ret));
+  return ret;
 };
 
 
@@ -3384,6 +3390,9 @@ function receiveTasks (id, tasks) {
   }
   if (Array.isArray(tasks)) {
     return tasks.map(function (task) {
+       nativeLog("[jsfm][task] method:" +task.method +" | args :"+JSON.stringify(task.args)); 
+
+
       switch (task.method) {
         case 'callback': return callback.apply(void 0, [ document ].concat( task.args ))
         case 'fireEventSync':

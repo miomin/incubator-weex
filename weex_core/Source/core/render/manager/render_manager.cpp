@@ -40,8 +40,8 @@ bool RenderManager::CreatePage(const std::string& page_id, const char *data) {
     
 //#if RENDER_LOG
   wson_parser parser(data);
-  LOGD("[RenderManager] CreatePage >>>> pageId: %s, dom data: %s",
-       pageId.c_str(), parser.toStringUTF8().c_str());
+  LOGW("[RenderManager] CreatePage >>>> pageId: %s, dom data: %s",
+       page_id.c_str(), parser.toStringUTF8().c_str());
 //#endif
 
   RenderPage *page = new RenderPage(page_id);
@@ -119,13 +119,13 @@ bool RenderManager::AddRenderObject(const std::string &page_id,
   RenderPage *page = GetPage(page_id);
   if (page == nullptr) return false;
 
-#if RENDER_LOG
+//#if RENDER_LOG
   wson_parser parser(data);
-  LOGD(
+  LOGW(
       "[RenderManager] AddRenderObject >>>> pageId: %s, parentRef: %s, index: "
       "%d, dom data: %s",
-      pageId.c_str(), parentRef.c_str(), index, parser.toStringUTF8().c_str());
-#endif
+      page_id.c_str(), parent_ref.c_str(), index, parser.toStringUTF8().c_str());
+//#endif
 
   int64_t start_time = getCurrentTime();
   RenderObject *child = Wson2RenderObject(data, page_id);
@@ -161,10 +161,10 @@ bool RenderManager::RemoveRenderObject(const std::string &page_id,
   RenderPage *page = this->GetPage(page_id);
   if (page == nullptr) return false;
 
-#if RENDER_LOG
-  LOGD("[RenderManager] RemoveRenderObject >>>> pageId: %s, ref: %s",
-       pageId.c_str(), ref.c_str());
-#endif
+//#if RENDER_LOG
+  LOGW("[RenderManager] RemoveRenderObject >>>> pageId: %s, ref: %s",
+       page_id.c_str(), ref.c_str());
+//#endif
 
   page->set_is_dirty(true);
   return page->RemoveRenderObject(ref);
@@ -192,11 +192,11 @@ bool RenderManager::UpdateAttr(const std::string &page_id,
   RenderPage *page = this->GetPage(page_id);
   if (page == nullptr) return false;
 
-#if RENDER_LOG
+//#if RENDER_LOG
   wson_parser parser(data);
   LOGD("[RenderManager] UpdateAttr >>>> pageId: %s, ref: %s, data: %s",
        pageId.c_str(), ref.c_str(), parser.toStringUTF8().c_str());
-#endif
+//#endif
 
   int64_t start_time = getCurrentTime();
   std::vector<std::pair<std::string, std::string>> *attrs = Wson2Pairs(data);
@@ -226,11 +226,11 @@ bool RenderManager::UpdateStyle(const std::string &page_id,
   RenderPage *page = this->GetPage(page_id);
   if (page == nullptr) return false;
 
-#if RENDER_LOG
+//#if RENDER_LOG
   wson_parser parser(data);
   LOGD("[RenderManager] UpdateStyle >>>> pageId: %s, ref: %s, data: %s",
        pageId.c_str(), ref.c_str(), parser.toStringUTF8().c_str());
-#endif
+//#endif
 
   int64_t start_time = getCurrentTime();
   std::vector<std::pair<std::string, std::string>> *styles = Wson2Pairs(data);
@@ -263,10 +263,10 @@ bool RenderManager::AddEvent(const std::string &page_id, const std::string &ref,
   RenderPage *page = this->GetPage(page_id);
   if (page == nullptr) return false;
 
-#if RENDER_LOG
+//#if RENDER_LOG
   LOGD("[RenderManager] AddEvent >>>> pageId: %s, ref: %s, event: %s",
        pageId.c_str(), ref.c_str(), event.c_str());
-#endif
+//#endif
 
   page->set_is_dirty(true);
   return page->AddEvent(ref, event);

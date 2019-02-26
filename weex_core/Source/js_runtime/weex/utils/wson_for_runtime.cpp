@@ -23,8 +23,20 @@
 #include <include/wtf/icu/unicode/utf.h>
 #include <include/wtf/text/WTFString.h>
 #include "wson/wson.h"
-#include "js_runtime/utils/log_utils.h"
+#include "wson/wson_parser.h"
+
 #include "wson_for_runtime.h"
+
+
+//#ifdef log_test
+
+#include "js_runtime/utils/log_utils.h"
+
+//#else
+//#define LOGW
+//#define LOGE
+//#endif
+
 
 namespace wson {
 
@@ -135,6 +147,12 @@ namespace wson {
     unicorn::ScopeValues toRunTimeValueFromWson(unicorn::EngineContext *context, void *data, int length) {
         wson_buffer *buffer = wson_buffer_from(data, length);
         auto ret = convertWsonToRuntimeValue(context, buffer);
+
+        wson_parser parser((char *) buffer->data);
+        LOGE("[WeexValueToRuntimeValue][wson] :%s", parser.toStringUTF8().c_str());
+
+
+
         buffer->data = nullptr;
         wson_buffer_free(buffer);
         return unicorn::ScopeValues(ret);

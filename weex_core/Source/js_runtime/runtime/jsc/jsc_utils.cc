@@ -59,7 +59,7 @@ namespace unicorn {
             bool b = false;
             value->GetAsBoolean(&b);
        ///     LOG_TEST("[Context] RuntimeValueToJSValue -> value %p on ctx:%p, bool :%d", value, ctx, b);
-            JSValueMakeBoolean(ctx, b);
+            return JSValueMakeBoolean(ctx, b);
         } else if (value->IsInt()) {
             int num = 0;
             value->GetAsInteger(&num);

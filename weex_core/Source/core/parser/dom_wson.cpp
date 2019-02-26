@@ -26,7 +26,12 @@
 #include "dom_wson.h"
 #include "wson/wson.h"
 #include "wson/wson_parser.h"
+#ifdef test_log
 #include "base/utils/log_utils.h"
+#else
+#define LOGW
+#define LOGE
+#endif
 
 namespace WeexCore {
 

@@ -299,15 +299,15 @@ int WeexRuntimeV2::exeJS(const String &instanceId, const String &nameSpace, cons
     if (runFunc == "callJS") {
         globalObject = weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str];
         if (globalObject == nullptr) {
-            LOGW("----------->[global] exeJS func:%s", runFunc.c_str());
+            LOGW("[runtime2]----------->[global] exeJS func:%s", runFunc.c_str());
             globalObject = weex_object_holder_v2_->globalObject.get();
         } else {
             runFunc = std::string("__WEEX_CALL_JAVASCRIPT__");
-            LOGW("----------->[instance][%s] exeJS func:%s", instance_id_str.c_str(),runFunc.c_str());
+            LOGW("[runtime2]----------->[instance][%s] exeJS func:%s", instance_id_str.c_str(),runFunc.c_str());
         }
     } else {
         globalObject = weex_object_holder_v2_->globalObject.get();
-        LOGW("----------->[global] exeJS func:%s", runFunc.c_str());
+        LOGW("[runtime2]----------->[global] exeJS func:%s", runFunc.c_str());
     }
 
     std::vector<unicorn::ScopeValues> args;
@@ -323,7 +323,7 @@ int WeexRuntimeV2::exeJS(const String &instanceId, const String &nameSpace, cons
 
     if (!jsException.empty()) {
         //ReportException(globalObject, returnedException.get(), instanceId.utf8().data(), func.utf8().data());
-        LOGE("exeJS error on instance %s ,func:%s", instance_id_str.c_str(), runFunc.c_str());
+        LOGE("[runtime2]exeJS error on instance %s ,func:%s", instance_id_str.c_str(), runFunc.c_str());
         return static_cast<int32_t>(false);
     }
     return static_cast<int32_t>(true);
@@ -336,7 +336,7 @@ WeexRuntimeV2::exeJSWithResult(const String &instanceId, const String &nameSpace
     std::string instance_id_str = std::string(instanceId.utf8().data());
     std::string runFunc = std::string(func.utf8().data());
 
-    LOGW("WeexRuntime exeJSWithResult func is %s", runFunc.c_str());
+    LOGW("[runtime2]WeexRuntime exeJSWithResult func is %s", runFunc.c_str());
 
     std::unique_ptr<WeexJSResult> returnResult;
     returnResult.reset(new WeexJSResult);
@@ -369,7 +369,7 @@ WeexRuntimeV2::exeJSWithResult(const String &instanceId, const String &nameSpace
 
     if (!jsException.empty()) {
         //ReportException(globalObject, returnedException.get(), instanceId.utf8().data(), func.utf8().data());
-        LOGE("exeJS error on instance %s ,func:%s", instance_id_str.c_str(), runFunc.c_str());
+        LOGE("[runtime2]exeJS error on instance %s ,func:%s", instance_id_str.c_str(), runFunc.c_str());
         return returnResult;
     }
     //todo  convertJSArrayToWeexJSResult(state, ret, returnResult.get());
@@ -394,7 +394,7 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
     WeexGlobalObjectV2 *impl_globalObject = weex_object_holder_v2_->globalObject.get();
     WeexGlobalObjectV2 *globalObject;
     if (instanceId == "") {
-        LOGE("WeexRuntime:  globalObject = impl_globalObject");
+        LOGE("[runtime2]WeexRuntime:  globalObject = impl_globalObject");
         globalObject = impl_globalObject;
     } else {
         std::string instance_id_str = std::string(instanceId.utf8().data());
