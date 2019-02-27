@@ -42,8 +42,14 @@ public:
     TimerQueue *timeQueue = nullptr;
     std::unique_ptr<unicorn::RuntimeContext> context;
 
-public:
+private:
+    WeexCore::ScriptBridge *script_bridge_;
+    WeexGlobalObjectType object_type_;
+    uint32_t function_id_;
+    std::map<uint32_t, unicorn::Function *> function_maps_;
 
+
+public:
 
     void makeWeexInstanceObject(unicorn::RuntimeVM *vm, const std::string &id, const std::string &name);
 
@@ -73,11 +79,6 @@ public:
         return this->object_type_;
     }
 
-private:
-    WeexCore::ScriptBridge *script_bridge_;
-    WeexGlobalObjectType object_type_;
-    uint32_t function_id_;
-    std::map<uint32_t, unicorn::Function *> function_maps_;
 };
 
 

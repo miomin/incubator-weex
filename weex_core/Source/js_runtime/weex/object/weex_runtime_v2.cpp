@@ -149,7 +149,7 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
         LOGE("WeexRuntime: createAppContext failed , exception :%s", jsException.c_str());
         return static_cast<int32_t>(false);
     }
-    LOGW("WeexRuntime: try convert funcRetValue to obj");
+    LOG_RUNTIME("WeexRuntime: try convert funcRetValue to obj");
     JSRunTimeObject fucRetJSObject = worker_globalObject->context->GetEngineContext()->toObjectFromValue(funcRet);
     if (nullptr == fucRetJSObject) {
         LOGE("WeexRuntime: CreateAppContext get funcRet obj failed");
@@ -441,8 +441,6 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
                 if (!temp_object->context->GetEngineContext()->SetObjectPrototypeFromValue(vueObject, nullptr)) {
                     LOGE("WeexRuntime: failed ====> set vue's prototype to newContext's globalObject prototype");
                 }
-            } else {
-                LOGE("WeexRuntime: get vue's prototype from funcRet falied");
             }
 
             LOG_RUNTIME("WeexRuntime:   set newContext's globalObject value from  funcRet's type");
@@ -453,7 +451,6 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
                 LOGE("WeexRuntime:   get fucRetJSObject properties name array failed");
                 return static_cast<int32_t>(false);
             }
-
 
             LOG_RUNTIME(
                     "WeexRuntime:   get fucRetJSObject properties name array failed,globalContext:%p,instance context:%p",
@@ -472,8 +469,7 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
                 temp_object->context->GetEngineContext()->setObjectValue(nullptr, propertyName, propertyValue);
             }
             weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str] = temp_object;
-            LOGW("create Instance succeed :%s", instance_id_str.c_str());
-
+            LOG_RUNTIME("create Instance succeed :%s", instance_id_str.c_str());
         }
         globalObject = temp_object;
     }
@@ -623,7 +619,6 @@ WeexObjectHolderV2 *WeexRuntimeV2::getLightAppObjectHolderV2(const String &insta
         return nullptr;
     }
     return app_worker_context_holder_map_v2_.at(instanceId.utf8().data());
-
 }
 
 WeexObjectHolder *WeexRuntimeV2::getLightAppObjectHolder(const String &instanceId) {
