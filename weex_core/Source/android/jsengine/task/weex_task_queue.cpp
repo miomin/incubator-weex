@@ -114,8 +114,10 @@ static void *startThread(void *td) {
     if (self->weexRuntime == nullptr) {
         bool  useRunTimeApi = true;
         if (useRunTimeApi){
+            LOGE("[weex_plan] runtime plan : runtime");
             self->weexRuntime = new WeexRuntimeV2(new TimerQueue(self),WeexEnv::getEnv()->scriptBridge(), self->isMultiProgress);
         } else{
+            LOGE("[weex_plan] runtime plan : jsc");
             self->weexRuntime = new WeexRuntime(new TimerQueue(self),WeexEnv::getEnv()->scriptBridge(), self->isMultiProgress);
         }
        //
