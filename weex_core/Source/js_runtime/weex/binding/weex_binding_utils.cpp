@@ -30,14 +30,14 @@ namespace weex {
         unicorn::ScopeValues
         WeexBindingUtils::atob(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING(" method :atob");
+            LOG_WEEX_BINDING("[WeexBindingUtils] method :atob");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::btoa(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING(" method :btoa");
+            LOG_WEEX_BINDING("[WeexBindingUtils] method :btoa");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
@@ -45,7 +45,7 @@ namespace weex {
                                                          const std::vector<unicorn::ScopeValues> &vars) {
 
 
-           // LOG_JS("[JS] enter native log :args->size %d", vars.size());
+            // LOG_JS("[JS] enter native log :args->size %d", vars.size());
             if (vars.empty()) {
                 unicorn::RuntimeValues::MakeBool(true);
             }
@@ -56,11 +56,11 @@ namespace weex {
                     vars[i]->GetAsString(&logItem);
                     logStr.append(logItem);
                 } else {
-                    LOG_WEEX_BINDING("log arg is not str, not supprot ,arg index:%d", i);
+                    LOG_WEEX_BINDING("[WeexBindingUtils]log arg is not str, not supprot ,arg index:%d", i);
                 }
             }
 
-            LOG_JS("[JS] %s", logStr.c_str());
+            LOG_JS("[WeexBindingUtils][JS] %s", logStr.c_str());
             if (!logStr.empty()) {
                 // nativeObject->js_bridge()->core_side()->NativeLog(logStr.c_str());
             }
@@ -69,28 +69,28 @@ namespace weex {
 
         unicorn::ScopeValues WeexBindingUtils::setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                                                 const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING(" method :setNativeTimeout");
+            LOG_WEEX_BINDING("[WeexBindingUtils][WeexBindingUtils] method :setNativeTimeout");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::setNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                             const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING(" method :setNativeInterval");
+            LOG_WEEX_BINDING("WeexBindingUtils method :setNativeInterval");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::clearNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                              const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING(" method :clearNativeTimeout");
+            LOG_WEEX_BINDING("[WeexBindingUtils] method :clearNativeTimeout");
             return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::clearNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                               const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING(" method :clearNativeInterval");
+            LOG_WEEX_BINDING("[WeexBindingUtils] method :clearNativeInterval");
             return unicorn::RuntimeValues::MakeUndefined();
         }
     }
