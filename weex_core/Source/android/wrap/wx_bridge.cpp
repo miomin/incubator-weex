@@ -283,10 +283,10 @@ static jint InitFramework(JNIEnv* env, jobject object, jstring script,
           new ScriptBridgeInMultiProcess);
 
   // It means initialization failed when any bridge is not passable
-//  if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
-//      !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
-//
-//    if(isSingleProcess()) {
+  if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
+      !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
+
+    if(isSingleProcess()) {
       WeexCoreManager::Instance()->set_project_mode(
               WeexCoreManager::ProjectMode::MULTI_SO);
       WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
@@ -295,8 +295,8 @@ static jint InitFramework(JNIEnv* env, jobject object, jstring script,
           !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
         return false;
       }
-  //  }
-  //}
+    }
+  }
 
 
 //  if (isSingleProcess()) {
