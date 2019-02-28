@@ -26,9 +26,9 @@ add_definitions(-DPRINT_LOG_CACHEFILE=0)
 add_definitions(-DOS_ANDROID)
 
 # log switch for debug in file "js_runtime/utils/log_utils.h"
-add_definitions(-DLOG_JS_RUNTIME_DEBUG=0)
-add_definitions(-DLOG_WEEX_RUNTIME_DEBUG=0)
-add_definitions(-DLOG_CONVERSION_DEBUG=0)
+#add_definitions(-DLOG_JS_RUNTIME_DEBUG=0)
+#add_definitions(-DLOG_WEEX_RUNTIME_DEBUG=0)
+#add_definitions(-DLOG_CONVERSION_DEBUG=0)
 add_definitions(-DLOG_WEEX_BINDING_DEBUG=0)
 add_definitions(-DLOG_JS_DEBUG=0)
 
@@ -209,7 +209,7 @@ SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLA
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv7-a -fno-omit-frame-pointer")# -fsanitize=address -g3")
 set(WEEXJSSERVERSTUB_NAME libweexjsb.so)
 add_executable(${WEEXJSSERVERSTUB_NAME}
-               weex_js_server_main_stub.cpp)
+               weex_js_server_main_stub.cpp ../../js_runtime/utils/base64.hpp)
 
 set_target_properties(${WEEXJSSERVERSTUB_NAME} 
 PROPERTIES                                                                        

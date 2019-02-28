@@ -95,13 +95,13 @@ namespace weex {
         unicorn::ScopeValues WeexInstanceBinding::callGCanvasLinkNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexInstanceBinding method :callGCanvasLinkNative");
-            return unicorn::RuntimeValues::MakeUndefined();
+            return WeexBindingUtils::callGCanvasLinkNative(nativeObject, vars);
         }
 
         unicorn::ScopeValues WeexInstanceBinding::callT3DLinkNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexInstanceBinding method :callT3DLinkNative");
-            return unicorn::RuntimeValues::MakeUndefined();
+            return WeexBindingUtils::callT3DLinkNative(nativeObject, vars);
         }
 
         unicorn::ScopeValues WeexInstanceBinding::setNativeTimeout(

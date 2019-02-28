@@ -59,6 +59,13 @@ namespace weex {
             clearNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                 const std::vector<unicorn::ScopeValues> &vars);
 
+            static unicorn::ScopeValues callT3DLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                                                          const std::vector<unicorn::ScopeValues> &vars);
+
+
+            static unicorn::ScopeValues callGCanvasLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                                                              const std::vector<unicorn::ScopeValues> &vars);
+
         };
     }
 }

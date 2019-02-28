@@ -257,18 +257,7 @@ namespace weex {
         unicorn::ScopeValues WeexGlobalBinding::callGCanvasLinkNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexGlobalBinding method :callGCanvasLinkNative");
-            std::string id_str;
-            int type;
-            std::string arg_str;
-
-            vars[0]->GetAsString(&id_str);
-            vars[1]->GetAsInteger(&type);
-            vars[2]->GetAsString(&arg_str);
-
-            auto result = nativeObject->js_bridge()->core_side()->CallGCanvasLinkNative(
-                    id_str.c_str(), type, arg_str.c_str()
-            );
-            return unicorn::RuntimeValues::MakeString(result);
+            return WeexBindingUtils::callGCanvasLinkNative(nativeObject,vars);
         }
 
         unicorn::ScopeValues
@@ -308,21 +297,8 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callT3DLinkNative(const std::vector<unicorn::ScopeValues> &vars) {
-            int type;
-            std::string arg_str;
-
-            vars[0]->GetAsInteger(&type);
-            vars[1]->GetAsString(&arg_str);
-
-            LOG_WEEX_BINDING("WeexGlobalBinding method :callT3DLinkNative type:%d, arg_str:%s", type, arg_str.c_str());
-
-            auto result = nativeObject->js_bridge()->core_side()->CallT3DLinkNative(type, arg_str.c_str());
-
-            LOG_WEEX_BINDING("WeexGlobalBinding method :callT3DLinkNative result :%s", result);
-
-            std::string utf_8_result = std::string(result);
-
-            return unicorn::RuntimeValues::MakeString(utf_8_result);
+            LOG_WEEX_BINDING("WeexGlobalBinding method :callT3DLinkNative");
+            return WeexBindingUtils::callT3DLinkNative(nativeObject, vars);
         }
 
         unicorn::ScopeValues WeexGlobalBinding::__updateComponentData(

@@ -24,21 +24,39 @@
 #include "js_runtime/utils/log_utils.h"
 #include "core/bridge/script_bridge.h"
 #include "js_runtime/weex/object/weex_global_object_v2.h"
+#include "js_runtime/utils/base64.hpp"
 
 namespace weex {
     namespace jsengine {
         unicorn::ScopeValues
         WeexBindingUtils::atob(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("[WeexBindingUtils] method :atob");
-            return unicorn::RuntimeValues::MakeUndefined();
+
+            std::string origin_data;
+            vars[0]->GetAsString(&origin_data);
+
+            LOG_WEEX_BINDING("[WeexBindingUtils] method :atob, frome: %s", origin_data.c_str());
+
+            std::string res = beast::detail::base64_decode(origin_data);
+
+            LOG_WEEX_BINDING("[WeexBindingUtils] method :atob, res: %s", res.c_str());
+
+            return unicorn::RuntimeValues::MakeString(res);
         }
 
         unicorn::ScopeValues
         WeexBindingUtils::btoa(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("[WeexBindingUtils] method :btoa");
-            return unicorn::RuntimeValues::MakeUndefined();
+            std::string origin_data;
+            vars[0]->GetAsString(&origin_data);
+
+            LOG_WEEX_BINDING("[WeexBindingUtils] method :btoa, frome: %s", origin_data.c_str());
+
+            std::string res = beast::detail::base64_encode(origin_data);
+
+            LOG_WEEX_BINDING("[WeexBindingUtils] method :btoa, res: %s", res.c_str());
+
+            return unicorn::RuntimeValues::MakeString(res);
         }
 
         unicorn::ScopeValues WeexBindingUtils::nativeLog(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
@@ -92,6 +110,43 @@ namespace weex {
                                               const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("[WeexBindingUtils] method :clearNativeInterval");
             return unicorn::RuntimeValues::MakeUndefined();
+        }
+
+        unicorn::ScopeValues
+        WeexBindingUtils::callT3DLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                                            const std::vector<unicorn::ScopeValues> &vars) {
+            int type;
+            std::string arg_str;
+
+            vars[0]->GetAsInteger(&type);
+            vars[1]->GetAsString(&arg_str);
+
+            LOG_WEEX_BINDING("WeexBindingUtils method :callT3DLinkNative type:%d, arg_str:%s", type, arg_str.c_str());
+
+            auto result = nativeObject->js_bridge()->core_side()->CallT3DLinkNative(type, arg_str.c_str());
+
+            LOG_WEEX_BINDING("WeexBindingUtils method :callT3DLinkNative result :%s", result);
+
+            std::string utf_8_result = std::string(result);
+
+            return unicorn::RuntimeValues::MakeString(utf_8_result);
+        }
+
+        unicorn::ScopeValues
+        WeexBindingUtils::callGCanvasLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                                                const std::vector<unicorn::ScopeValues> &vars) {
+            std::string id_str;
+            int type;
+            std::string arg_str;
+
+            vars[0]->GetAsString(&id_str);
+            vars[1]->GetAsInteger(&type);
+            vars[2]->GetAsString(&arg_str);
+
+            auto result = nativeObject->js_bridge()->core_side()->CallGCanvasLinkNative(
+                    id_str.c_str(), type, arg_str.c_str()
+            );
+            return unicorn::RuntimeValues::MakeString(result);
         }
     }
 }

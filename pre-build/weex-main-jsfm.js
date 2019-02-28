@@ -1837,7 +1837,7 @@ var setTimeoutNative = global.setTimeoutNative;
  */
 /* istanbul ignore next */
 function setNativeTimer () {
-  nativeLog('[jsfm] setTimeoutNative type:'+typeof(setTimeoutNative) +"| setTimeout "+typeof(setTimeout));
+  //nativeLog('[jsfm] setTimeoutNative type:'+typeof(setTimeoutNative) +"| setTimeout "+typeof(setTimeout));
 
   if (typeof setTimeout === 'undefined' &&
   typeof setTimeoutNative === 'function') {
@@ -1849,7 +1849,7 @@ function setNativeTimer () {
       setTimeoutNative(timeoutId.toString(), time);
     };
 
-     nativeLog('[jsfm] AFTER setTimeoutNative type:'+typeof(setTimeoutNative) +"| setTimeout "+typeof(setTimeout));
+     //nativeLog('[jsfm] AFTER setTimeoutNative type:'+typeof(setTimeoutNative) +"| setTimeout "+typeof(setTimeout));
 
     global.setTimeoutCallback = function (id) {
       if (typeof timeoutMap[id] === 'function') {
@@ -3264,15 +3264,15 @@ TaskCenter.prototype.send = function send (type, params, args, options) {
 
   switch (type) {
     case 'dom': {
-      nativeLog(("[callDOM]-->(" + (this.instanceId) + "," + (this.type) + "," + action + ") " + (JSON.stringify(args))));
+      //nativeLog(("[callDOM]-->(" + (this.instanceId) + "," + (this.type) + "," + action + ") " + (JSON.stringify(args))));
       return this[action](this.instanceId, args)
     }
     case 'component':
       return this.componentHandler(this.instanceId, ref, method, args, Object.assign({ component: component }, options))
     default: {
-      nativeLog("[jsfm][callNativeModule]--> page:" + this.instanceId + ",module:" + module+ ",method:"+method + ",args:"+JSON.stringify(args)+", options:"+JSON.stringify(options));
+      //nativeLog("[jsfm][callNativeModule]--> page:" + this.instanceId + ",module:" + module+ ",method:"+method + ",args:"+JSON.stringify(args)+", options:"+JSON.stringify(options));
       let ret =  global.callNativeModule(this.instanceId, module, method, args, options);
-      nativeLog("[jsfm][callNativeModule][result] :"+JSON.stringify(ret));
+      //nativeLog("[jsfm][callNativeModule][result] :"+JSON.stringify(ret));
       return ret;
       //return this.moduleHandler(this.instanceId, module, method, args, options)
     }
@@ -3290,9 +3290,9 @@ TaskCenter.prototype.callComponent = function callComponent (ref, method, args, 
 };
 
 TaskCenter.prototype.callModule = function callModule (module, method, args, options) {
-   nativeLog("[jsfm][callNativeModule]--> page:" + this.instanceId + ",module:" + module+ ",method:"+method + ",args:"+JSON.stringify(args)+", options:"+JSON.stringify(options));
+  // nativeLog("[jsfm][callNativeModule]--> page:" + this.instanceId + ",module:" + module+ ",method:"+method + ",args:"+JSON.stringify(args)+", options:"+JSON.stringify(options));
   let ret = global.callNativeModule(this.instanceId, module, method, args, options);
-   nativeLog("[jsfm][callNativeModule][result] :"+JSON.stringify(ret));
+   //nativeLog("[jsfm][callNativeModule][result] :"+JSON.stringify(ret));
   return ret;
 };
 
@@ -3390,7 +3390,7 @@ function receiveTasks (id, tasks) {
   }
   if (Array.isArray(tasks)) {
     return tasks.map(function (task) {
-       nativeLog("[jsfm][task] method:" +task.method +" | args :"+JSON.stringify(task.args)); 
+      // nativeLog("[jsfm][task] method:" +task.method +" | args :"+JSON.stringify(task.args)); 
 
 
       switch (task.method) {
@@ -3430,7 +3430,7 @@ var weexModules = {};
  */
 function registerModules (newModules) {
 
-  nativeLog("[jsfm][registerModules] : " + JSON.stringify(newModules));
+ // nativeLog("[jsfm][registerModules] : " + JSON.stringify(newModules));
 
   var loop = function ( name ) {
     if (!weexModules[name]) {
