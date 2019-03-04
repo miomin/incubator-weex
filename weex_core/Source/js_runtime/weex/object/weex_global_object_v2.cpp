@@ -175,7 +175,7 @@ unicorn::Function *WeexGlobalObjectV2::getTimerFunction(uint32_t function_id) {
     return function_maps_[function_id];
 }
 
-void WeexGlobalObjectV2::addTimer(uint32_t function_id, unicorn::ScopeValues func) {
+void WeexGlobalObjectV2::addTimer(uint32_t function_id, const unicorn::ScopeValues func) {
 
     auto iter = function_maps_.find(function_id);
     if (iter != function_maps_.end()) {

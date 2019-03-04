@@ -95,6 +95,40 @@ namespace weex {
         WeexBindingUtils::setNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                             const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexBindingUtils method :setNativeInterval");
+            if (vars.size() < 2 || !vars[0]->IsFunction() || !vars[1]->IsNumber()) {
+
+                if (vars.size() < 2) {
+                    LOG_WEEX_BINDING("WeexBindingUtils method :setNativeInterval argsSize check failed, argSize:%d",
+                                     vars.size());
+                } else {
+                    LOG_WEEX_BINDING(
+                            "WeexBindingUtils method :setNativeInterval argsType check failed, 1type::%d,2type:%d",
+                            vars[0]->GetType(), vars[1]->GetType());
+                }
+                return unicorn::RuntimeValues::MakeInt(0);
+            }
+            int timeout;
+
+
+            TimerQueue *timerQueue = nativeObject->timeQueue;
+            if (timerQueue != nullptr) {
+ //               uint32_t function_id = nativeObject->genFunctionID();
+//                const std::unique_ptr<unicorn::RuntimeValues> func = vars[1];
+
+                //nativeObject->addTimer(function_id, vars[1]);
+
+                // globalObject->addTimer(function_id, JSC::Strong<JSC::Unknown>{vm, JSC::asObject(value)});
+//                uint64_t timeout = static_cast<uint64_t>(jsValue.asInt32());
+//                if (timeout < 1)
+//                    timeout = 1;
+//                TimerTask *task = new TimerTask(globalObject->id.c_str(), function_id,
+//                                                timeout, globalObject, false);
+//
+//                timerQueue->addTimerTask(task);
+//                return JSValue::encode(jsNumber(task->taskId));;
+            }
+
+
             return unicorn::RuntimeValues::MakeUndefined();
         }
 

@@ -67,7 +67,7 @@ public:
     void setScriptBridge(WeexCore::ScriptBridge *script_bridge);
 
     // store js timer function
-    void addTimer(uint32_t function_id, unicorn::ScopeValues func);
+    void addTimer(uint32_t function_id, const unicorn::ScopeValues func);
 
     void removeTimer(uint32_t function_id);
 

@@ -28,6 +28,7 @@
 #include "WTFString.h"
 #include "JSCJSValue.h"
 #include "android/jsengine/object/weex_global_object.h"
+#include "js_runtime/weex/object/weex_global_object_v2.h"
 
 class TimerTask {
 
@@ -43,6 +44,8 @@ public:
     bool repeat = false;
 
     WeexGlobalObject* global_object_;
+
+    WeexGlobalObjectV2* global_object_v2_;
 
     explicit TimerTask(String id, uint32_t function, uint64_t millSecTimeout, WeexGlobalObject* global_object, bool repeat = false);
 
