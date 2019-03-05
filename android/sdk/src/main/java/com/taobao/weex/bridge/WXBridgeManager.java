@@ -189,7 +189,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
   // weexcore use single process or not
   private static boolean isUseSingleProcess = false;
 
-  private static boolean isUseRuntimeApi = false;
+  private static boolean isUseRuntimeApi = true;
   // add for cloud setting, default value is false.
   // jsEngine use multiThread or not
   private volatile static boolean isJsEngineMultiThreadEnable = false;
