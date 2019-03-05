@@ -109,6 +109,7 @@ void JSCFunction::SetJSContext(JSContextRef  contest){
 
 std::unique_ptr<RuntimeValues> JSCFunction::Call(JSContextRef cur_context,size_t argc,
                                     std::vector<ScopeValues>& argv) const {
+  LOG_RUNTIME("call js on context:%p",cur_context);
   JSValueRef argv_js[argc];
   for (size_t i = 0; i < argc; i++) {
 //    LOG_TEST("[Context] JSCFunction Call func originContext :%p",context_);

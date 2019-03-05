@@ -191,6 +191,7 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
 }
 
 std::unique_ptr<WeexJSResult> WeexRuntimeV2::exeJSOnAppWithResult(const String &instanceId, const String &jsBundle) {
+    LOGE("WeexRuntime: exeJSOnAppWithResult app.js is empty!!!!!!!!!!!, instanceId:%s, jsBundle:%s",instanceId.utf8().data(),jsBundle.utf8().data());
     return WeexRuntime::exeJSOnAppWithResult(instanceId, jsBundle);
 }
 
@@ -677,6 +678,7 @@ int WeexRuntimeV2::exeTimerFunctionForRunTimeApi(const String &instanceId, uint3
     auto jsContext = globalContext->GetContext();
 
     function->SetJSContext(static_cast<JSRunTimeContext>(jsContext));
+    LOG_WEEX_BINDING("run native timer func at instnace :%s, taskId:%d",globalObject->id.c_str(),timerFunction);
 
     function->Call(
             static_cast<JSRunTimeContext>(jsContext),
@@ -696,6 +698,7 @@ void WeexRuntimeV2::removeTimerFunctionForRunTimeApi(const uint32_t timerFunctio
     if (nullptr == globalObject) {
         return;
     }
+    LOG_WEEX_BINDING("removeTimerFunctionForRunTimeApi");
     unicorn::RuntimeValues* targetFuncValue = globalObject->removeTimer(timerFunction);
 
     if (nullptr != targetFuncValue){
@@ -705,8 +708,10 @@ void WeexRuntimeV2::removeTimerFunctionForRunTimeApi(const uint32_t timerFunctio
                func->SetJSContext(static_cast<JSRunTimeContext>(globalObject->context->GetEngineContext()->GetContext()));
            }
         }
+        LOG_WEEX_BINDING("remove timer and delete fucn ,instance:%s, taskId:%d,context:%p",globalObject->id.c_str(),timerFunction,globalObject->context->GetEngineContext()->GetContext());
 
         delete targetFuncValue;
+        LOG_WEEX_BINDING("delete fucn ,instance:%s, taskId:%d ,succeed",globalObject->id.c_str(),timerFunction);
         targetFuncValue = nullptr;
     }
 }
