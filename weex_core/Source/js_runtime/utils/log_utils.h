@@ -33,7 +33,7 @@
 
 
 #ifdef LOG_WEEX_RUNTIME_DEBUG
-#define LOG_RUNTIME(...) __android_log_print(ANDROID_LOG_DEBUG,"[WEEX_RUNTIME]", __VA_ARGS__)
+#define LOG_RUNTIME(...) __android_log_print(ANDROID_LOG_WARN,"[WEEX_RUNTIME]", __VA_ARGS__)
 #else
 #define LOG_RUNTIME(...) ((void)0)
 #endif
@@ -45,7 +45,7 @@
 #endif
 
 #ifdef LOG_WEEX_BINDING_DEBUG
-#define LOG_WEEX_BINDING(...) __android_log_print(ANDROID_LOG_DEBUG,"[WEEX_BINDING]", __VA_ARGS__)
+#define LOG_WEEX_BINDING(...) __android_log_print(ANDROID_LOG_WARN,"[WEEX_BINDING]", __VA_ARGS__)
 #else
 #define LOG_WEEX_BINDING(...) ((void)0)
 #endif
