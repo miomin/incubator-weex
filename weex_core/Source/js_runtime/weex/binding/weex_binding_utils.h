@@ -45,19 +45,11 @@ namespace weex {
 
             static unicorn::ScopeValues
             setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                             const std::vector<unicorn::ScopeValues> &vars);
-
-            static unicorn::ScopeValues
-            setNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                              const std::vector<unicorn::ScopeValues> &vars);
+                             std::vector<unicorn::ScopeValues> &vars, bool interval);
 
             static unicorn::ScopeValues
             clearNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                               const std::vector<unicorn::ScopeValues> &vars);
-
-            static unicorn::ScopeValues
-            clearNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                                const std::vector<unicorn::ScopeValues> &vars);
+                               std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues callT3DLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                                           const std::vector<unicorn::ScopeValues> &vars);

@@ -98,9 +98,18 @@ public:
 
     virtual int exeTimerFunction(const String &instanceId, uint32_t timerFunction, JSGlobalObject *globalObject);
 
+
     virtual WeexObjectHolder * getLightAppObjectHolder(const String &instanceId);
 
     virtual void removeTimerFunction(const uint32_t timerFunction, JSGlobalObject *globalObject);
+
+    virtual int exeTimerFunctionForRunTimeApi(const String &instanceId, uint32_t timerFunction, WeexGlobalObjectV2 *globalObject){
+        return 0;
+    }
+
+    virtual void removeTimerFunctionForRunTimeApi(const uint32_t timerFunction, WeexGlobalObjectV2 *globalObject){
+
+    }
 
 private:
     int _initFramework(const String &source);

@@ -188,6 +188,8 @@ public class WXBridgeManager implements Callback, BactchExecutor {
   // add for cloud setting, default value is false.
   // weexcore use single process or not
   private static boolean isUseSingleProcess = false;
+
+  private static boolean isUseRuntimeApi = false;
   // add for cloud setting, default value is false.
   // jsEngine use multiThread or not
   private volatile static boolean isJsEngineMultiThreadEnable = false;
@@ -270,6 +272,13 @@ public class WXBridgeManager implements Callback, BactchExecutor {
 //      }
     }
   }
+
+  public void setUseRunTimeApi( boolean useRunTimeApi) {
+    if (useRunTimeApi != isUseRuntimeApi) {
+      isUseRuntimeApi = useRunTimeApi;
+    }
+  }
+
   public boolean jsEngineMultiThreadEnable() {
     return isJsEngineMultiThreadEnable;
   }
@@ -2033,6 +2042,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
     wxParams.setLogLevel(config.get(WXConfig.logLevel));
     wxParams.setLayoutDirection(config.get(WXConfig.layoutDirection));
     wxParams.setUseSingleProcess(isUseSingleProcess ? "true" : "false");
+    wxParams.setUseRunTimeApi(isUseRuntimeApi);
     wxParams.setCrashFilePath(WXEnvironment.getCrashFilePath(WXEnvironment.getApplication().getApplicationContext()));
     wxParams.setLibJssPath(WXEnvironment.getLibJssRealPath());
     wxParams.setLibIcuPath(WXEnvironment.getLibJssIcuPath());

@@ -151,13 +151,15 @@ void WeexGlobalObjectV2::setScriptBridge(WeexCore::ScriptBridge *script_bridge) 
 }
 
 
-void WeexGlobalObjectV2::removeTimer(uint32_t function_id) {
+unicorn::RuntimeValues* WeexGlobalObjectV2::removeTimer(uint32_t function_id) {
     auto iter = function_maps_.find(function_id);
     if (iter == function_maps_.end()) {
         LOGE("timer do not exist!");
-        return;
+        return nullptr;
     }
+    auto funcValue = function_maps_[function_id];
     function_maps_.erase(function_id);
+    return funcValue;
 }
 
 uint32_t WeexGlobalObjectV2::genFunctionID() {
@@ -168,21 +170,21 @@ uint32_t WeexGlobalObjectV2::genFunctionID() {
     return function_id_++;
 }
 
-unicorn::Function *WeexGlobalObjectV2::getTimerFunction(uint32_t function_id) {
+unicorn::RuntimeValues* WeexGlobalObjectV2::getTimerFunction(uint32_t function_id) {
     auto iter = function_maps_.find(function_id);
     if (iter == function_maps_.end())
         return nullptr;
     return function_maps_[function_id];
 }
 
-void WeexGlobalObjectV2::addTimer(uint32_t function_id, const unicorn::ScopeValues func) {
+void WeexGlobalObjectV2::addTimer(uint32_t function_id,  unicorn::RuntimeValues* func) {
 
     auto iter = function_maps_.find(function_id);
     if (iter != function_maps_.end()) {
         LOGE("timer already exist in map, return now");
         return;
     }
-   // function_maps_.insert(std::pair<uint32_t, unicorn::Function *>(function_id, func.g));
+    function_maps_[function_id] = func;
 
 }
 

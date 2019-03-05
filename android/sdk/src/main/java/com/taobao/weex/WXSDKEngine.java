@@ -184,6 +184,10 @@ public class WXSDKEngine implements Serializable {
     }
   }
 
+  public static void useRunTimeApi(boolean useRunTimeApi){
+    WXBridgeManager.getInstance().setUseRunTimeApi(useRunTimeApi);
+  }
+
   private static void registerApplicationOptions(final Application application) {
 
     if (application == null) {

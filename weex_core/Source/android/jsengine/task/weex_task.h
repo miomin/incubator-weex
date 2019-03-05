@@ -80,10 +80,19 @@ public:
         global_object_ = global_object;
     }
 
+    inline WeexGlobalObjectV2* global_object_v2() {
+        return global_object_v2_;
+    }
+
+    inline void set_global_object_v2(WeexGlobalObjectV2* global_object_v2) {
+        global_object_v2_ = global_object_v2;
+    }
+
     weex::base::TimeCalculator *timeCalculator;
 private:
     Future* future_;
     WeexGlobalObject* global_object_;
+    WeexGlobalObjectV2* global_object_v2_;
 };
 
 

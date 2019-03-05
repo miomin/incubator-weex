@@ -46,7 +46,7 @@ private:
     WeexCore::ScriptBridge *script_bridge_;
     WeexGlobalObjectType object_type_;
     uint32_t function_id_;
-    std::map<uint32_t, unicorn::Function *> function_maps_;
+    std::map<uint32_t, unicorn::RuntimeValues*> function_maps_;
 
 
 public:
@@ -67,13 +67,13 @@ public:
     void setScriptBridge(WeexCore::ScriptBridge *script_bridge);
 
     // store js timer function
-    void addTimer(uint32_t function_id, const unicorn::ScopeValues func);
+    void addTimer(uint32_t function_id, unicorn::RuntimeValues*  func);
 
-    void removeTimer(uint32_t function_id);
+    unicorn::RuntimeValues* removeTimer(uint32_t function_id);
 
     uint32_t genFunctionID();
 
-    unicorn::Function *getTimerFunction(uint32_t function_id);
+    unicorn::RuntimeValues* getTimerFunction(uint32_t function_id) ;
 
     inline WeexGlobalObjectType getObjectType() {
         return this->object_type_;

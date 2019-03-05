@@ -86,65 +86,58 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexBindingUtils::setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                                                                const std::vector<unicorn::ScopeValues> &vars) {
+                                                                std::vector<unicorn::ScopeValues> &vars,
+                                                                bool interval) {
             LOG_WEEX_BINDING("[WeexBindingUtils][WeexBindingUtils] method :setNativeTimeout");
-            return unicorn::RuntimeValues::MakeUndefined();
-        }
-
-        unicorn::ScopeValues
-        WeexBindingUtils::setNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                                            const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("WeexBindingUtils method :setNativeInterval");
             if (vars.size() < 2 || !vars[0]->IsFunction() || !vars[1]->IsNumber()) {
 
                 if (vars.size() < 2) {
-                    LOG_WEEX_BINDING("WeexBindingUtils method :setNativeInterval argsSize check failed, argSize:%d",
+                    LOG_WEEX_BINDING("WeexBindingUtils method :setNativeTimeout argsSize check failed, argSize:%d",
                                      vars.size());
                 } else {
                     LOG_WEEX_BINDING(
-                            "WeexBindingUtils method :setNativeInterval argsType check failed, 1type::%d,2type:%d",
+                            "WeexBindingUtils method :setNativeTimeout argsType check failed, 1type::%d,2type:%d",
                             vars[0]->GetType(), vars[1]->GetType());
                 }
                 return unicorn::RuntimeValues::MakeInt(0);
             }
-            int timeout;
-
-
             TimerQueue *timerQueue = nativeObject->timeQueue;
             if (timerQueue != nullptr) {
- //               uint32_t function_id = nativeObject->genFunctionID();
-//                const std::unique_ptr<unicorn::RuntimeValues> func = vars[1];
+                uint32_t function_id = nativeObject->genFunctionID();
+                nativeObject->addTimer(function_id, vars[0].release());
+                int timeout = 0;
+                vars[1]->GetAsInteger(&timeout);
+                if (timeout < 1) {
+                    timeout = 1;
+                }
 
-                //nativeObject->addTimer(function_id, vars[1]);
+                LOG_WEEX_BINDING("WeexBindingUtils setNativeTimeout timeOut :%d , type:%d",timeout,vars[1]->GetType());
 
-                // globalObject->addTimer(function_id, JSC::Strong<JSC::Unknown>{vm, JSC::asObject(value)});
-//                uint64_t timeout = static_cast<uint64_t>(jsValue.asInt32());
-//                if (timeout < 1)
-//                    timeout = 1;
-//                TimerTask *task = new TimerTask(globalObject->id.c_str(), function_id,
-//                                                timeout, globalObject, false);
-//
-//                timerQueue->addTimerTask(task);
-//                return JSValue::encode(jsNumber(task->taskId));;
+                TimerTask *task = new TimerTask(WTF::String::fromUTF8(nativeObject->id.c_str()), function_id,
+                                                timeout, nullptr, interval);
+                task->global_object_v2_ = nativeObject.get();
+
+                timerQueue->addTimerTask(task);
+                return unicorn::RuntimeValues::MakeInt(task->taskId);
             }
-
-
-            return unicorn::RuntimeValues::MakeUndefined();
+            return unicorn::RuntimeValues::MakeInt(0);
         }
+
 
         unicorn::ScopeValues
         WeexBindingUtils::clearNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                                             const std::vector<unicorn::ScopeValues> &vars) {
+                                             std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("[WeexBindingUtils] method :clearNativeTimeout");
-            return unicorn::RuntimeValues::MakeUndefined();
+            TimerQueue *timerQueue = nativeObject->timeQueue;
+            if (timerQueue != nullptr && vars[0]->IsNumber()) {
+                LOG_WEEX_BINDING("[WeexBindingUtils] method :clearNativeTimeout : succeed");
+                int timerId;
+                vars[0]->GetAsInteger(&timerId);
+                timerQueue->removeTimer(timerId);
+            }
+            return unicorn::RuntimeValues::MakeInt(0);
         }
 
-        unicorn::ScopeValues
-        WeexBindingUtils::clearNativeInterval(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                                              const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("[WeexBindingUtils] method :clearNativeInterval");
-            return unicorn::RuntimeValues::MakeUndefined();
-        }
 
         unicorn::ScopeValues
         WeexBindingUtils::callT3DLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,

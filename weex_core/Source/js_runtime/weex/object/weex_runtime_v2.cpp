@@ -550,9 +550,6 @@ int WeexRuntimeV2::exeTimerFunction(const String &instanceId, uint32_t timerFunc
 }
 
 
-void WeexRuntimeV2::removeTimerFunction(const uint32_t timerFunction, WeexGlobalObjectV2 *globalObject) {
-    globalObject->removeTimer(timerFunction);
-}
 
 int WeexRuntimeV2::_initFrameworkWithScript(const String &source) {
 
@@ -632,5 +629,84 @@ WeexRuntimeV2::_geJSRuntimeArgsFromWeexParams(unicorn::EngineContext *context, s
     for (unsigned int i = 0; i < params.size(); i++) {
         VALUE_WITH_TYPE *paramsObject = params[i];
         obj->push_back(weex::jsengine::WeexConversionUtils::WeexValueToRuntimeValue(context, paramsObject));
+    }
+}
+
+int WeexRuntimeV2::exeTimerFunctionForRunTimeApi(const String &instanceId, uint32_t timerFunction,
+                                                 WeexGlobalObjectV2 *globalObject) {
+//    uint64_t begin = microTime();
+//    if (globalObject == nullptr) {
+//        LOGE("exeTimerFunction and object is null");
+//        return 0;
+//    }
+//    VM &vm = globalObject->vm();
+//    JSLockHolder locker(&vm);
+//    WeexGlobalObject* go = static_cast<WeexGlobalObject*>(globalObject);
+//    const JSValue& value = go->getTimerFunction(timerFunction);
+//    JSValue result;
+//    CallData callData;
+//    CallType callType = getCallData(value, callData);
+//    if (callType == CallType::None)
+//        return -1;
+//
+//    NakedPtr<Exception> returnedException;
+//    if (value.isEmpty()) {
+//        LOGE("Weex jsserver IPCJSMsg::CALLJSONAPPCONTEXT js funtion is empty");
+//    }
+//
+//    ArgList a;
+//    JSValue ret = call(globalObject->globalExec(), value, callType, callData, globalObject, a, returnedException);
+//    uint64_t end = microTime();
+//
+//    return 0;
+    if (globalObject == nullptr) {
+        LOGE("api: exeTimerFunction  and object is null");
+        return 0;
+    }
+    auto func = globalObject->getTimerFunction(timerFunction);
+    std::vector<unicorn::ScopeValues> args;
+    if (nullptr == func){
+        LOGE("api: timer callback func is null");
+        return 0;
+    }
+
+
+
+    auto function =  func->GetAsFunction();
+    auto globalContext = globalObject->context->GetEngineContext();
+    auto jsContext = globalContext->GetContext();
+
+    function->SetJSContext(static_cast<JSRunTimeContext>(jsContext));
+
+    function->Call(
+            static_cast<JSRunTimeContext>(jsContext),
+            0,
+            args
+    );
+    return 0;
+}
+
+void WeexRuntimeV2::removeTimerFunctionForRunTimeApi(const uint32_t timerFunction, WeexGlobalObjectV2 *globalObject) {
+//    WeexGlobalObject* go = static_cast<WeexGlobalObject*>(globalObject);
+//    if (go == nullptr)
+//        return;
+//
+//    go->removeTimer(timerFunction);
+   // LOG_JS_RUNTIME("[timer] start remove timer");
+    if (nullptr == globalObject) {
+        return;
+    }
+    unicorn::RuntimeValues* targetFuncValue = globalObject->removeTimer(timerFunction);
+
+    if (nullptr != targetFuncValue){
+        if ( targetFuncValue->IsFunction()){
+           auto func = targetFuncValue->GetAsFunction();
+           if(nullptr != func){
+               func->SetJSContext(static_cast<JSRunTimeContext>(globalObject->context->GetEngineContext()->GetContext()));
+           }
+        }
+
+        delete targetFuncValue;
+        targetFuncValue = nullptr;
     }
 }

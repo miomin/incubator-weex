@@ -44,7 +44,7 @@ namespace weex {
 
         CLASS_METHOD_CALLBACK(AppWorkerBinding, clearNativeInterval)
 
-        CLASS_METHOD_CALLBACK(AppWorkerBinding, console)
+        CLASS_MEMBER_GET_CALLBACK(AppWorkerBinding, console)
 
         CLASS_REGISTER_START(AppWorkerBinding, AppWorker)
             REGISTER_METHOD_CALLBACK(AppWorkerBinding, nativeLog)
@@ -55,12 +55,14 @@ namespace weex {
             REGISTER_METHOD_CALLBACK(AppWorkerBinding, setNativeInterval)
             REGISTER_METHOD_CALLBACK(AppWorkerBinding, clearNativeTimeout)
             REGISTER_METHOD_CALLBACK(AppWorkerBinding, clearNativeInterval)
-            REGISTER_METHOD_CALLBACK(AppWorkerBinding, console)
+            REGISTER_GET_CALLBACK(AppWorkerBinding, console)
         CLASS_REGISTER_END(AppWorkerBinding)
 
         AppWorkerBinding::AppWorkerBinding(unicorn::EngineContext *context, const OpaqueJSContext *js_ctx)
                 : RuntimeObject(context, js_ctx) {
             SetJSClass(AppWorkerBinding::s_jsclass_AppWorkerBinding);
+            WeexConsoleBinding::CreateClassRef(context);
+            consoleBinding.reset(new WeexConsoleBinding(context, js_ctx));
         }
 
         AppWorkerBinding::~AppWorkerBinding() {
@@ -139,28 +141,31 @@ namespace weex {
         }
 
         unicorn::ScopeValues
-        AppWorkerBinding::setNativeTimeout(const std::vector<unicorn::ScopeValues> &vars) {
-            return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars);
+        AppWorkerBinding::setNativeTimeout(std::vector<unicorn::ScopeValues> &vars) {
+            return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars, false);
         }
 
         unicorn::ScopeValues AppWorkerBinding::setNativeInterval(
-                const std::vector<unicorn::ScopeValues> &vars) {
-            return WeexBindingUtils::setNativeInterval(this->nativeObject, vars);
+                std::vector<unicorn::ScopeValues> &vars) {
+            return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars, true);
         }
 
         unicorn::ScopeValues AppWorkerBinding::clearNativeTimeout(
-                const std::vector<unicorn::ScopeValues> &vars) {
+                std::vector<unicorn::ScopeValues> &vars) {
             return WeexBindingUtils::clearNativeTimeout(this->nativeObject, vars);
         }
 
         unicorn::ScopeValues AppWorkerBinding::clearNativeInterval(
-                const std::vector<unicorn::ScopeValues> &vars) {
-            return WeexBindingUtils::clearNativeInterval(this->nativeObject, vars);
+                std::vector<unicorn::ScopeValues> &vars) {
+            return WeexBindingUtils::clearNativeTimeout(this->nativeObject, vars);
         }
 
         unicorn::ScopeValues
-        AppWorkerBinding::console(const std::vector<unicorn::ScopeValues> &vars) {
-            return unicorn::RuntimeValues::MakeUndefined();
+        AppWorkerBinding::console() {
+            return unicorn::RuntimeValues::MakeCommonObject(
+                    static_cast<void *>(this->consoleBinding.get()),
+                    new unicorn::RuntimeClass(consoleBinding->GetJSClass())
+            );
         }
     }
 }

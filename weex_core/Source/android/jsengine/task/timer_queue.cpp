@@ -22,6 +22,7 @@
 
 #include "timer_queue.h"
 #include "android/jsengine/task/weex_task_queue.h"
+#include "android/jsengine/object/weex_env.h"
 
 static void *startThread(void *td) {
     auto *self = static_cast<TimerQueue *>(td);
@@ -45,10 +46,16 @@ void TimerQueue::start() {
     while (true) {
         auto pTask = getTask();
         LOGE("getTask return task");
+        bool ptaskHasGlobalObject;
+        if (WeexEnv::getEnv()->isUseRunTimeApi()){
+            ptaskHasGlobalObject = pTask->global_object_v2_ != nullptr;
+        } else{
+            ptaskHasGlobalObject = pTask->global_object_ != nullptr;
+        }
 
-        if(pTask->global_object_ != nullptr && weexTaskQueue->weexRuntime->hasInstanceId(pTask->instanceID)) {
-            weexTaskQueue->addTimerTask(pTask->instanceID, pTask->m_function, pTask->taskId,pTask->global_object_, !pTask->repeat);
-            if (pTask->repeat && pTask->global_object_ != nullptr && weexTaskQueue->weexRuntime->hasInstanceId(pTask->instanceID)) {
+        if(ptaskHasGlobalObject && weexTaskQueue->weexRuntime->hasInstanceId(pTask->instanceID)) {
+            weexTaskQueue->addTimerTask(pTask->instanceID, pTask->m_function, pTask->taskId,pTask->global_object_, !pTask->repeat,pTask->global_object_v2_);
+            if (pTask->repeat && ptaskHasGlobalObject && weexTaskQueue->weexRuntime->hasInstanceId(pTask->instanceID)) {
                 LOGE("repreat");
                 addTimerTask(new TimerTask(pTask));
             }
@@ -140,8 +147,14 @@ void TimerQueue::removeTimer(int timerId) {
             if (reference->taskId == timerId) {
                 timerQueue_.erase(it);
                 weexTaskQueue->removeTimer(reference->taskId);
-                if (weexTaskQueue->weexRuntime)
-                    weexTaskQueue->weexRuntime->removeTimerFunction(reference->m_function, reference->global_object_);
+                if (weexTaskQueue->weexRuntime){
+                    if (WeexEnv::getEnv()->isUseRunTimeApi()){
+                        weexTaskQueue->weexRuntime->removeTimerFunctionForRunTimeApi(reference->m_function,reference->global_object_v2_);
+                    } else{
+                        weexTaskQueue->weexRuntime->removeTimerFunction(reference->m_function, reference->global_object_);
+                    }
+                }
+
                 delete (reference);
                 reference = nullptr;
             }
@@ -167,8 +180,14 @@ void TimerQueue::destroyPageTimer(String instanceId) {
             if (reference->instanceID == instanceId) {
                 timerQueue_.erase(it);
                 weexTaskQueue->removeTimer(reference->taskId);
-                if (weexTaskQueue->weexRuntime)
-                    weexTaskQueue->weexRuntime->removeTimerFunction(reference->m_function, reference->global_object_);
+                if (weexTaskQueue->weexRuntime){
+                    if (WeexEnv::getEnv()->isUseRunTimeApi()){
+                        weexTaskQueue->weexRuntime->removeTimerFunction(reference->m_function, reference->global_object_);
+                    } else{
+                        weexTaskQueue->weexRuntime->removeTimerFunctionForRunTimeApi(reference->m_function,reference->global_object_v2_);
+                    }
+                }
+
                 delete (reference);
                 reference = nullptr;
             }

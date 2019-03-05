@@ -115,6 +115,7 @@ class Function {
 
   RuntimeObject* GetObject() const { return this_object_; }
   void SetObject(RuntimeObject* thiz);
+  virtual void SetJSContext(JSRunTimeContext contest) = 0;
 
  private:
   RuntimeObject* this_object_{nullptr};
@@ -305,7 +306,7 @@ class RuntimeValues {
   bool GetAsUtf8JsonStr(const char **out_val) const;
   const Map* GetAsMap() const { return map_.get(); }
   const Array* GetAsArray() const { return array_.get(); }
-  const Function* GetAsFunction() const { return function_.get(); }
+  Function* GetAsFunction() const { return function_.get(); }
 
   BaseObject* GetAsObject() const;
   BaseObject* PassObject();

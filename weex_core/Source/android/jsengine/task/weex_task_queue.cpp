@@ -70,9 +70,10 @@ WeexTask *WeexTaskQueue::getTask() {
     return task;
 }
 
-int WeexTaskQueue::addTimerTask(String id, uint32_t function, int taskId, WeexGlobalObject* global_object, bool one_shot) {
+int WeexTaskQueue::addTimerTask(String id, uint32_t function, int taskId, WeexGlobalObject* global_object, bool one_shot,WeexGlobalObjectV2* global_object_v2) {
     WeexTask *task = new NativeTimerTask(id, function,taskId, one_shot);
     task->set_global_object(global_object);
+    task->set_global_object_v2(global_object_v2);
     return _addTask(
             task,
             false);
@@ -112,12 +113,11 @@ static void *startThread(void *td) {
     self->isInitOk = true;
 
     if (self->weexRuntime == nullptr) {
-        bool  useRunTimeApi = true;
-        if (useRunTimeApi){
-            LOGE("[weex_plan] runtime plan : runtime");
+        if (WeexEnv::getEnv()->isUseRunTimeApi()){
+            LOGE("[weex_plan] new runtime");
             self->weexRuntime = new WeexRuntimeV2(new TimerQueue(self),WeexEnv::getEnv()->scriptBridge(), self->isMultiProgress);
         } else{
-            LOGE("[weex_plan] runtime plan : jsc");
+            LOGE("[weex_plan] jsc");
             self->weexRuntime = new WeexRuntime(new TimerQueue(self),WeexEnv::getEnv()->scriptBridge(), self->isMultiProgress);
         }
        //

@@ -120,10 +120,17 @@ set(WEEX_BINDING
         ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_global_binding.h
         ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/app_context_binding.cpp
         ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/app_context_binding.h
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_console_binding.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_console_binding.h
+
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/utils/wson_for_runtime.cpp
+        ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/utils/wson_for_runtime.h
+
         ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_binding_utils.cpp
         ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/binding/weex_binding_utils.h
         ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/utils/weex_conversion_utils.cpp
         ${WEEX_CORE_SOURCE_DIR}/js_runtime/weex/utils/weex_conversion_utils.h
+
         )
 
 set(JSON_SRC
@@ -245,7 +252,7 @@ z
 )
 
 add_library(${WEEXJSSERVER_NAME} SHARED
-            ${${WEEXJSSERVER_NAME}_SOURCES} ../../js_runtime/weex/utils/wson_for_runtime.cpp ../../js_runtime/weex/utils/wson_for_runtime.h)
+            ${${WEEXJSSERVER_NAME}_SOURCES} )
 
 
 target_link_libraries(${WEEXJSSERVER_NAME}

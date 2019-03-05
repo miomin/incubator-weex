@@ -25,6 +25,7 @@
 
 #include "js_runtime/runtime/runtime_object.h"
 #include "js_runtime/runtime/binding_macro.h"
+#include "weex_console_binding.h"
 
 class WeexGlobalObjectV2;
 
@@ -40,37 +41,38 @@ namespace weex {
 
             ~WeexInstanceBinding() override;
 
-            unicorn::ScopeValues nativeLog( const std::vector<unicorn::ScopeValues> &vars);
+            unicorn::ScopeValues nativeLog(const std::vector<unicorn::ScopeValues> &vars);
 
-            unicorn::ScopeValues atob( const std::vector<unicorn::ScopeValues> &vars);
+            unicorn::ScopeValues atob(const std::vector<unicorn::ScopeValues> &vars);
 
-            unicorn::ScopeValues btoa( const std::vector<unicorn::ScopeValues> &vars);
-
-            unicorn::ScopeValues
-            callGCanvasLinkNative( const std::vector<unicorn::ScopeValues> &vars);
+            unicorn::ScopeValues btoa(const std::vector<unicorn::ScopeValues> &vars);
 
             unicorn::ScopeValues
-            callT3DLinkNative( const std::vector<unicorn::ScopeValues> &vars);
+            callGCanvasLinkNative(const std::vector<unicorn::ScopeValues> &vars);
 
             unicorn::ScopeValues
-            setNativeTimeout( const std::vector<unicorn::ScopeValues> &vars);
+            callT3DLinkNative(const std::vector<unicorn::ScopeValues> &vars);
 
             unicorn::ScopeValues
-            setNativeInterval( const std::vector<unicorn::ScopeValues> &vars);
+            setNativeTimeout(std::vector<unicorn::ScopeValues> &vars);
 
             unicorn::ScopeValues
-            clearNativeTimeout( const std::vector<unicorn::ScopeValues> &vars);
+            setNativeInterval(std::vector<unicorn::ScopeValues> &vars);
 
             unicorn::ScopeValues
-            clearNativeInterval( const std::vector<unicorn::ScopeValues> &vars);
-
-            unicorn::ScopeValues console( const std::vector<unicorn::ScopeValues> &vars);
+            clearNativeTimeout(std::vector<unicorn::ScopeValues> &vars);
 
             unicorn::ScopeValues
-            __updateComponentData( const std::vector<unicorn::ScopeValues> &vars);
+            clearNativeInterval(std::vector<unicorn::ScopeValues> &vars);
+
+            unicorn::ScopeValues console();
+
+            unicorn::ScopeValues
+            __updateComponentData(const std::vector<unicorn::ScopeValues> &vars);
 
         public:
             std::unique_ptr<WeexGlobalObjectV2> nativeObject;
+            std::unique_ptr<WeexConsoleBinding> consoleBinding;
         };
     }
 }

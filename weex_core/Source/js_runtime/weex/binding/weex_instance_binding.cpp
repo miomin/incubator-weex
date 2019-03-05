@@ -47,7 +47,7 @@ namespace weex {
 
         CLASS_METHOD_CALLBACK(WeexInstanceBinding, clearNativeInterval)
 
-        CLASS_METHOD_CALLBACK(WeexInstanceBinding, console)
+        CLASS_MEMBER_GET_CALLBACK(WeexInstanceBinding, console)
 
         CLASS_METHOD_CALLBACK(WeexInstanceBinding, __updateComponentData)
 
@@ -61,8 +61,8 @@ namespace weex {
             REGISTER_METHOD_CALLBACK(WeexInstanceBinding, setNativeInterval)
             REGISTER_METHOD_CALLBACK(WeexInstanceBinding, clearNativeTimeout)
             REGISTER_METHOD_CALLBACK(WeexInstanceBinding, clearNativeInterval)
-            REGISTER_METHOD_CALLBACK(WeexInstanceBinding, console)
             REGISTER_METHOD_CALLBACK(WeexInstanceBinding, __updateComponentData)
+            REGISTER_GET_CALLBACK(WeexInstanceBinding, console)
         CLASS_REGISTER_END(WeexInstanceBinding)
 
 
@@ -70,6 +70,8 @@ namespace weex {
                 : RuntimeObject(context, js_ctx) {
             SetJSClass(WeexInstanceBinding::s_jsclass_WeexInstanceBinding);
             LOG_WEEX_BINDING("WeexInstanceBinding init");
+            WeexConsoleBinding::CreateClassRef(context);
+            consoleBinding.reset(new WeexConsoleBinding(context, js_ctx));
         }
 
         WeexInstanceBinding::~WeexInstanceBinding() {
@@ -105,29 +107,31 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexInstanceBinding::setNativeTimeout(
-                const std::vector<unicorn::ScopeValues> &vars) {
-            return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars);
+                std::vector<unicorn::ScopeValues> &vars) {
+            return WeexBindingUtils::setNativeTimeout(nativeObject, vars, false);
         }
 
         unicorn::ScopeValues WeexInstanceBinding::setNativeInterval(
-                const std::vector<unicorn::ScopeValues> &vars) {
-            return WeexBindingUtils::setNativeInterval(this->nativeObject, vars);
+                std::vector<unicorn::ScopeValues> &vars) {
+            return WeexBindingUtils::setNativeTimeout(nativeObject, vars, true);
         }
 
         unicorn::ScopeValues WeexInstanceBinding::clearNativeTimeout(
-                const std::vector<unicorn::ScopeValues> &vars) {
+                std::vector<unicorn::ScopeValues> &vars) {
             return WeexBindingUtils::clearNativeTimeout(this->nativeObject, vars);
         }
 
         unicorn::ScopeValues WeexInstanceBinding::clearNativeInterval(
-                const std::vector<unicorn::ScopeValues> &vars) {
-            return WeexBindingUtils::clearNativeInterval(this->nativeObject, vars);
+                std::vector<unicorn::ScopeValues> &vars) {
+            return WeexBindingUtils::clearNativeTimeout(this->nativeObject, vars);
         }
 
-        unicorn::ScopeValues
-        WeexInstanceBinding::console(const std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("WeexInstanceBinding method :console");
-            return unicorn::RuntimeValues::MakeUndefined();
+        unicorn::ScopeValues WeexInstanceBinding::console() {
+            LOG_WEEX_BINDING("[console] WeexInstanceBinding  console :%p",this->consoleBinding.get());
+            return unicorn::RuntimeValues::MakeCommonObject(
+                    static_cast<void *>(this->consoleBinding.get()),
+                    new unicorn::RuntimeClass(consoleBinding->GetJSClass())
+            );
         }
 
         unicorn::ScopeValues WeexInstanceBinding::__updateComponentData(

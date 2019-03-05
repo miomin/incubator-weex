@@ -51,7 +51,7 @@ public:
 
     std::unique_ptr<WeexJSResult> exeJSOnAppWithResult(const String &instanceId, const String &jsBundle) override;
 
-   // int callJSOnAppContext(IPCArguments *arguments) override;
+    // int callJSOnAppContext(IPCArguments *arguments) override;
 
     int
     callJSOnAppContext(const String &instanceId, const String &func, std::vector<VALUE_WITH_TYPE *> &params) override;
@@ -93,14 +93,19 @@ public:
 
     WeexObjectHolderV2 *getLightAppObjectHolderV2(const String &instanceId);
 
-    void removeTimerFunction(const uint32_t timerFunction, WeexGlobalObjectV2 *globalObject);
+    int exeTimerFunctionForRunTimeApi(const String &instanceId, uint32_t timerFunction,
+                                     WeexGlobalObjectV2 *globalObject) override;
+
+    void removeTimerFunctionForRunTimeApi(const uint32_t timerFunction, WeexGlobalObjectV2 *globalObject) override;
+
 
 protected:
     int _initFrameworkWithScript(const String &source);
 
     int _initAppFrameworkWithScript(const String &instanceId, const String &appFramework);
 
-    void _geJSRuntimeArgsFromWeexParams(unicorn::EngineContext* context,std::vector<unicorn::ScopeValues> *obj, std::vector<VALUE_WITH_TYPE *> &params);
+    void _geJSRuntimeArgsFromWeexParams(unicorn::EngineContext *context, std::vector<unicorn::ScopeValues> *obj,
+                                        std::vector<VALUE_WITH_TYPE *> &params);
 
 
 protected:

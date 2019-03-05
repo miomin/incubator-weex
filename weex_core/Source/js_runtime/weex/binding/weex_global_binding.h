@@ -27,11 +27,15 @@
 
 #include "js_runtime/runtime/runtime_object.h"
 #include "js_runtime/runtime/binding_macro.h"
+#include "weex_console_binding.h"
 
 class WeexGlobalObjectV2;
 
 namespace weex {
     namespace jsengine {
+
+
+
         class WeexGlobalBinding : public unicorn::RuntimeObject {
         public:
             DECLARE_CLASS_REGISTER_OP(WeexGlobalBinding)
@@ -104,6 +108,7 @@ namespace weex {
 
         public:
             std::unique_ptr<WeexGlobalObjectV2> nativeObject;
+
         };
     }
 }

@@ -103,6 +103,10 @@ void JSCFunction::MemberUnprotect() {
   JSValueUnprotect(context_, function_);
 }
 
+void JSCFunction::SetJSContext(JSContextRef  contest){
+  context_ = contest;
+}
+
 std::unique_ptr<RuntimeValues> JSCFunction::Call(JSContextRef cur_context,size_t argc,
                                     std::vector<ScopeValues>& argv) const {
   JSValueRef argv_js[argc];
