@@ -122,15 +122,22 @@ namespace weex {
         unicorn::ScopeValues
         WeexGlobalBinding::callNative(const std::vector<unicorn::ScopeValues> &vars) {
             std::string id_js;
-            Args task;
+            std::string task;
             std::string callback_str;
             vars[0]->GetAsString(&id_js);
-            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[1].get(), task);
-            vars[2]->GetAsString(&callback_str);
-            LOG_WEEX_BINDING("WeexGlobalBinding callNative id_js:%s,callback_str:%s",
-                             id_js.c_str(),callback_str.c_str());
+            WeexConversionUtils::RunTimeValuesOfObjectToJson(vars[1].get()).dump(task);
+            if (vars.size() >= 3) {
+                vars[2]->GetAsString(&callback_str);
+            } else{
+                callback_str = std::string("undefined");
+            }
+            //vars[2]->GetAsString(&callback_str);
+            //  wson_parser parser(task.getValue());
+            LOG_WEEX_BINDING("WeexGlobalBinding callNative id_js:%s,task_str:%s,callback_str:%s",
+                             id_js.c_str(), task.c_str(), callback_str.c_str());
 
-            this->nativeObject->js_bridge()->core_side()->CallNative(id_js.c_str(), task.getValue(),
+
+            this->nativeObject->js_bridge()->core_side()->CallNative(id_js.c_str(), task.c_str(),
                                                                      callback_str.c_str());
             return unicorn::RuntimeValues::MakeUndefined();
         }
@@ -257,7 +264,7 @@ namespace weex {
         unicorn::ScopeValues WeexGlobalBinding::callGCanvasLinkNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexGlobalBinding method :callGCanvasLinkNative");
-            return WeexBindingUtils::callGCanvasLinkNative(nativeObject,vars);
+            return WeexBindingUtils::callGCanvasLinkNative(nativeObject, vars);
         }
 
         unicorn::ScopeValues

@@ -168,7 +168,7 @@ static JSValueRef METHOD_CALLBACK_FUNCTION(method_name_)(                  \
                                         ) {                                \
   class_* obj = static_cast<class_*>(JSObjectGetPrivate(thiz));            \
   std::vector<unicorn::ScopeValues> arguments;                             \
-  LOG_JS_RUNTIME("[Context] method call :%s on context:%p",#method_name_,ctx);   \
+  LOG_WEEX_BINDING("[Context]thiz:%p, object:%p,method  :%s on context:%p",thiz,obj,#method_name_,ctx);   \
   unicorn::Conversion::JSValuesArrayToRuntimeValues(ctx, thiz, argc,       \
                                argv,                                       \
                                arguments);                                 \

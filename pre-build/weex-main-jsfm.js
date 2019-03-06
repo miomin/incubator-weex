@@ -3296,9 +3296,12 @@ TaskCenter.prototype.callModule = function callModule (module, method, args, opt
     return global.callNativeModule(this.instanceId, module, method, args, options)
   }
 
-   nativeLog("[jsfm] callModule -> fallback :"+ typeof global.callNativeModule);
+   var tmpArg = [{ module: module, method: method, args: args }];
+   nativeLog("[jsfm] callModule ->");
 
-  return fallback(this.instanceId, [{ module: module, method: method, args: args }])
+   return global.callNative(this.instanceId, tmpArg);
+
+ // return fallback(this.instanceId, [{ module: module, method: method, args: args }])
 };
 
 function init$1 () {
