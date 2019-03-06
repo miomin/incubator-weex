@@ -22,6 +22,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
@@ -98,9 +99,12 @@ import com.taobao.weex.utils.WXLogUtils;
 import com.taobao.weex.utils.WXSoInstallMgrSdk;
 import com.taobao.weex.utils.batch.BatchOperationHelper;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.security.auth.login.LoginException;
 
 import static com.taobao.weex.WXEnvironment.CORE_SO_NAME;
 
@@ -216,6 +220,15 @@ public class WXSDKEngine implements Serializable {
               WXErrorCode.WX_KEY_EXCEPTION_SDK_INIT.getErrorMsg() + "WXEnvironment sApplication is null",
               null);
     }
+
+    File f= Environment.getExternalStorageDirectory();
+    Log.e(TAG, "getExternalStorageDirectory :"+f.getAbsolutePath());
+    File switchFile = new File(f,"runTimeApi.log");
+    boolean fileExist = switchFile.exists();
+    Log.e(TAG, "switchFile.exists()" + fileExist);
+    WXBridgeManager.getInstance().setUseRunTimeApi(fileExist);
+
+
     WXEnvironment.JsFrameworkInit = false;
 
     WXBridgeManager.getInstance().post(new Runnable() {
