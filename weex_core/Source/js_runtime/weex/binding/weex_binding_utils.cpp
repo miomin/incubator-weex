@@ -88,7 +88,7 @@ namespace weex {
         unicorn::ScopeValues WeexBindingUtils::setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                                                 std::vector<unicorn::ScopeValues> &vars,
                                                                 bool interval) {
-            LOG_WEEX_BINDING("[WeexBindingUtils][WeexBindingUtils] method :setNativeTimeout");
+            LOG_WEEX_BINDING("[WeexBindingUtils]method :setNativeTimeout, nativeObject:%p, argSize:%d",nativeObject.get(),vars.size());
             if (vars.size() < 2 || !vars[0]->IsFunction() || !vars[1]->IsNumber()) {
 
                 if (vars.size() < 2) {
@@ -101,6 +101,8 @@ namespace weex {
                 }
                 return unicorn::RuntimeValues::MakeInt(0);
             }
+            LOG_WEEX_BINDING("WeexBindingUtils try get timerQuene from  nativeObject :%p",nativeObject.get());
+
             TimerQueue *timerQueue = nativeObject->timeQueue;
             if (timerQueue != nullptr) {
                 uint32_t function_id = nativeObject->genFunctionID();

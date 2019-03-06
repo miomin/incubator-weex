@@ -142,11 +142,13 @@ namespace weex {
 
         unicorn::ScopeValues
         AppWorkerBinding::setNativeTimeout(std::vector<unicorn::ScopeValues> &vars) {
+            LOG_WEEX_BINDING("appConteext: setNativeTimeout this:%p,nativeObject:%p", this,nativeObject.get());
             return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars, false);
         }
 
         unicorn::ScopeValues AppWorkerBinding::setNativeInterval(
                 std::vector<unicorn::ScopeValues> &vars) {
+            LOG_WEEX_BINDING("appConteext: setNativeInterval this:%p,nativeObject:%p", this,nativeObject.get());
             return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars, true);
         }
 

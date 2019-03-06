@@ -108,11 +108,13 @@ namespace weex {
 
         unicorn::ScopeValues WeexInstanceBinding::setNativeTimeout(
                 std::vector<unicorn::ScopeValues> &vars) {
+            LOG_WEEX_BINDING("instanceConteext: setNativeTimeout this:%p,nativeObject:%p", this,nativeObject.get());
             return WeexBindingUtils::setNativeTimeout(nativeObject, vars, false);
         }
 
         unicorn::ScopeValues WeexInstanceBinding::setNativeInterval(
                 std::vector<unicorn::ScopeValues> &vars) {
+            LOG_WEEX_BINDING("instanceConteext: setNativeInterval this:%p,nativeObject:%p", this,nativeObject.get());
             return WeexBindingUtils::setNativeTimeout(nativeObject, vars, true);
         }
 
