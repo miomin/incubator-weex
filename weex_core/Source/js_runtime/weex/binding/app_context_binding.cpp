@@ -113,20 +113,19 @@ namespace weex {
             std::string vm_id;
 
             WeexConversionUtils::GetStringFromArgsDefaultEmpty(vars, 0, client_id);
-            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message_sync__ client_id is %s", client_id.c_str());
-
-
             bool succeed = WeexConversionUtils::GetJsonStrFromArgs(vars, 1, data);
             const char *data_char = succeed ? data.c_str() : nullptr;
-            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ data is %s", data_char);
-
             vm_id = this->nativeObject->id;
-            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
+
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ , cliend:%s, vm:%s,data:%s", client_id.c_str(),vm_id.c_str(),data_char);
 
             auto result = this->nativeObject->js_bridge()->core_side()->DispatchMessageSync(client_id.c_str(),
                                                                                             data_char,
                                                                                             succeed ? data.length() : 0,
                                                                                             vm_id.c_str());
+
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ , result:%s",result->data.get());
+
             if (result->length == 0) {
                 return unicorn::RuntimeValues::MakeUndefined();
             } else {
