@@ -122,15 +122,15 @@ namespace weex {
         unicorn::ScopeValues
         WeexGlobalBinding::callNative(const std::vector<unicorn::ScopeValues> &vars) {
             std::string id_js;
-            std::string task_str;
+            Args task;
             std::string callback_str;
             vars[0]->GetAsString(&id_js);
-            vars[1]->GetAsString(&task_str);
+            WeexConversionUtils::ConvertRunTimeVaueToWson(vars[1].get(), task);
             vars[2]->GetAsString(&callback_str);
-            LOG_WEEX_BINDING("WeexGlobalBinding callNative id_js:%s,task_str:%s,callback_str:%s",
-                             id_js.c_str(), task_str.c_str(), callback_str.c_str());
+            LOG_WEEX_BINDING("WeexGlobalBinding callNative id_js:%s,callback_str:%s",
+                             id_js.c_str(),callback_str.c_str());
 
-            this->nativeObject->js_bridge()->core_side()->CallNative(id_js.c_str(), task_str.c_str(),
+            this->nativeObject->js_bridge()->core_side()->CallNative(id_js.c_str(), task.getValue(),
                                                                      callback_str.c_str());
             return unicorn::RuntimeValues::MakeUndefined();
         }
