@@ -41,7 +41,7 @@ namespace weex {
 
             static unicorn::ScopeValues
             nativeLog(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                      const std::vector<unicorn::ScopeValues> &vars);
+                      const std::vector<unicorn::ScopeValues> &vars, bool toCoreSide);
 
             static unicorn::ScopeValues
             setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
@@ -56,6 +56,10 @@ namespace weex {
 
 
             static unicorn::ScopeValues callGCanvasLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
+                                                              const std::vector<unicorn::ScopeValues> &vars);
+
+
+            static unicorn::ScopeValues __updateComponentData(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
                                                               const std::vector<unicorn::ScopeValues> &vars);
 
         };

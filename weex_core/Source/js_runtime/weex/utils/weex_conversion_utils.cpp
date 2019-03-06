@@ -20,6 +20,7 @@
 // Created by 陈佩翰 on 2019/2/12.
 //
 
+#include <wson/wson_parser.h>
 #include "weex_jsc_utils.h"
 #include "weex_conversion_utils.h"
 #include "js_runtime/utils/log_utils.h"
@@ -156,13 +157,14 @@ namespace weex {
             // LOGE("WeexRuntime: WeexValueToRuntimeValue type is %d", paramsObject->type);
             switch (paramsObject->type) {
                 case ParamsType::DOUBLE: {
-                    LOG_CONVERSION("WeexValueToRuntimeValue double :%d",paramsObject->value.doubleValue);
+                    LOG_CONVERSION("WeexValueToRuntimeValue double :%d", paramsObject->value.doubleValue);
                     return unicorn::RuntimeValues::MakeDouble(paramsObject->value.doubleValue);
                 }
                 case ParamsType::STRING: {
                     WeexString *ipcstr = paramsObject->value.string;
                     const String &string2String = weexString2String(ipcstr);
-                    LOG_CONVERSION("WeexValueToRuntimeValue string :%s", std::string(string2String.utf8().data()).c_str());
+                    LOG_CONVERSION("WeexValueToRuntimeValue string :%s",
+                                   std::string(string2String.utf8().data()).c_str());
                     return unicorn::RuntimeValues::MakeString(std::string(string2String.utf8().data()).c_str());
                 }
                 case ParamsType::JSONSTRING: {
@@ -179,7 +181,7 @@ namespace weex {
 
 //                obj->append(o);
                     //  obj->push_back(unicorn::RuntimeValues::MakeObjectFromWson(static_cast<void *>(array->content),array->length));
-                  //  LOG_TEST("WeexValueToRuntimeValue wson bbyte array");
+                    //  LOG_TEST("WeexValueToRuntimeValue wson bbyte array");
                     LOG_CONVERSION("WeexValueToRuntimeValue wson");
                     const WeexByteArray *array = paramsObject->value.byteArray;
                     return wson::toRunTimeValueFromWson(context, (void *) array->content, array->length);
@@ -195,6 +197,59 @@ namespace weex {
         void WeexConversionUtils::ConvertRunTimeVaueToWson(unicorn::RuntimeValues *value, Args &args) {
             wson_buffer *buffer = wson::runTimeValueToWson(value);
             args.setWson(buffer);
+        }
+
+        void
+        WeexConversionUtils::GetStringFromArgsDefaultUndefined(const std::vector<unicorn::ScopeValues> &vars, int index,
+                                                               std::string &result) {
+
+            if (index >= vars.size()) {
+                result.assign("undefined");
+                return;
+            }
+            vars[index]->GetAsString(&result);
+        }
+
+
+        void
+        WeexConversionUtils::GetStringFromArgsDefaultEmpty(const std::vector<unicorn::ScopeValues> &vars, int index,
+                                                           std::string &result) {
+            if (index >= vars.size()) {
+                result.assign("");
+                return;
+            }
+            if (vars[index]->IsUndefined()) {
+                result.assign("undefined");
+                return;
+            }
+            if (vars[index]->IsInt()) {
+                int val = 0;
+                vars[index]->GetAsInteger(&val);
+                result.assign(std::to_string(val));
+                return;;
+            }
+            vars[index]->GetAsString(&result);
+        }
+
+        bool WeexConversionUtils::GetJsonStrFromArgs(const std::vector<unicorn::ScopeValues> &vars, int index,
+                                                     std::string &result) {
+            if (index >= vars.size() || vars[index].get() == nullptr || vars[index]->IsNull() ||
+                vars[index]->IsUndefined()) {
+                return false;
+            }
+
+            WeexConversionUtils::RunTimeValuesOfObjectToJson(vars[index].get()).dump(result);
+
+            return true;
+        }
+
+        void WeexConversionUtils::GetWsonFromArgs(const std::vector<unicorn::ScopeValues> &vars, int index,
+                                                  Args &args) {
+            if (index >= vars.size()) {
+                args.setWson((wson_buffer *) nullptr);
+                return;
+            }
+            ConvertRunTimeVaueToWson(vars[index].get(), args);
         }
     }
 }

@@ -81,7 +81,7 @@ namespace weex {
 
         unicorn::ScopeValues
         WeexInstanceBinding::nativeLog(const std::vector<unicorn::ScopeValues> &vars) {
-            return WeexBindingUtils::nativeLog(this->nativeObject, vars);
+            return WeexBindingUtils::nativeLog(this->nativeObject, vars, false);
         }
 
         unicorn::ScopeValues

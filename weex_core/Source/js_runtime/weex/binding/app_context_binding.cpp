@@ -71,7 +71,7 @@ namespace weex {
 
         unicorn::ScopeValues
         AppWorkerBinding::nativeLog(const std::vector<unicorn::ScopeValues> &vars) {
-            return WeexBindingUtils::nativeLog(this->nativeObject, vars);
+            return WeexBindingUtils::nativeLog(this->nativeObject, vars, false);
         }
 
         unicorn::ScopeValues AppWorkerBinding::__dispatch_message__(
@@ -84,20 +84,23 @@ namespace weex {
             std::string callback;
             std::string vm_id;
 
-            vars[0]->GetAsString(&client_id);
+            WeexConversionUtils::GetStringFromArgsDefaultEmpty(vars, 0, client_id);
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ client_id is %s", client_id.c_str());
-            WeexConversionUtils::RunTimeValuesOfObjectToJson(vars[1].get()).dump(data);
-            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ data is %s", data.c_str());
-            vars[2]->GetAsString(&callback);
+
+            bool succeed = WeexConversionUtils::GetJsonStrFromArgs(vars, 1, data);
+            const char *data_char = succeed ? data.c_str() : nullptr;
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ data is %s", data_char);
+
+            WeexConversionUtils::GetStringFromArgsDefaultEmpty(vars, 2, callback);
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ callback is %s", callback.c_str());
+
             vm_id = this->nativeObject->id;
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
 
-            this->nativeObject->js_bridge()->core_side()->DispatchMessage(client_id.c_str(), data.c_str(),
-                                                                          data.length(),
+            this->nativeObject->js_bridge()->core_side()->DispatchMessage(client_id.c_str(), data_char,
+                                                                          succeed ? data.length() : 0,
                                                                           callback.c_str(), vm_id.c_str());
-
-            return unicorn::RuntimeValues::MakeUndefined();
+            return unicorn::RuntimeValues::MakeInt(0);
         }
 
         unicorn::ScopeValues
@@ -109,18 +112,27 @@ namespace weex {
             std::string data;
             std::string vm_id;
 
-            vars[0]->GetAsString(&client_id);
+            WeexConversionUtils::GetStringFromArgsDefaultEmpty(vars, 0, client_id);
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message_sync__ client_id is %s", client_id.c_str());
-            WeexConversionUtils::RunTimeValuesOfObjectToJson(vars[1].get()).dump(data);
-            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message_sync__ data is %s", data.c_str());
+
+
+            bool succeed = WeexConversionUtils::GetJsonStrFromArgs(vars, 1, data);
+            const char *data_char = succeed ? data.c_str() : nullptr;
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ data is %s", data_char);
+
             vm_id = this->nativeObject->id;
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
 
             auto result = this->nativeObject->js_bridge()->core_side()->DispatchMessageSync(client_id.c_str(),
-                                                                                            data.c_str(), data.length(),
+                                                                                            data_char,
+                                                                                            succeed ? data.length() : 0,
                                                                                             vm_id.c_str());
+            if (result->length == 0) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            } else {
+                return unicorn::RuntimeValues::MakeObjectFromJsonStr(result->data.get());
+            }
 
-            return unicorn::RuntimeValues::MakeUndefined();
         }
 
         unicorn::ScopeValues
@@ -130,25 +142,29 @@ namespace weex {
             std::string data;
             std::string vm_id;
 
-            WeexConversionUtils::RunTimeValuesOfObjectToJson(vars[0].get()).dump(data);
-            LOG_WEEX_BINDING("WeexRuntime: postMessage data is %s", data.c_str());
+
+            bool succeed = WeexConversionUtils::GetJsonStrFromArgs(vars, 0, data);
+            const char *data_char = succeed ? data.c_str() : nullptr;
+            LOG_WEEX_BINDING("WeexRuntime: postMessage data is %s", data_char);
+
+
             vm_id = this->nativeObject->id;
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
 
-            this->nativeObject->js_bridge()->core_side()->PostMessage(vm_id.c_str(), data.c_str(), data.length());
+            this->nativeObject->js_bridge()->core_side()->PostMessage(vm_id.c_str(), data_char, succeed?data.length():0);
 
-            return unicorn::RuntimeValues::MakeUndefined();
+            return unicorn::RuntimeValues::MakeInt(0);
         }
 
         unicorn::ScopeValues
         AppWorkerBinding::setNativeTimeout(std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("appConteext: setNativeTimeout this:%p,nativeObject:%p", this,nativeObject.get());
+            LOG_WEEX_BINDING("appConteext: setNativeTimeout this:%p,nativeObject:%p", this, nativeObject.get());
             return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars, false);
         }
 
         unicorn::ScopeValues AppWorkerBinding::setNativeInterval(
                 std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("appConteext: setNativeInterval this:%p,nativeObject:%p", this,nativeObject.get());
+            LOG_WEEX_BINDING("appConteext: setNativeInterval this:%p,nativeObject:%p", this, nativeObject.get());
             return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars, true);
         }
 

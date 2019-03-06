@@ -38,14 +38,28 @@ namespace weex {
 
             static bool convertKVToJSon(const std::string &name, const ::std::string &value, std::string &result);
 
-            static json11::Json RunTimeValuesOfObjectToJson(unicorn::RuntimeValues *vars);
 
             static unicorn::ScopeValues
             WeexValueToRuntimeValue(unicorn::EngineContext *context, VALUE_WITH_TYPE *weexValue);
 
-            static void ConvertRunTimeVaueToWson(unicorn::RuntimeValues *value, Args &args);
 
-            //  static bool convertStyleToJSon(const std::string &name, StyleVale *value, std::string &result);
+            static void GetStringFromArgsDefaultEmpty(const std::vector<unicorn::ScopeValues> &vars, int index,
+                                                      std::string &result);
+
+            static void GetStringFromArgsDefaultUndefined(const std::vector<unicorn::ScopeValues> &vars, int index,
+                                                          std::string &result);
+
+            static bool
+            GetJsonStrFromArgs(const std::vector<unicorn::ScopeValues> &vars, int index,std::string &result);
+
+            static void
+            GetWsonFromArgs(const std::vector<unicorn::ScopeValues> &vars, int index, Args &args);
+
+        private:
+
+            static void ConvertRunTimeVaueToWson(unicorn::RuntimeValues *value, Args &args);
+            static json11::Json RunTimeValuesOfObjectToJson(unicorn::RuntimeValues *vars);
+
         };
 
     }
