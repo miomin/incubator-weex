@@ -3292,7 +3292,7 @@ TaskCenter.prototype.callComponent = function callComponent (ref, method, args, 
 TaskCenter.prototype.callModule = function callModule (module, method, args, options) {
 
   if (typeof global.callNativeModule === 'function') {
-    nativeLog("[jsfm] callModule -> callNativeModule ");
+    nativeLog("[jsfm] callModule -> callNativeModule "+module +"| method"+method);
     return global.callNativeModule(this.instanceId, module, method, args, options)
   }
 
