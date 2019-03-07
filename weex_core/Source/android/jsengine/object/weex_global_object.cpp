@@ -691,8 +691,10 @@ JSFUNCTION functionNativeLog(ExecState *state) {
 
     if (!sb.isEmpty()) {
 
-        WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
-        globalObject->js_bridge()->core_side()->NativeLog(sb.toString().utf8().data());
+       // WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
+        //globalObject->js_bridge()->core_side()->NativeLog(sb.toString().utf8().data());
+        auto log_char = sb.toString().utf8().data();
+        LOGW("[JS_LOG][GlobalObject] :%s ",log_char);
     }
     return JSValue::encode(jsBoolean(true));
 }

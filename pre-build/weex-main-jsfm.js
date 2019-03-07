@@ -3260,13 +3260,14 @@ TaskCenter.prototype.send = function send (type, params, args, options) {
 
   switch (type) {
     case 'dom': {
-      nativeLog(("[jsfm][task](" + (this.instanceId) + ",type:" + (this.type) + ",action:" + action + ") args:" + (JSON.stringify(args))));
+      nativeLog(("[jsfm][action]-->" + this.instanceId + ",type:" + type + ",action:" + action + ", args:" + (JSON.stringify(args))));
       return this[action](this.instanceId, args)
     }
     case 'component':
+      nativeLog(("[jsfm][callComponent]-->" + this.instanceId));
       return this.callComponent(ref, method, args, Object.assign({ component: component }, options))
     default: {
-      nativeLog(("[jsfm][task](" + (this.instanceId) + ",module:" + module + ",method:" + method + ")  args:" + (JSON.stringify(args))));
+      nativeLog(("[jsfm][callModule]-->" + ",type:"+type+",instance:"+ this.instanceId + ",module:" + module + ",method:" + method + ")  args:" + (JSON.stringify(args))));
       return this.callModule(module, method, args, options)
     }
   }
@@ -3293,7 +3294,7 @@ TaskCenter.prototype.callModule = function callModule (module, method, args, opt
   }
 
    var tmpArg = [{ module: module, method: method, args: args }];
-   nativeLog("[jsfm] callNative -> ");
+   nativeLog("[jsfm] callNative ->");
 
    return global.callNative(this.instanceId, tmpArg);
 
