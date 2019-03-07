@@ -57,6 +57,16 @@ void CoreSideInScript::CallNative(const char *page_id, const char *task,
                          "\"args\":[]}]");
   std::string::size_type idx = task_str.find(target_str);
 
+  LOGW("CoreSideInScript : CallNative idx:%d, [taskLength:%d,targetLength:%d,task_charLength:%d ]|||||||||||,taskStr:%s,  targetStr:%s,  task_char:%s",
+       idx,
+       task_str.length(),
+       target_str.length(),
+       strlen(task),
+       task_str.c_str(),
+       target_str.c_str(),
+       task
+  );
+
   if(idx == std::string::npos) {
     WeexCoreManager::Instance()
         ->getPlatformBridge()

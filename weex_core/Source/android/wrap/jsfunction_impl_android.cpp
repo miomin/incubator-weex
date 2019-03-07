@@ -85,9 +85,10 @@ void jsHandleCallNative(JNIEnv *env, jobject object, jstring instanceId, jbyteAr
     std::string pageId = jString2StrFast(env, instanceId);
     std::string task = jByteArray2Str(env, tasks);
 
-#if JSAPI_LOG
-    LOGD("[ExtendJSApi] handleCallNative >>>> pageId: %s, task: %s", pageId.c_str(), task.c_str());
-#endif
+
+    LOGE("[ExtendJSApi] handleCallNative >>>> pageId: %s, task: %s", pageId.c_str(), task.c_str());
+
+
 
     if (task == "[{\"module\":\"dom\",\"method\":\"createFinish\",\"args\":[]}]") {
         RenderManager::GetInstance()->CreateFinish(pageId) ? 0 : -1;
@@ -105,6 +106,8 @@ void
 jsHandleCallNativeModule(JNIEnv *env, jobject object, jstring instanceId, jstring module,
                          jstring method, jbyteArray
                          arguments, jbyteArray options, jboolean from) {
+
+    LOGE("[ExtendJSApi] jsHandleCallNativeModule >>>>");
     JByteArrayRef argumentsRef(env, arguments);
     JByteArrayRef optionsRef(env, options);
 
