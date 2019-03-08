@@ -223,10 +223,10 @@ public class WXSDKEngine implements Serializable {
 
     File f= Environment.getExternalStorageDirectory();
     Log.e(TAG, "getExternalStorageDirectory :"+f.getAbsolutePath());
-    File switchFile = new File(f,"runTimeApi.log");
+    File switchFile = new File(f,"jsc.log");
     boolean fileExist = switchFile.exists();
     Log.e(TAG, "switchFile.exists()" + fileExist);
-    WXBridgeManager.getInstance().setUseRunTimeApi(fileExist);
+    WXBridgeManager.getInstance().setUseRunTimeApi(!fileExist);
 
 
     WXEnvironment.JsFrameworkInit = false;
