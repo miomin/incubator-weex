@@ -355,7 +355,6 @@ JSFUNCTION functionCallNative(ExecState *state) {
     JSValue callback_js = state->argument(2);
     String callback_str = callback_js.toWTFString(state);
 
-    LOGE("[globalobect] :functionCallNative, id:%s,task:%s,callback:%s",id_str.utf8().data(),task.get(),callback_str.utf8().data());
 
     globalObject->js_bridge()->core_side()->CallNative(id_str.utf8().data(), task.get(),
                                                        callback_str.utf8().data());

@@ -66,7 +66,8 @@ namespace unicorn {
         //JSValueRef result = nullptr;
         JSEvaluateScript(context_, source, NULL, NULL, 0, &exceptionRef);
         // release jsc string
-        Conversion::printJSValueRefException(context_, exceptionRef);
+        Conversion::JSValueToStdString(context_,exceptionRef,runException);
+       // Conversion::printJSValueRefException(context_, exceptionRef);
 
         JSStringRelease(source);
         if (exceptionRef) {
@@ -84,11 +85,11 @@ namespace unicorn {
         JSValueRef result = nullptr;
         if (!exceptionRef) {
             result = JSEvaluateScript(context_, source, NULL, NULL, 0, &exceptionRef);
+        } else{
+            Conversion::JSValueToStdString(context_,exceptionRef,exception);
         }
-        // release jsc string
 
         JSStringRelease(source);
-        Conversion::printJSValueRefException(context_, exceptionRef);
         return Conversion::JSValueToRuntimeValue(context_, nullptr, result);
     }
 
@@ -153,8 +154,11 @@ namespace unicorn {
 
         JSObjectRef funcObjectRef = JSValueToObject(context_, funcValueRef, &exc);
 
+        if(exc && JSValueIsString(context_,exc)){
+            Conversion::JSValueToStdString(context_,exc,exception);
+        }
+
         if (exc || !funcObjectRef || !JSObjectIsFunction(context_, funcObjectRef)) {
-            Conversion::printJSValueRefException(context_, exc);
             return nullptr;
         }
 
@@ -168,7 +172,7 @@ namespace unicorn {
         result = JSObjectCallAsFunction(context_, funcObjectRef, targetObjectRef, args.size(), argv_js, &exc);
 
         if (!result || exc) {
-            Conversion::printJSValueRefException(context_, exc);
+            Conversion::JSValueToStdString(context_,exc,exception);
             return nullptr;
         }
         LOG_JS_RUNTIME("EngineContextJSC  call func  :%s succeed ~~~ ,return result :%d", cName, result);
@@ -184,9 +188,9 @@ namespace unicorn {
         JSStringRef str = JSStringCreateWithUTF8CString(property_id.c_str());
         JSValueRef exc = nullptr;
         JSValueRef resultValue = JSObjectGetProperty(context_, object, str, &exc);
-        if (exc) {
-            Conversion::printJSValueRefException(context_, exc);
-        }
+//        if (exc) {
+//            Conversion::printJSValueRefException(context_, exc);
+//        }
         JSStringRelease(str);
         if (resultValue && !JSValueIsUndefined(context_, resultValue)) {
             //     LOG_TEST("EngineContextJSC GetPropertyValueFromObject succeed :%s", property_id.c_str());
@@ -215,7 +219,7 @@ namespace unicorn {
         }
         JSValueRef exc = nullptr;
         JSObjectRef convertObjectRef = JSValueToObject(context_, js_value, &exc);
-        Conversion::printJSValueRefException(context_, exc);
+        //Conversion::printJSValueRefException(context_, exc);
         if (convertObjectRef) {
             return convertObjectRef;
         }
@@ -282,7 +286,6 @@ namespace unicorn {
         JSObjectSetProperty(context_, targetObject, str, value, 0, &exe);
         //LOG_TEST("EngineContextJSC setObjectValue succeed ");
         if (exe) {
-            Conversion::printJSValueRefException(context_, exe);
             return false;
         } else {
             return true;

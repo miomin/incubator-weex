@@ -172,14 +172,14 @@ static JSValueRef METHOD_CALLBACK_FUNCTION(method_name_)(                  \
                                         ) {                                \
                                                                                                             \
   auto addr = JSObjectGetPrivate(thiz);                                                                     \
-  LOG_WEEX_BINDING("[Context]thiz:%p, object :%p,method  :%s on context:%p",thiz,addr,#method_name_,ctx);   \
+  LOG_JS_RUNTIME("[Context]thiz:%p, object :%p,method  :%s on context:%p",thiz,addr,#method_name_,ctx);   \
   if(nullptr == addr && s_is_global_binding){                                                               \
       JSObjectRef globalObject = JSContextGetGlobalObject(ctx);                                             \
       addr = JSObjectGetPrivate(globalObject);                                                              \
-     LOG_WEEX_BINDING("[Context]try get object %p at globalObject :%p, ",addr,thiz);                        \
+     LOG_JS_RUNTIME("[Context]try get object %p at globalObject :%p, ",addr,thiz);                        \
   }                                                                                                         \
   if( nullptr == addr){                                                                                     \
-      LOGE("[Context]return undefined!! can't get object %p at thiz:%p, ",addr,thiz);                       \
+      LOGE("[Context]return undefined!! can't get object %p at thiz:%p, method:",addr,thiz,#method_name_);                       \
       return JSValueMakeUndefined(ctx);                                                                     \
   }                                                                                                         \
   class_* obj = static_cast<class_*>(addr);                                \

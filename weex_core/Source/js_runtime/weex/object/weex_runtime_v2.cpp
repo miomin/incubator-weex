@@ -179,7 +179,9 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
     if (!jsBundle.isEmpty()) {
         std::string exeption;
         if (!app_globalObject->context->ExecuteJavaScript(std::string(jsBundle.utf8().data()), &exeption)) {
-            LOGE("WeexRuntime: createAppContext and ExecuteJavaScript Error: %s", exeption.c_str());
+            if(!exeption.empty()){
+                app_globalObject->js_bridge()->core_side()->ReportException(instanceId.utf8().data(),"createAppContext",exeption.c_str());
+            }
             return static_cast<int32_t>(false);
         }
     } else {
@@ -267,8 +269,15 @@ int WeexRuntimeV2::destroyAppContext(const String &instanceId) {
 int WeexRuntimeV2::exeJsService(const String &source) {
     std::string source_str = std::string(source.utf8().data());
 
-    if (!weex_object_holder_v2_->globalObject->context->ExecuteJavaScript(source_str, nullptr)) {
-        LOGE("jsLog JNI_Error execjsservice >>> scriptStr :%s", source_str.c_str());
+    std::string js_exception;
+    bool succeed = weex_object_holder_v2_->globalObject->context->ExecuteJavaScript(source_str, &js_exception);
+
+    if (!js_exception.empty()){
+        weex_object_holder_v2_->globalObject->js_bridge()->core_side()->ReportException("service","exeJsService",js_exception.c_str());
+    }
+
+    if (!succeed) {
+        LOGE("exec service error :%s ,script: :%s", js_exception.c_str(),source_str.c_str());
         return static_cast<int32_t>(false);
     } else {
         return static_cast<int32_t>(true);
@@ -320,7 +329,7 @@ int WeexRuntimeV2::exeJS(const String &instanceId, const String &nameSpace, cons
     );
 
     if (!jsException.empty()) {
-        //ReportException(globalObject, returnedException.get(), instanceId.utf8().data(), func.utf8().data());
+        globalObject->js_bridge()->core_side()->ReportException(instance_id_str.c_str(),runFunc.c_str(),jsException.c_str());
         LOGE("[runtime2]exeJS error on instance %s ,func:%s", instance_id_str.c_str(), runFunc.c_str());
         return static_cast<int32_t>(false);
     }
@@ -366,7 +375,7 @@ WeexRuntimeV2::exeJSWithResult(const String &instanceId, const String &nameSpace
     );
 
     if (!jsException.empty()) {
-        //ReportException(globalObject, returnedException.get(), instanceId.utf8().data(), func.utf8().data());
+        globalObject->js_bridge()->core_side()->ReportException(instance_id_str.c_str(),runFunc.c_str(),jsException.c_str());
         LOGE("[runtime2]exeJS error on instance %s ,func:%s", instance_id_str.c_str(), runFunc.c_str());
         return returnResult;
     }
@@ -475,16 +484,23 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
         globalObject = temp_object;
     }
 
+    std::string js_exception;
     if (!extendsApi.isEmpty() && extendsApi.length() > 0) {
-        if (!globalObject->context->ExecuteJavaScript(std::string(extendsApi.utf8().data()), nullptr)) {
+        if (!globalObject->context->ExecuteJavaScript(std::string(extendsApi.utf8().data()), &js_exception)) {
             LOGE("before createInstanceContext run rax api Error");
+            if(!js_exception.empty()){
+                globalObject->js_bridge()->core_side()->ReportException(instanceId.utf8().data(),"run raxApi",js_exception.c_str());
+            }
             return static_cast<int32_t>(false);
         }
     }
 
     if (!script.isEmpty()) {
-        if (!globalObject->context->GetEngineContext()->RunJavaScript(std::string(script.utf8().data()), nullptr)) {
-            LOGE("createInstanceContext and ExecuteJavaScript Error");
+        if (!globalObject->context->GetEngineContext()->RunJavaScript(std::string(script.utf8().data()), &js_exception)) {
+            //LOGE("createInstanceContext and ExecuteJavaScript Error :%s",js_exception.c_str());
+            if(!js_exception.empty()){
+                globalObject->js_bridge()->core_side()->ReportException(instanceId.utf8().data(),"createInstanceContext",js_exception.c_str());
+            }
             return static_cast<int32_t>(false);
         }
     }
@@ -509,6 +525,7 @@ std::unique_ptr<WeexJSResult> WeexRuntimeV2::exeJSOnInstance(const String &insta
 
     if (!jsException.empty()) {
         LOGE("exec JS on instance %s, exception:%s", instance_id_str.c_str(), jsException.c_str());
+        globalObject->js_bridge()->core_side()->ReportException(instance_id_str.c_str(),"execJSOnInstance",jsException.c_str());
         return nullptr;
     }
     // const char *data = returnValue.toWTFString(globalObject->globalExec()).utf8().data();
@@ -536,6 +553,8 @@ int WeexRuntimeV2::destroyInstance(const String &instanceId) {
     if (weex_object_holder_v2_->timeQueue != nullptr) {
         weex_object_holder_v2_->timeQueue->destroyPageTimer(instance_id_str.c_str());
     }
+    delete globalObject;
+    globalObject = nullptr;
     return static_cast<int32_t>(true);
 }
 
@@ -545,12 +564,11 @@ int WeexRuntimeV2::updateGlobalConfig(const String &config) {
 }
 
 int WeexRuntimeV2::exeTimerFunction(const String &instanceId, uint32_t timerFunction, JSGlobalObject *globalObject) {
+    LOGE("[runtimev2] should not exec timer here!!!!");
     //return WeexRuntime::exeTimerFunction(instanceId, timerFunction, globalObject);
     return 0;
 
 }
-
-
 
 int WeexRuntimeV2::_initFrameworkWithScript(const String &source) {
 
@@ -560,7 +578,7 @@ int WeexRuntimeV2::_initFrameworkWithScript(const String &source) {
     weex_object_holder_v2_->globalObject->context->ExecuteJavaScript(std::string(source.utf8().data()), &exception);
 
     if (!exception.empty()) {
-        LOGE("WeexRuntime _initFramework error: %s", exception.c_str());
+        weex_object_holder_v2_->globalObject->js_bridge()->core_side()->ReportException("jsfm","_initFramework",exception.c_str());
         return false;
     }
     std::vector<unicorn::ScopeValues> args;
@@ -596,13 +614,12 @@ int WeexRuntimeV2::_initAppFrameworkWithScript(const String &instanceId, const S
     worker_globalObject->setScriptBridge(script_bridge_);
     worker_globalObject->id = std::string(instanceId.utf8().data());
 
-    std::string exeption;
-    if (!worker_globalObject->context->ExecuteJavaScript(std::string(appFramework.utf8().data()), &exeption)) {
-        if (!exeption.empty()) {
-            LOGE("WeexRuntime run worker failed: %s", exeption.c_str());
-        } else {
-            LOGE("WeexRuntime run worker failed");
+    std::string js_exception;
+    if (!worker_globalObject->context->ExecuteJavaScript(std::string(appFramework.utf8().data()), &js_exception)) {
+        if (!js_exception.empty()) {
+            worker_globalObject->js_bridge()->core_side()->ReportException(instanceId.utf8().data(),"initAppFramework",js_exception.c_str());
         }
+        LOGE("WeexRuntime run worker failed");
         return static_cast<int32_t>(false);
     }
 
@@ -677,8 +694,8 @@ int WeexRuntimeV2::exeTimerFunctionForRunTimeApi(const String &instanceId, uint3
     auto globalContext = globalObject->context->GetEngineContext();
     auto jsContext = globalContext->GetContext();
 
-    function->SetJSContext(static_cast<JSRunTimeContext>(jsContext));
-    LOG_WEEX_BINDING("run native timer func at instnace :%s, taskId:%d",globalObject->id.c_str(),timerFunction);
+    //function->SetJSContext(static_cast<JSRunTimeContext>(jsContext));
+    //LOG_WEEX_BINDING("run native timer func at instnace :%s, taskId:%d",globalObject->id.c_str(),timerFunction);
 
     function->Call(
             static_cast<JSRunTimeContext>(jsContext),
@@ -702,13 +719,13 @@ void WeexRuntimeV2::removeTimerFunctionForRunTimeApi(const uint32_t timerFunctio
     unicorn::RuntimeValues* targetFuncValue = globalObject->removeTimer(timerFunction);
 
     if (nullptr != targetFuncValue){
-        if ( targetFuncValue->IsFunction()){
-           auto func = targetFuncValue->GetAsFunction();
-           if(nullptr != func){
-               func->SetJSContext(static_cast<JSRunTimeContext>(globalObject->context->GetEngineContext()->GetContext()));
-           }
-        }
-        LOG_WEEX_BINDING("remove timer and delete fucn ,instance:%s, taskId:%d,context:%p",globalObject->id.c_str(),timerFunction,globalObject->context->GetEngineContext()->GetContext());
+//        if ( targetFuncValue->IsFunction()){
+//           auto func = targetFuncValue->GetAsFunction();
+//           if(nullptr != func){
+//               func->SetJSContext(static_cast<JSRunTimeContext>(globalObject->context->GetEngineContext()->GetContext()));
+//           }
+//        }
+//        LOG_WEEX_BINDING("remove timer and delete fucn ,instance:%s, taskId:%d,context:%p",globalObject->id.c_str(),timerFunction,globalObject->context->GetEngineContext()->GetContext());
 
         delete targetFuncValue;
         LOG_WEEX_BINDING("delete fucn ,instance:%s, taskId:%d ,succeed",globalObject->id.c_str(),timerFunction);

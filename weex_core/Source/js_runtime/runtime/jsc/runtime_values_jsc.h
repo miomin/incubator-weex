@@ -65,8 +65,6 @@ class JSCFunction : public Function {
 
   bool IsFromNative() override { return is_from_native_; };
 
-  void SetJSContext(JSContextRef contest) override;
-
   std::unique_ptr<RuntimeValues> Call(JSContextRef cur_context,size_t argc,
                             std::vector<ScopeValues>& argv) const override;
 

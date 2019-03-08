@@ -115,7 +115,6 @@ class Function {
 
   RuntimeObject* GetObject() const { return this_object_; }
   void SetObject(RuntimeObject* thiz);
-  virtual void SetJSContext(JSRunTimeContext contest) = 0;
 
  private:
   RuntimeObject* this_object_{nullptr};

@@ -78,6 +78,7 @@ JSCFunction::JSCFunction(JSContextRef ctx, std::string name, JSObjectRef thiz,
                           thiz_(thiz),
                           function_(function),
                           is_from_native_(false) {
+  context_ = JSContextGetGlobalContext(ctx);
  // LOG_JS_RUNTIME("JSCFunction constructor,ctx:%p, thiz:%p,func:%p",context_,thiz_,function_);
   JSGlobalContextRef global_ctx = JSContextGetGlobalContext(ctx);
   EngineContext* context =
@@ -101,10 +102,6 @@ void JSCFunction::MemberProtect() {
 void JSCFunction::MemberUnprotect() {
   JSValueUnprotect(context_, thiz_);
   JSValueUnprotect(context_, function_);
-}
-
-void JSCFunction::SetJSContext(JSContextRef  contest){
-  context_ = contest;
 }
 
 std::unique_ptr<RuntimeValues> JSCFunction::Call(JSContextRef cur_context,size_t argc,

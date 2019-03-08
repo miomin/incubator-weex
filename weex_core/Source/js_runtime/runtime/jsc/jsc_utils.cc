@@ -50,30 +50,30 @@ namespace unicorn {
                                                  JSClassRef class_ref,
                                                  const RuntimeValues *value) {
         if (value->IsUndefined()) {
-      //      LOG_TEST("RuntimeValueToJSValue -> undefined");
+            //      LOG_TEST("RuntimeValueToJSValue -> undefined");
             return JSValueMakeUndefined(ctx);
         } else if (value->IsNull()) {
-        //    LOG_TEST("RuntimeValueToJSValue -> null");
+            //    LOG_TEST("RuntimeValueToJSValue -> null");
             return JSValueMakeNull(ctx);
         } else if (value->IsBool()) {
             bool b = false;
             value->GetAsBoolean(&b);
-       ///     LOG_TEST("[Context] RuntimeValueToJSValue -> value %p on ctx:%p, bool :%d", value, ctx, b);
+            ///     LOG_TEST("[Context] RuntimeValueToJSValue -> value %p on ctx:%p, bool :%d", value, ctx, b);
             return JSValueMakeBoolean(ctx, b);
         } else if (value->IsInt()) {
             int num = 0;
             value->GetAsInteger(&num);
-          //  LOG_TEST("RuntimeValueToJSValue -> int :%d", num);
+            //  LOG_TEST("RuntimeValueToJSValue -> int :%d", num);
             return JSValueMakeNumber(ctx, static_cast<double>(num));
         } else if (value->IsDouble()) {
             double num = 0.0;
             value->GetAsDouble(&num);
-         //   LOG_TEST("RuntimeValueToJSValue -> double:%d", num);
+            //   LOG_TEST("RuntimeValueToJSValue -> double:%d", num);
             return JSValueMakeNumber(ctx, num);
         } else if (value->IsString()) {
             std::string tmp;
             value->GetAsString(&tmp);
-           // LOG_TEST("RuntimeValueToJSValue -> string:%s", tmp.c_str());
+            // LOG_TEST("RuntimeValueToJSValue -> string:%s", tmp.c_str());
             JSStringRef str = JSStringCreateWithUTF8CString(tmp.c_str());
             return JSValueMakeString(ctx, str);
         } else if (value->IsJsonObject()) {
@@ -82,7 +82,7 @@ namespace unicorn {
             //LOG_TEST("RuntimeValueToJSValue -> json:%s", json_str);
             return Conversion::ParserUtf8CharJsonToJValueJSContextRef(ctx, json_str);
         } else if (value->IsObject()) {
-           // LOG_TEST("RuntimeValueToJSValue -> obj");
+            // LOG_TEST("RuntimeValueToJSValue -> obj");
             BaseObject *native_ob = value->GetAsObject();
             if (class_ref == nullptr) {
                 auto clz = native_ob->GetRuntimeClass();
@@ -103,7 +103,7 @@ namespace unicorn {
             JSObjectSetPrivate(js_obj, data);
             return js_obj;
         } else if (value->IsMap()) {
-           // LOG_TEST("RuntimeValueToJSValue [start]-> map");
+            // LOG_TEST("RuntimeValueToJSValue [start]-> map");
             const JSCMap *local = static_cast<const JSCMap *>(value->GetAsMap());
             auto &map = local->GetMap();
             JSObjectRef thiz = local->GetThisObject();
@@ -111,16 +111,16 @@ namespace unicorn {
                 thiz = JSObjectMake(ctx, nullptr, nullptr);
             }
             for (auto &iter : map) {
-            //    LOG_TEST("RuntimeValueToJSValue [map key]-> %s", iter.first.c_str());
+                //    LOG_TEST("RuntimeValueToJSValue [map key]-> %s", iter.first.c_str());
                 JSStringRef str = JSStringCreateWithUTF8CString(iter.first.c_str());
                 JSValueRef value_ref = RuntimeValueToJSValue(ctx, nullptr, iter.second);
                 JSObjectSetProperty(ctx, thiz, str, value_ref, 0, nullptr);
                 JSStringRelease(str);
             }
-           // LOG_TEST("RuntimeValueToJSValue [end]-> map");
+            // LOG_TEST("RuntimeValueToJSValue [end]-> map");
             return thiz;
         } else if (value->IsFunction()) {
-           // LOG_TEST("RuntimeValueToJSValue -> func");
+            // LOG_TEST("RuntimeValueToJSValue -> func");
             const JSCFunction *local =
                     static_cast<const JSCFunction *>(value->GetAsFunction());
             return local->GetFunction();
@@ -129,7 +129,7 @@ namespace unicorn {
 // array in android now
 //#if defined(OS_ANDROID)
         else if (value->IsArray()) {
-          //  LOG_TEST("RuntimeValueToJSValue[start] -> array");
+            //  LOG_TEST("RuntimeValueToJSValue[start] -> array");
             // const JSCArray *local = static_cast<const JSCArray *>(value->GetAsArray());
 //            JSObjectRef thiz = local->GetThisObject();
 //            if (thiz == nullptr) {
@@ -154,7 +154,7 @@ namespace unicorn {
 
             JSObjectRef js_array = JSObjectMakeArray(ctx, length, args, &js_exception);
             printJSValueRefException(ctx, js_exception);
-         //   LOG_TEST("RuntimeValueToJSValue[end] -> array");
+            //   LOG_TEST("RuntimeValueToJSValue[end] -> array");
             return js_array;
         }
 //#endif
@@ -255,7 +255,7 @@ namespace unicorn {
     }
 
     bool Conversion::JSValueToStdString(JSContextRef ctx, JSValueRef value, std::string *result) {
-        if (!JSValueIsString(ctx, value)) {
+        if (nullptr == value || JSValueIsNull(ctx, value)) {
             return false;
         }
         JSStringRef str = JSValueToStringCopy(ctx, value, nullptr);
@@ -266,11 +266,7 @@ namespace unicorn {
             return false;
         }
         result->resize(bytes_written - 1);
-//        if (nullptr != result){
-//            LOG_TEST("Conversion::JSValueToStdString result: %s",result->c_str());
-//        } else{
-//            LOG_TEST("Conversion::JSValueToStdString result is null ptr");
-//        }
+       // LOGE("Conversion::JSValueToStdString result: %s", result->c_str());
 
         JSStringRelease(str);
         return true;
