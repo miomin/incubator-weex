@@ -86,6 +86,10 @@ public:
 #define DECLARE_CLASS_REGISTER_OP(class_)                                        \
 static JSClassRef s_jsclass_##class_;                                              \
 static JSClassRef CreateClassRef(unicorn::EngineContext* context);
+static bool s_is_global_binding = false;
+
+#define SET_IS_GLOBAL                                                       \
+s_is_global_binding = true;
 
 #define CHECK_IS_BASIC_TYPE(type_name_)                                    \
   bool is_basic_type = false;                                              \
@@ -166,9 +170,20 @@ static JSValueRef METHOD_CALLBACK_FUNCTION(method_name_)(                  \
                                         const JSValueRef* argv,            \
                                         JSValueRef *exception              \
                                         ) {                                \
-  class_* obj = static_cast<class_*>(JSObjectGetPrivate(thiz));            \
+                                                                                                            \
+  auto addr = JSObjectGetPrivate(thiz);                                                                     \
+  LOG_WEEX_BINDING("[Context]thiz:%p, object :%p,method  :%s on context:%p",thiz,addr,#method_name_,ctx);   \
+  if(nullptr == addr && s_is_global_binding){                                                               \
+      JSObjectRef globalObject = JSContextGetGlobalObject(ctx);                                             \
+      addr = JSObjectGetPrivate(globalObject);                                                              \
+     LOG_WEEX_BINDING("[Context]try get object %p at globalObject :%p, ",addr,thiz);                        \
+  }                                                                                                         \
+  if( nullptr == addr){                                                                                     \
+      LOGE("[Context]return undefined!! can't get object %p at thiz:%p, ",addr,thiz);                       \
+      return JSValueMakeUndefined(ctx);                                                                     \
+  }                                                                                                         \
+  class_* obj = static_cast<class_*>(addr);                                \
   std::vector<unicorn::ScopeValues> arguments;                             \
-  LOG_WEEX_BINDING("[Context]thiz:%p, object:%p,method  :%s on context:%p",thiz,obj,#method_name_,ctx);   \
   unicorn::Conversion::JSValuesArrayToRuntimeValues(ctx, thiz, argc,       \
                                argv,                                       \
                                arguments);                                 \

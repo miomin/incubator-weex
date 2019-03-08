@@ -81,6 +81,7 @@ namespace weex {
         CLASS_METHOD_CALLBACK(WeexGlobalBinding, __updateComponentData)
 
         CLASS_REGISTER_START(WeexGlobalBinding, Global)
+            SET_IS_GLOBAL
             REGISTER_METHOD_CALLBACK(WeexGlobalBinding, callNative)
             REGISTER_METHOD_CALLBACK(WeexGlobalBinding, callNativeModule)
             REGISTER_METHOD_CALLBACK(WeexGlobalBinding, callNativeComponent)

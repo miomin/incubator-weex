@@ -40,7 +40,7 @@ WeexRuntimeV2::WeexRuntimeV2(TimerQueue *timeQueue, bool isMultiProgress)
     initHeapTimer();
 
     //create vm
-    this->vm_ = unicorn::RuntimeVM::ForProcess();
+    this->vm_ = new unicorn::RuntimeVM();
     //code
     weex_object_holder_v2_.reset(new WeexObjectHolderV2(this->vm_, timeQueue, isMultiProgress));
 }

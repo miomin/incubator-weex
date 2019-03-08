@@ -39,32 +39,25 @@ CoreSideInSimple::~CoreSideInSimple() {}
 
 void CoreSideInSimple::CallNative(const char *page_id, const char *task,
                                   const char *callback) {
+  if (page_id == nullptr || task == nullptr) return;
   if(isUseRunTimeApi()){
-      if (isCallNativeToFinish(task)){
-          LOGE("CoreSideInSimple CallNative------> RenderManager::GetInstance()->CreateFinish");
-          RenderManager::GetInstance()->CreateFinish(page_id) ? 0 : -1;
-      } else{
-          LOGE("CoreSideInSimple CallNative------> module");
-          WeexCoreManager::Instance()
-                  ->getPlatformBridge()
-                  ->platform_side()
-                  ->CallNative(page_id, task, callback);
-      }
-      return;
+    if (isCallNativeToFinish(task)){
+      RenderManager::GetInstance()->CreateFinish(page_id) ? 0 : -1;
+    } else{
+      WeexCoreManager::Instance()
+              ->getPlatformBridge()
+              ->platform_side()
+              ->CallNative(page_id, task, callback);
+    }
+    return;
   }
 
-
-  char* target = "[{\"module\":\"dom\",\"method\":\"createFinish\",\"args\":[]}]";
-  if (page_id == nullptr || task == nullptr) return;
   if (strcmp(
           task,
           "[{\"module\":\"dom\",\"method\":\"createFinish\",\"args\":[]}]") ==
       0) {
-
-    LOGW("CoreSideInSimple callNalive  strcmp succeed ! target length:%d, vale:%s| src length:%d, value:%s",strlen(target), target,strlen(task),task);
     RenderManager::GetInstance()->CreateFinish(page_id) ? 0 : -1;
   } else {
-    LOGE("CoreSideInSimple callNalive  strcmp failed ! target length:%d, vale:%s| src length:%d, value:%s",strlen(target), target,strlen(task),task);
     WeexCoreManager::Instance()
         ->getPlatformBridge()
         ->platform_side()
@@ -76,7 +69,6 @@ std::unique_ptr<IPCResult> CoreSideInSimple::CallNativeModule(
     const char *page_id, const char *module, const char *method,
     const char *arguments, int arguments_length, const char *options,
     int options_length) {
-  LOGW("CoreSideInSimple callNaliveModule page:%s,module:%s,method:%s",page_id,module,method);
   std::unique_ptr<IPCResult> ret = createInt32Result(-1);
   if (page_id != nullptr && module != nullptr && method != nullptr) {
     RenderManager::GetInstance()->CallNativeModule(page_id, module, method,

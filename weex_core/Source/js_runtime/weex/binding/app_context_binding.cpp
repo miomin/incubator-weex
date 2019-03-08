@@ -47,6 +47,7 @@ namespace weex {
         CLASS_MEMBER_GET_CALLBACK(AppWorkerBinding, console)
 
         CLASS_REGISTER_START(AppWorkerBinding, AppWorker)
+            SET_IS_GLOBAL
             REGISTER_METHOD_CALLBACK(AppWorkerBinding, nativeLog)
             REGISTER_METHOD_CALLBACK(AppWorkerBinding, __dispatch_message__)
             REGISTER_METHOD_CALLBACK(AppWorkerBinding, __dispatch_message_sync__)

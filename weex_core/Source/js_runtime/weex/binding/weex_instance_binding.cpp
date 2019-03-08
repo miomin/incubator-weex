@@ -52,6 +52,7 @@ namespace weex {
         CLASS_METHOD_CALLBACK(WeexInstanceBinding, __updateComponentData)
 
         CLASS_REGISTER_START(WeexInstanceBinding, Instance)
+            SET_IS_GLOBAL
             REGISTER_METHOD_CALLBACK(WeexInstanceBinding, nativeLog)
             REGISTER_METHOD_CALLBACK(WeexInstanceBinding, atob)
             REGISTER_METHOD_CALLBACK(WeexInstanceBinding, btoa)
