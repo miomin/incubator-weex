@@ -139,7 +139,7 @@ namespace weex {
         unicorn::ScopeValues WeexInstanceBinding::__updateComponentData(
                 const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexInstanceBinding method :__updateComponentData");
-            return unicorn::RuntimeValues::MakeUndefined();
+            return WeexBindingUtils::__updateComponentData(this->nativeObject,vars);
         }
     }
 }

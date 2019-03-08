@@ -182,9 +182,9 @@ void TimerQueue::destroyPageTimer(String instanceId) {
                 weexTaskQueue->removeTimer(reference->taskId);
                 if (weexTaskQueue->weexRuntime){
                     if (WeexEnv::getEnv()->isUseRunTimeApi()){
-                        weexTaskQueue->weexRuntime->removeTimerFunction(reference->m_function, reference->global_object_);
-                    } else{
                         weexTaskQueue->weexRuntime->removeTimerFunctionForRunTimeApi(reference->m_function,reference->global_object_v2_);
+                    } else{
+                        weexTaskQueue->weexRuntime->removeTimerFunction(reference->m_function, reference->global_object_);
                     }
                 }
 

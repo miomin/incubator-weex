@@ -3293,7 +3293,9 @@ TaskCenter.prototype.callModule = function callModule (module, method, args, opt
     return global.callNativeModule(this.instanceId, module, method, args, options)
   }
 
-   var tmpArg = [{ module: module, method: method, args: args }];
+    var tmpArg = [{ module: module, method: method, args: args }];
+
+   //var tmpArg = [{ module: "dom", method: "createFinish", args: [] }];
    nativeLog("[jsfm] callNative ->");
 
    return global.callNative(this.instanceId, tmpArg);

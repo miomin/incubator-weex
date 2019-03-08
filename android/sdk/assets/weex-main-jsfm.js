@@ -3288,12 +3288,14 @@ TaskCenter.prototype.callComponent = function callComponent (ref, method, args, 
 
 TaskCenter.prototype.callModule = function callModule (module, method, args, options) {
 
-  // if (typeof global.callNativeModule === 'function') {
-  //   nativeLog("[jsfm] callModule -> callNativeModule:");
-  //   return global.callNativeModule(this.instanceId, module, method, args, options)
-  // }
+  if (typeof global.callNativeModule === 'function') {
+    nativeLog("[jsfm] callModule -> callNativeModule:");
+    return global.callNativeModule(this.instanceId, module, method, args, options)
+  }
 
-   var tmpArg = [{ module: module, method: method, args: args }];
+    var tmpArg = [{ module: module, method: method, args: args }];
+
+   //var tmpArg = [{ module: "dom", method: "createFinish", args: [] }];
    nativeLog("[jsfm] callNative ->");
 
    return global.callNative(this.instanceId, tmpArg);

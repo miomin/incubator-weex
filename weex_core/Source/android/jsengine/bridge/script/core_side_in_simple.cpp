@@ -27,6 +27,8 @@
 #include "core/manager/weex_core_manager.h"
 #include "core/render/manager/render_manager.h"
 #include "third_party/IPC/IPCResult.h"
+#include "android/utils/params_utils.h"
+#include "core/parser/action_args_check.h"
 
 namespace weex {
 namespace bridge {
@@ -37,7 +39,21 @@ CoreSideInSimple::~CoreSideInSimple() {}
 
 void CoreSideInSimple::CallNative(const char *page_id, const char *task,
                                   const char *callback) {
-  LOGE("CoreSideInSimple callNalive : pageId:%s ,task:%s",page_id,task);
+  if(isUseRunTimeApi()){
+      if (isCallNativeToFinish(task)){
+          LOGE("CoreSideInSimple CallNative------> RenderManager::GetInstance()->CreateFinish");
+          RenderManager::GetInstance()->CreateFinish(page_id) ? 0 : -1;
+      } else{
+          LOGE("CoreSideInSimple CallNative------> module");
+          WeexCoreManager::Instance()
+                  ->getPlatformBridge()
+                  ->platform_side()
+                  ->CallNative(page_id, task, callback);
+      }
+      return;
+  }
+
+
   char* target = "[{\"module\":\"dom\",\"method\":\"createFinish\",\"args\":[]}]";
   if (page_id == nullptr || task == nullptr) return;
   if (strcmp(
