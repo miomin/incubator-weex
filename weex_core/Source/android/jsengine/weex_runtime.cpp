@@ -713,6 +713,37 @@ int WeexRuntime::createInstance(const String &instanceId, const String &func, co
                     LOGE("dyy create instance propertyName_ == null");
                     continue;
                 }
+                std::string testName;
+                size_t max_bytes = JSStringGetMaximumUTF8CStringSize(propertyName_);
+                testName.resize(max_bytes);
+                size_t bytes_written = JSStringGetUTF8CString(propertyName_, &testName[0], max_bytes);
+                if (max_bytes == 0) {
+                    return false;
+                }
+                testName.resize(bytes_written - 1);
+
+                LOGE("createInstance ,global set item [%s,%p]",testName.c_str(),propertyValue_);
+                //JSStringRelease(propertyName_);
+                if (testName == "weex"){
+                    JSObjectRef weexObject = JSValueToObject(globalContextRef,propertyValue_,NULL);
+                    auto weexArray = JSObjectCopyPropertyNames(globalContextRef, weexObject);
+                    size_t weex_key_count = JSPropertyNameArrayGetCount(weexArray);
+                    for (size_t weexIndex = 0; weexIndex < weex_key_count; ++weexIndex) {
+                        JSStringRef weexKey = JSPropertyNameArrayGetNameAtIndex(weexArray, weexIndex);
+                        auto weex_key_value_ = JSObjectGetProperty(globalContextRef, weexObject, weexKey, NULL);
+                        std::string weex_key_Name;
+                        size_t weex_max_bytes = JSStringGetMaximumUTF8CStringSize(weexKey);
+                        weex_key_Name.resize(weex_max_bytes);
+                        size_t weex_bytes_written = JSStringGetUTF8CString(weexKey, &weex_key_Name[0], weex_max_bytes);
+                        if (weex_max_bytes == 0) {
+                            break;
+                        }
+                        weex_key_Name.resize(weex_bytes_written - 1);
+                        LOGE("[createInstance] weex.config item [%s,%p] ,this:%p, index:%d",weex_key_Name.c_str(),weex_key_value_,this,weexIndex);
+                       // JSStringRelease(weexKey);
+                    }
+                }
+
 
                 JSObjectSetProperty(instanceContextRef, instanceGlobalObject, propertyName_, propertyValue_, 0, NULL);
             }
@@ -723,7 +754,6 @@ int WeexRuntime::createInstance(const String &instanceId, const String &func, co
             if (vueRef != nullptr) {
                 JSObjectRef vueObject = JSValueToObject(globalContextRef, vueRef, nullptr);
                 if (vueObject != nullptr) {
-
                     JSObjectSetPrototype(instanceContextRef, vueObject,
                                          JSObjectGetPrototype(instanceContextRef,
                                                               JSContextGetGlobalObject(instanceContextRef)));

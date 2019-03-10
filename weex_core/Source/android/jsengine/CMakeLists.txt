@@ -26,9 +26,9 @@ add_definitions(-DPRINT_LOG_CACHEFILE=0)
 add_definitions(-DOS_ANDROID)
 
 # log switch for debug in file "js_runtime/utils/log_utils.h"
-#add_definitions(-DLOG_JS_RUNTIME_DEBUG=0)
-#add_definitions(-DLOG_WEEX_RUNTIME_DEBUG=0)
-#add_definitions(-DLOG_CONVERSION_DEBUG=0)
+add_definitions(-DLOG_JS_RUNTIME_DEBUG=0)
+add_definitions(-DLOG_WEEX_RUNTIME_DEBUG=0)
+add_definitions(-DLOG_CONVERSION_DEBUG=0)
 add_definitions(-DLOG_WEEX_BINDING_DEBUG=0)
 add_definitions(-DLOG_JS_DEBUG=0)
 

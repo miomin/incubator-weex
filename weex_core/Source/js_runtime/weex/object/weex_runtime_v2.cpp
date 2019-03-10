@@ -118,7 +118,7 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
         final_instanceId = instanceId;
     }
 
-    LOG_RUNTIME("createAppContext get_context_fun_name = %s", get_context_fun_name.utf8().data());
+    LOG_RUNTIME("WeexRuntime  createAppContext get_context_fun_name = %s", get_context_fun_name.utf8().data());
 
     // new a global object
     // --------------------------------------------------
@@ -159,7 +159,7 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
     std::vector<std::string> nameArray;
 
     if (!worker_globalObject->context->GetEngineContext()->GetObjectPropertyNameArray(fucRetJSObject, nameArray)) {
-        LOGE("WeexRuntime:   get fucRetJSObject properties name array failed");
+        LOGE("WeexRuntime:  createAppContext  get fucRetJSObject properties name array failed");
         return static_cast<int32_t>(false);
     }
 
@@ -167,14 +167,14 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
         auto propertyValue = worker_globalObject->context->GetEngineContext()->GetPropertyValueFromObject(
                 propertyName, fucRetJSObject);
         if (nullptr == propertyValue) {
-            LOGE("WeexRuntime:   get fucRetJSObject properties value failed, name:%s", propertyName.c_str());
+            LOGE("WeexRuntime:  createAppContext  get fucRetJSObject properties value failed, name:%s", propertyName.c_str());
             return static_cast<int32_t>(false);
         }
         app_globalObject->context->GetEngineContext()->setObjectValue(nullptr, propertyName, propertyValue);
     }
 
     app_globalObject->id = std::string(final_instanceId.utf8().data());
-    LOG_RUNTIME("WeexRuntime: Create App Context instanceId.utf8().data() %s", final_instanceId.utf8().data());
+    LOG_RUNTIME("WeexRuntime:createAppContext instanceId.utf8().data() %s", final_instanceId.utf8().data());
 
     if (!jsBundle.isEmpty()) {
         std::string exeption;
@@ -475,7 +475,19 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
                     LOGE("WeexRuntime:   get fucRetJSObject properties value failed, name:%s", propertyName.c_str());
                     return static_cast<int32_t>(false);
                 }
-                // LOGE("WeexRuntime:  set newContext properties name:%s", propertyName.c_str());
+                LOG_RUNTIME("WeexRuntime:  set global item [%s,%p] ,this:%s", propertyName.c_str(),propertyValue,this);
+
+                if (propertyName == "weex"){
+                    std::vector<std::string> weexPropties;
+                    JSRunTimeObject weexObject = impl_globalObject->context->GetEngineContext()->toObjectFromValue(propertyValue);
+                    impl_globalObject->context->GetEngineContext()->GetObjectPropertyNameArray(weexObject, weexPropties);
+
+                    for(auto weexKey : weexPropties){
+                        LOG_RUNTIME("WeexRuntime:  weex.config [%s,%p] ,this:%s", weexKey.c_str(),propertyValue,this);
+                    }
+                }
+
+
                 temp_object->context->GetEngineContext()->setObjectValue(nullptr, propertyName, propertyValue);
             }
             weex_object_holder_v2_->m_jsInstanceGlobalObjectMap[instance_id_str] = temp_object;
@@ -485,7 +497,7 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
     }
 
     std::string js_exception;
-    if (!extendsApi.isEmpty() && extendsApi.length() > 0) {
+    if (!extendsApi.length() > 0) {
         if (!globalObject->context->ExecuteJavaScript(std::string(extendsApi.utf8().data()), &js_exception)) {
             LOGE("before createInstanceContext run rax api Error");
             if(!js_exception.empty()){
