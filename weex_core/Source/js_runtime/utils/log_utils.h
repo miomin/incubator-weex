@@ -26,7 +26,7 @@
 #include "base/utils/log_utils.h"
 
 #ifdef LOG_JS_RUNTIME_DEBUG
-#define LOG_JS_RUNTIME(...) __android_log_print(ANDROID_LOG_DEBUG,"[JS_RUNTIME]", __VA_ARGS__)
+#define LOG_JS_RUNTIME(...) __android_log_print(ANDROID_LOG_WARN,"[JS_RUNTIME]", __VA_ARGS__)
 #else
 #define LOG_JS_RUNTIME(...) ((void)0)
 #endif

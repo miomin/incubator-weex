@@ -49,8 +49,14 @@ int ScriptSideInQueue::InitFramework(
   weexTaskQueue_->init();
 
   if (WeexEnv::getEnv()->enableBackupThread()) {
+ //   WeexEnv::getEnv()->locker()->lock();
+//    while (!WeexEnv::getEnv()->is_jsc_init_finished()) {
+//      WeexEnv::getEnv()->locker()->wait();
+//    }
+//    WeexEnv::getEnv()->locker()->unlock();
     weexTaskQueue_bk_ = new WeexTaskQueue(weexTaskQueue_->isMultiProgress);
     weexTaskQueue_bk_->addTask(new InitFrameworkTask(String::fromUTF8(script), params));
+    weexTaskQueue_bk_->isBack = true;
     weexTaskQueue_bk_->init();
   }
 
@@ -289,6 +295,7 @@ WeexTaskQueue *ScriptSideInQueue::taskQueue(const char *id, bool log) {
   if (id != nullptr && shouldUseBackUpWeexRuntime(id)) {
     if (weexTaskQueue_bk_ == nullptr) {
       weexTaskQueue_bk_ = new WeexTaskQueue(weexTaskQueue_->isMultiProgress);
+      weexTaskQueue_bk_->isBack = true;
     }
     if (log) {
       LOGE("dyyLog instance %s use back up thread time is %lld", id, microTime());

@@ -32,7 +32,7 @@ class WeexRuntimeV2 : public WeexRuntime {
 public:
     explicit WeexRuntimeV2(TimerQueue *timeQueue, bool isMultiProgress);
 
-    explicit WeexRuntimeV2(TimerQueue *timeQueue, WeexCore::ScriptBridge *script_bridge, bool isMultiProgress);
+    explicit WeexRuntimeV2(TimerQueue *timeQueue, WeexCore::ScriptBridge *script_bridge, bool isMultiProgress,bool isBack);
 
     bool hasInstanceId(String &id) override;
 
@@ -113,6 +113,8 @@ protected:
     std::map<std::string, WeexObjectHolderV2 *> app_worker_context_holder_map_v2_;
     unicorn::RuntimeVM *vm_;
     bool multi_process_flag_;
+public:
+    bool isBack = false;
 };
 
 

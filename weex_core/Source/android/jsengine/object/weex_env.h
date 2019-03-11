@@ -91,12 +91,21 @@ public:
         return enableBackupThread__;
     }
 
+    ThreadLocker* locker() { return &thread_locker_; }
+        void jsc_init_finished() { isJscInitOk_ = true; };
+
+        bool is_jsc_init_finished() {return isJscInitOk_; }
+
 public:
     std::unique_ptr<BackToWeexCoreQueue> m_back_to_weex_core_thread;
     volatile bool isMultiProcess = true;
     std::unique_ptr<WeexIPCClient> m_ipc_client_;
 private:
     static WeexEnv *env_;
+
+    ThreadLocker thread_locker_;
+
+    volatile bool isJscInitOk_ = false;
 
     volatile bool isUsingWson = true;
 

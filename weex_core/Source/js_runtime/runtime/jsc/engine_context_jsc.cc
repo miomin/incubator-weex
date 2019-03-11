@@ -43,15 +43,15 @@ namespace unicorn {
         JSContextGroupRef context_group =
                 static_cast<JSContextGroupRef>(vm_->EngineVM());
         context_ = JSGlobalContextCreateInGroup(context_group, globalClassRef);
-        LOG_JS_RUNTIME("[Context] EngineContextJSC::create context :%p ，globalObject :%p", context_,JSContextGetGlobalObject(context_));
+        LOG_JS_RUNTIME("[Context] EngineContextJSC::create context :%p ，globalObject :%p", context_,
+                       JSContextGetGlobalObject(context_));
 
         if (delegate_) delegate_->OnEngineContextInitialized();
     }
 
     bool EngineContextJSC::RunJavaScript(const std::string &script, std::string *runException) {
-        LOG_JS_RUNTIME("EngineContextJSC:: RunJavaScript :%s", script.c_str());
+        LOG_JS_RUNTIME("EngineContextJSC:: RunJavaScript onContext :%p, script :%s", context_, script.c_str());
         JSStringRef source = JSStringCreateWithUTF8CString(script.c_str());
-        LOG_JS_RUNTIME("WeexRuntime:: RunJavaScript source is %s, ref is %p", script.c_str(), source);
         JSValueRef exceptionRef = nullptr;
 
 //  JSObjectRef targetObjectRef = nullptr;
@@ -66,14 +66,15 @@ namespace unicorn {
         //JSValueRef result = nullptr;
         JSEvaluateScript(context_, source, NULL, NULL, 0, &exceptionRef);
         // release jsc string
-        Conversion::JSValueToStdString(context_,exceptionRef,runException);
-       // Conversion::printJSValueRefException(context_, exceptionRef);
+        Conversion::JSValueToStdString(context_, exceptionRef, runException);
+        // Conversion::printJSValueRefException(context_, exceptionRef);
 
         JSStringRelease(source);
         if (exceptionRef) {
             // to be done
             return false;
         }
+        LOG_JS_RUNTIME("WeexRuntime:: RunJavaScript succeed this");
         return true;
     }
 
@@ -85,8 +86,8 @@ namespace unicorn {
         JSValueRef result = nullptr;
         if (!exceptionRef) {
             result = JSEvaluateScript(context_, source, NULL, NULL, 0, &exceptionRef);
-        } else{
-            Conversion::JSValueToStdString(context_,exceptionRef,exception);
+        } else {
+            Conversion::JSValueToStdString(context_, exceptionRef, exception);
         }
 
         JSStringRelease(source);
@@ -154,8 +155,8 @@ namespace unicorn {
 
         JSObjectRef funcObjectRef = JSValueToObject(context_, funcValueRef, &exc);
 
-        if(exc && JSValueIsString(context_,exc)){
-            Conversion::JSValueToStdString(context_,exc,exception);
+        if (exc && JSValueIsString(context_, exc)) {
+            Conversion::JSValueToStdString(context_, exc, exception);
         }
 
         if (exc || !funcObjectRef || !JSObjectIsFunction(context_, funcObjectRef)) {
@@ -172,7 +173,7 @@ namespace unicorn {
         result = JSObjectCallAsFunction(context_, funcObjectRef, targetObjectRef, args.size(), argv_js, &exc);
 
         if (!result || exc) {
-            Conversion::JSValueToStdString(context_,exc,exception);
+            Conversion::JSValueToStdString(context_, exc, exception);
             return nullptr;
         }
         LOG_JS_RUNTIME("EngineContextJSC  call func  :%s succeed ~~~ ,return result :%d", cName, result);
@@ -181,7 +182,8 @@ namespace unicorn {
 
     JSValueRef EngineContextJSC::GetPropertyValueFromObject(std::string property_id, JSRunTimeObject object) {
         if (nullptr == object) {
-            LOG_JS_RUNTIME("EngineContextJSC GetPropertyValueFromObject check object failed from id:%s", property_id.c_str());
+            LOG_JS_RUNTIME("EngineContextJSC GetPropertyValueFromObject check object failed from id:%s",
+                           property_id.c_str());
             return nullptr;
         }
         //  LOG_TEST("EngineContextJSC try GetPropertyValueFromObject :%s", property_id.c_str());
@@ -267,7 +269,7 @@ namespace unicorn {
             }
             result.resize(bytes_written - 1);
 
-            LOG_JS_RUNTIME("[EngineContextJSC] GetObjectPropertyName item :%s",result.c_str());
+            LOG_JS_RUNTIME("[EngineContextJSC] GetObjectPropertyName item :%s", result.c_str());
 
             JSStringRelease(propertyName_);
             nameArrays.push_back(result);
@@ -276,7 +278,12 @@ namespace unicorn {
     }
 
     bool EngineContextJSC::setObjectValue(JSRunTimeObject targetObject, const std::string &key, JSRunTimeValue value) {
-        LOG_JS_RUNTIME("EngineContextJSC enter func  setObjectValue :%s, val :%p", key.c_str(),value);
+        LOG_JS_RUNTIME("EngineContextJSC enter func  setObjectValue onContext %p, [%s,%d],val:%p",
+                       context_,
+                       key.c_str(),
+                       JSValueGetType(context_, value),
+                       value
+        );
         if (nullptr == targetObject) {
             //LOG_TEST("EngineContextJSC  setObjectValue to global ");
             targetObject = JSContextGetGlobalObject(context_);
@@ -289,8 +296,8 @@ namespace unicorn {
         //LOG_TEST("EngineContextJSC setObjectValue succeed ");
         if (exe) {
             std::string jse;
-            Conversion::JSValueToStdString(context_,exe,&jse);
-            LOGE("[JSExcepion] ------> %s",jse.c_str());
+            Conversion::JSValueToStdString(context_, exe, &jse);
+            LOGE("[JSExcepion] ------> %s", jse.c_str());
 
             return false;
         } else {

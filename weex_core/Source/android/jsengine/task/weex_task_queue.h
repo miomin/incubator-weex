@@ -53,6 +53,7 @@ public:
 public:
     WeexRuntime *weexRuntime;
     bool isMultiProgress;
+    bool  isBack = false;
 
 private:
     int _addTask(WeexTask *task, bool front);

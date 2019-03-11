@@ -192,7 +192,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
   private static boolean isUseRuntimeApi = true;
   // add for cloud setting, default value is false.
   // jsEngine use multiThread or not
-  private volatile static boolean isJsEngineMultiThreadEnable = false;
+  private volatile static boolean isJsEngineMultiThreadEnable = true;
 
   public enum BundType {
     Vue,
@@ -284,7 +284,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
   }
 
   public void checkJsEngineMultiThread() {
-    boolean flag = false;
+    boolean flag = true;
     IWXJscProcessManager wxJscProcessManager = WXSDKManager.getInstance().getWXJscProcessManager();
     if(wxJscProcessManager!=null) {
       flag = wxJscProcessManager.enableBackupThread();

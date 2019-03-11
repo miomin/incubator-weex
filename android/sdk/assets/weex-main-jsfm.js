@@ -4391,6 +4391,14 @@ function getFrameworkType (id) {
   return instanceTypeMap[id]
 }
 
+function printObject(msg,ob){
+  var keys = [];
+  for(var itemKey in ob){
+    keys.push(itemKey);
+  }
+  nativeLog(msg + "| keys: "+JSON.stringify(keys));
+}
+
 function createInstanceContext (id, options, data) {
   if ( options === void 0 ) options = {};
 
@@ -4435,18 +4443,11 @@ function createInstanceContext (id, options, data) {
     Object.assign(instanceContext, framework.createInstanceContext(id, runtimeContext, data));
   }
   Object.freeze(instanceContext);
-  for(var tmpkey in instanceContext){
-     nativeLog("[jsfm][instanceContext] itemkey : "+ tmpkey);
-     if( tmpkey == "weex"){
-      var weexValue = instanceContext[tmpkey];
-      for(var weexkey in weexValue){
-         nativeLog("[jsfm][weex] itemkey:"+weexkey);
-         if (weexkey == "config") {
-           nativeLog("[jsfm][weex-config] valse :"+JSON.stringify(weexValue.config))
-         }
-      }
-     }
-  }
+
+  printObject("[jsfm][weex-instance] ",instanceContext);
+  printObject("[jsfm][weex-instance-weex] ",instanceContext.weex);
+  printObject("[jsfm][weex-instance-requireModule] ",instanceContext.requireModule);
+  nativeLog("[jsfm] , weex-instance-requireModule------>"+instanceContext.requireModule);
   return instanceContext
 }
 
