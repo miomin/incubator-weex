@@ -209,7 +209,9 @@ int WeexRuntimeV2::createAppContext(const String &instanceId, const String &jsBu
 std::unique_ptr<WeexJSResult> WeexRuntimeV2::exeJSOnAppWithResult(const String &instanceId, const String &jsBundle) {
     LOGE("WeexRuntime: exeJSOnAppWithResult app.js is empty!!!!!!!!!!!, instanceId:%s, jsBundle:%s",
          instanceId.utf8().data(), jsBundle.utf8().data());
-    return WeexRuntime::exeJSOnAppWithResult(instanceId, jsBundle);
+    //return WeexRuntime::exeJSOnAppWithResult(instanceId, jsBundle);
+    std::unique_ptr<WeexJSResult> returnResult;
+    return returnResult;
 }
 
 //int WeexRuntimeV2::callJSOnAppContext(IPCArguments *arguments) {
@@ -384,7 +386,7 @@ WeexRuntimeV2::exeJSWithResult(const String &instanceId, const String &nameSpace
     _geJSRuntimeArgsFromWeexParams(globalObject->context->GetEngineContext(), &args, params);
 
     std::string jsException;
-    auto values = globalObject->context->GetEngineContext()->callJavaScriptFunc(
+    auto values = globalObject->context->GetEngineContext()->CallJavaScriptFuncWithRuntimeValue(
             nullptr,
             runFunc,
             args,
@@ -397,8 +399,8 @@ WeexRuntimeV2::exeJSWithResult(const String &instanceId, const String &nameSpace
         LOGE("[runtime2]exeJS error on instance %s ,func:%s", instance_id_str.c_str(), runFunc.c_str());
         return returnResult;
     }
-    //todo  convertJSArrayToWeexJSResult(state, ret, returnResult.get());
     //convert values to returnResult
+    weex::jsengine::WeexConversionUtils::ConvertRunTimeValueToWeexJSResult(values, returnResult.get());
     return returnResult;
 }
 

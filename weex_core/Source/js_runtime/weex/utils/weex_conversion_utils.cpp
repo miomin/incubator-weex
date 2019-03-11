@@ -25,6 +25,7 @@
 #include "weex_conversion_utils.h"
 #include "js_runtime/utils/log_utils.h"
 #include "wson_for_runtime.h"
+#include "android/jsengine/object/weex_env.h"
 
 namespace weex {
     namespace jsengine {
@@ -250,6 +251,51 @@ namespace weex {
                 return;
             }
             ConvertRunTimeVaueToWson(vars[index].get(), args);
+        }
+
+        void
+        WeexConversionUtils::ConvertRunTimeValueToWeexJSResult(unicorn::ScopeValues &value, WeexJSResult *jsResult) {
+            if (!value->IsArray() || nullptr == jsResult) {
+                LOGE("!value->IsArray() ");
+                return;
+            }
+            bool isAllNull = true;
+            const unicorn::Array *array = value->GetAsArray();
+            if (nullptr == array) {
+                LOGE("nullptr == array");
+                return;
+            }
+            for (size_t i = 0; i < array->Size(); i++) {
+                auto item = array->atIndex(i);
+                if (nullptr != item && !item->IsUndefined() && !item->IsNull()) {
+                    isAllNull = false;
+                    break;
+                }
+            }
+            if (isAllNull) {
+                LOGE("isAllNull ");
+                return;
+            }
+            char *buf = nullptr;
+            if (WeexEnv::getEnv()->useWson()) {
+                wson_buffer *buffer = wson::runTimeValueToWson(value.get());
+                char *data = (char *) buffer->data;
+                jsResult->length = buffer->position;
+                buf = new char[jsResult->length + 1];
+                memcpy(buf, data, jsResult->length);
+                wson_parser parser((char *) buffer->data);
+                LOGW("[exeJSWithResult] result wson :%s", parser.toStringUTF8().c_str());
+
+                wson_buffer_free(buffer);
+            } else {
+                std::string json_str;
+                WeexConversionUtils::RunTimeValuesOfObjectToJson(value.get()).dump(json_str);
+                jsResult->length = json_str.length();
+                buf = new char[jsResult->length + 1];
+                memcpy(buf, json_str.c_str(), jsResult->length);
+            }
+            buf[jsResult->length] = '\0';
+            jsResult->data.reset(buf);
         }
     }
 }

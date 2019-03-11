@@ -96,6 +96,10 @@ namespace unicorn {
 
         std::string GetName() override;
 
+         ScopeValues
+         CallJavaScriptFuncWithRuntimeValue(RuntimeObject *target, const std::string &name, std::vector<ScopeValues> &args,
+                                           std::string *exception)override ;
+
 
     private:
         EngineContextDelegate *delegate_;

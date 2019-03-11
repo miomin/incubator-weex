@@ -20,11 +20,12 @@
 // Created by 陈佩翰 on 2019/2/22.
 //
 
-#include <js_runtime/weex/binding/weex_global_binding.h>
-#include <js_runtime/weex/binding/weex_instance_binding.h>
-#include <js_runtime/weex/binding/app_context_binding.h>
+#include "js_runtime/weex/binding/weex_global_binding.h"
+#include "js_runtime/weex/binding/weex_instance_binding.h"
+#include "js_runtime/weex/binding/app_context_binding.h"
 #include "weex_global_object_v2.h"
 #include "js_runtime/utils/log_utils.h"
+#include "js_runtime/weex/utils/weex_conversion_utils.h"
 
 void WeexGlobalObjectV2::makeWeexGlobalObject(unicorn::RuntimeVM *vm) {
     this->object_type_ = WeexGlobal;

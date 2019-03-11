@@ -77,6 +77,10 @@ namespace unicorn {
         callJavaScriptFunc(RuntimeObject *target, const std::string &name, std::vector<ScopeValues> &args,
                            std::string *exception) = 0;
 
+        virtual ScopeValues
+        CallJavaScriptFuncWithRuntimeValue(RuntimeObject *target, const std::string &name, std::vector<ScopeValues> &args,
+                           std::string *exception) = 0;
+
         virtual void ThrowJSError(const std::string &error) = 0;
 
         virtual void ThrowException(const std::string &error) = 0;

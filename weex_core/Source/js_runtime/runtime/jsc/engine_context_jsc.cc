@@ -331,5 +331,12 @@ namespace unicorn {
         return this->context_name;
     }
 
+    ScopeValues EngineContextJSC::CallJavaScriptFuncWithRuntimeValue(RuntimeObject *target, const std::string &name,
+                                                                     std::vector<ScopeValues> &args,
+                                                                     std::string *exception) {
+        JSValueRef  jsValue = this->callJavaScriptFunc(target,name,args,exception);
+        return Conversion::JSValueToRuntimeValue(context_, nullptr, jsValue);
+    }
+
 }
 // namespace unicorn
