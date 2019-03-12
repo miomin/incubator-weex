@@ -538,10 +538,6 @@ JSFUNCTION functionCallCreateFinish(ExecState *state) {
     Args idChar;
     getStringArgsFromState(state, 0, idChar);
     WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
-
-
-    LOGE("[globalObject] CreateFinish argSize:%d, id:%s",idChar.getValue());
-
     globalObject->js_bridge()->core_side()->CreateFinish(idChar.getValue());
     return JSValue::encode(jsNumber(0));
 }
@@ -555,9 +551,6 @@ JSFUNCTION functionCallRefreshFinish(ExecState *state) {
     getStringArgsFromState(state, 0, idChar);
     getStringArgsFromState(state, 1, taskChar);
     getStringArgsFromState(state, 2, callBackChar);
-
-    LOGE("[globalObject] functionCallRefreshFinish argSize:%d, id:%s, task:%s, callBack:%s",state->argumentCount(),idChar.getValue(),taskChar.getValue(),callBackChar.getValue());
-
     WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
 //    weex::base::TimeCalculator timeCalculator(weex::base::TaskPlatform::JSS_ENGINE, "functionCallRefreshFinish",globalObject->id);
 //    timeCalculator.taskStart();
