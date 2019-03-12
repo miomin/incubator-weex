@@ -46,12 +46,12 @@ WeexRuntimeV2::WeexRuntimeV2(TimerQueue *timeQueue, WeexCore::ScriptBridge *scri
             LOG_RUNTIME("failed to init ICUEnv single process");
             // return false;
         }
+    }
         LOG_RUNTIME("WeexRuntime is running and mode is %s ， isBackQuene? : %d",
                     isMultiProgress ? "multiProcess" : "singleProcess", isBack);
         //todo if delete ,will crash
-        //WTF::initializeMainThread();
+        WTF::initializeMainThread();
         initHeapTimer();
-    }
 
     // });
     //create vm
