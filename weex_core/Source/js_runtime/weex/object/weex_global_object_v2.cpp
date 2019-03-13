@@ -27,17 +27,20 @@
 #include "js_runtime/utils/log_utils.h"
 #include "js_runtime/weex/utils/weex_conversion_utils.h"
 
+static bool isGlobalConfigStartUpSet = false;
+#define WX_GLOBAL_CONFIG_KEY "global_switch_config"
+
 void WeexGlobalObjectV2::makeWeexGlobalObject(unicorn::RuntimeVM *vm) {
     this->object_type_ = WeexGlobal;
     weex::jsengine::WeexGlobalBinding::CreateClassRef(nullptr);
     context = unicorn::RuntimeContext::Create(vm, weex::jsengine::WeexGlobalBinding::s_jsclass_WeexGlobalBinding);
     LOG_RUNTIME("[Context] makeWeexGlobalObject context ptr:%p", context->GetEngineContext()->GetContext());
-    auto globalObjectBinding = new weex::jsengine::WeexGlobalBinding(context->GetEngineContext(), nullptr);
-    auto globalJSObject = context->GetEngineContext()->GetGlobalObjectInContext();
-    context->GetEngineContext()->BindDataToObject(globalJSObject, globalObjectBinding);
-    globalObjectBinding->SetJSObject(globalJSObject);
-    globalObjectBinding->nativeObject.reset(this);
-    LOG_RUNTIME("WeexGlobalObject make binding:%p,native this:%p", globalObjectBinding, this);
+    auto binding_object = new weex::jsengine::WeexGlobalBinding(context->GetEngineContext(), nullptr);
+    auto global_js_object = context->GetEngineContext()->GetGlobalObjectInContext();
+    context->GetEngineContext()->BindDataToObject(global_js_object, binding_object);
+    binding_object->SetJSObject(global_js_object);
+    binding_object->nativeObject = this;
+    this->global_object_binding.reset(static_cast<unicorn::RuntimeObject*>(binding_object));
     //binding dom api
     //weex::jsengine::DomManager::BindingDomApi(context->GetEngineContext(), std::string("global"),std::string("weex_global_context"));
 }
@@ -50,11 +53,12 @@ WeexGlobalObjectV2::makeWeexInstanceObject(unicorn::RuntimeVM *vm, const std::st
     context = unicorn::RuntimeContext::Create(vm, weex::jsengine::WeexInstanceBinding::s_jsclass_WeexInstanceBinding);
     LOG_RUNTIME("[Context] makeWeexInstanceObject context ptr:%p", context->GetEngineContext()->GetContext());
     context->GetEngineContext()->SetName(id);
-    auto globalObjectBinding = new weex::jsengine::WeexInstanceBinding(context->GetEngineContext(), nullptr);
-    globalObjectBinding->nativeObject.reset(this);
-    auto globalJSObject = context->GetEngineContext()->GetGlobalObjectInContext();
-    context->GetEngineContext()->BindDataToObject(globalJSObject, globalObjectBinding);
-    globalObjectBinding->SetJSObject(globalJSObject);
+    auto binding_object = new weex::jsengine::WeexInstanceBinding(context->GetEngineContext(), nullptr);
+    binding_object->nativeObject = this;
+    auto global_js_object = context->GetEngineContext()->GetGlobalObjectInContext();
+    context->GetEngineContext()->BindDataToObject(global_js_object, binding_object);
+    binding_object->SetJSObject(global_js_object);
+    this->global_object_binding.reset(static_cast<unicorn::RuntimeObject*>(binding_object));
 }
 
 void WeexGlobalObjectV2::makeAppWorkerObject(unicorn::RuntimeVM *vm) {
@@ -62,11 +66,12 @@ void WeexGlobalObjectV2::makeAppWorkerObject(unicorn::RuntimeVM *vm) {
     //global object not support bind static method for globalObject now cause jsruntime
     weex::jsengine::AppWorkerBinding::CreateClassRef(nullptr);
     context = unicorn::RuntimeContext::Create(vm, weex::jsengine::AppWorkerBinding::s_jsclass_AppWorkerBinding);
-    auto globalObjectBinding = new weex::jsengine::AppWorkerBinding(context->GetEngineContext(), nullptr);
-    auto globalJSObject = context->GetEngineContext()->GetGlobalObjectInContext();
-    context->GetEngineContext()->BindDataToObject(globalJSObject, globalObjectBinding);
-    globalObjectBinding->nativeObject.reset(this);
-    globalObjectBinding->SetJSObject(globalJSObject);
+    auto binding_object = new weex::jsengine::AppWorkerBinding(context->GetEngineContext(), nullptr);
+    auto global_js_object = context->GetEngineContext()->GetGlobalObjectInContext();
+    context->GetEngineContext()->BindDataToObject(global_js_object, binding_object);
+    binding_object->nativeObject = this;
+    binding_object->SetJSObject(global_js_object);
+    this->global_object_binding.reset(static_cast<unicorn::RuntimeObject*>(binding_object));
 }
 
 void WeexGlobalObjectV2::addExtraOptions(std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
@@ -117,13 +122,13 @@ WeexGlobalObjectV2::initWxEnvironment(std::vector<INIT_FRAMEWORK_PARAMS *> &para
             m_initFrameworkParams.push_back(init_framework_params);
         }
 
-//        if (!isGlobalConfigStartUpSet) {
-//            if (strncmp(type.utf8().data(), WX_GLOBAL_CONFIG_KEY, strlen(WX_GLOBAL_CONFIG_KEY)) == 0) {
-//                const char *config = value.utf8().data();
-//                doUpdateGlobalSwitchConfig(config);
-//            }
-//            isGlobalConfigStartUpSet = true;
-//        }
+        if (!isGlobalConfigStartUpSet) {
+            if (strncmp(type.utf8().data(), WX_GLOBAL_CONFIG_KEY, strlen(WX_GLOBAL_CONFIG_KEY)) == 0) {
+                const char *config = value.utf8().data();
+                doUpdateGlobalSwitchConfig(config);
+            }
+            isGlobalConfigStartUpSet = true;
+        }
 
         // --------------------------------------------------------
         // add for debug mode
@@ -152,7 +157,7 @@ void WeexGlobalObjectV2::setScriptBridge(WeexCore::ScriptBridge *script_bridge) 
 }
 
 
-unicorn::RuntimeValues* WeexGlobalObjectV2::removeTimer(uint32_t function_id) {
+unicorn::RuntimeValues *WeexGlobalObjectV2::removeTimer(uint32_t function_id) {
     auto iter = function_maps_.find(function_id);
     if (iter == function_maps_.end()) {
         LOGE("timer do not exist!");
@@ -163,29 +168,59 @@ unicorn::RuntimeValues* WeexGlobalObjectV2::removeTimer(uint32_t function_id) {
     return funcValue;
 }
 
-uint32_t WeexGlobalObjectV2::genFunctionID() {
-    if (function_id_ > (INT_MAX - 1)) {
-        LOGE(" WeexGlobalObject::genFunctionID timer fucntion id to large, something wrong now, crash!");
-        abort();
-    }
-    return function_id_++;
-}
+//uint32_t WeexGlobalObjectV2::genFunctionID() {
+//    if (function_id_ > (INT_MAX - 1)) {
+//        LOGE(" WeexGlobalObject::genFunctionID timer fucntion id to large, something wrong now, crash!");
+//        abort();
+//    }
+//    return function_id_++;
+//}
 
-unicorn::RuntimeValues* WeexGlobalObjectV2::getTimerFunction(uint32_t function_id) {
+unicorn::RuntimeValues *WeexGlobalObjectV2::getTimerFunction(uint32_t function_id) {
     auto iter = function_maps_.find(function_id);
     if (iter == function_maps_.end())
         return nullptr;
     return function_maps_[function_id];
 }
 
-void WeexGlobalObjectV2::addTimer(uint32_t function_id,  unicorn::RuntimeValues* func) {
+//void WeexGlobalObjectV2::addTimer(uint32_t function_id, unicorn::RuntimeValues *func) {
+//
+//    auto iter = function_maps_.find(function_id);
+//    if (iter != function_maps_.end()) {
+//        LOGE("timer already exist in map, return now");
+//        return;
+//    }
+//    function_maps_[function_id] = func;
+//
+//}
 
-    auto iter = function_maps_.find(function_id);
-    if (iter != function_maps_.end()) {
-        LOGE("timer already exist in map, return now");
+int WeexGlobalObjectV2::setNativeTimeout(unicorn::RuntimeValues *func, int timeOut, bool interval) {
+    if (nullptr == func || nullptr == timeQueue) {
+        return 0;
+    }
+    if (function_id_ > (INT_MAX - 1)) {
+        LOGE(" WeexGlobalObject::genFunctionID timer fucntion id to large, something wrong now, crash!");
+        abort();
+    }
+    function_id_++;
+    function_maps_[function_id_] = func;
+    if (timeOut < 1) {
+        timeOut = 1;
+    }
+    LOG_WEEX_BINDING("WeexBindingUtils setNativeTimeout timeOut :%d , type:%d", timeOut, func->GetType());
+
+    TimerTask *task = new TimerTask(WTF::String::fromUTF8(this->id.c_str()), function_id_,
+                                    timeOut, nullptr, interval);
+    task->global_object_v2_ = this;
+    timeQueue->addTimerTask(task);
+    return task->taskId;
+}
+
+void WeexGlobalObjectV2::clearNativeTimeout(int timer_task_id) {
+    LOG_WEEX_BINDING("[WeexBindingUtils] method :clearNativeTimeout");
+    if (nullptr == timeQueue) {
         return;
     }
-    function_maps_[function_id] = func;
-
+    timeQueue->removeTimer(timer_task_id);
 }
 

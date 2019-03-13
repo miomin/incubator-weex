@@ -32,35 +32,30 @@ namespace weex {
         class WeexBindingUtils {
         public:
             static unicorn::ScopeValues
-            atob(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                 const std::vector<unicorn::ScopeValues> &vars);
+            atob(WeexGlobalObjectV2 *nativeObject, const std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues
-            btoa(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                 const std::vector<unicorn::ScopeValues> &vars);
+            btoa(WeexGlobalObjectV2 *nativeObject, const std::vector<unicorn::ScopeValues> &vars);
 
             static unicorn::ScopeValues
-            nativeLog(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                      const std::vector<unicorn::ScopeValues> &vars, bool toCoreSide);
+            nativeLog(WeexGlobalObjectV2 *nativeObject, const std::vector<unicorn::ScopeValues> &vars, bool toCoreSide);
 
             static unicorn::ScopeValues
-            setNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                             std::vector<unicorn::ScopeValues> &vars, bool interval);
+            setNativeTimeout(WeexGlobalObjectV2 *nativeObject, std::vector<unicorn::ScopeValues> &vars, bool interval);
 
             static unicorn::ScopeValues
-            clearNativeTimeout(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                               std::vector<unicorn::ScopeValues> &vars);
+            clearNativeTimeout(WeexGlobalObjectV2 *nativeObject, std::vector<unicorn::ScopeValues> &vars);
 
-            static unicorn::ScopeValues callT3DLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                                                          const std::vector<unicorn::ScopeValues> &vars);
-
-
-            static unicorn::ScopeValues callGCanvasLinkNative(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                                                              const std::vector<unicorn::ScopeValues> &vars);
+            static unicorn::ScopeValues
+            callT3DLinkNative(WeexGlobalObjectV2 *nativeObject, const std::vector<unicorn::ScopeValues> &vars);
 
 
-            static unicorn::ScopeValues __updateComponentData(const std::unique_ptr<WeexGlobalObjectV2> &nativeObject,
-                                                              const std::vector<unicorn::ScopeValues> &vars);
+            static unicorn::ScopeValues
+            callGCanvasLinkNative(WeexGlobalObjectV2 *nativeObject, const std::vector<unicorn::ScopeValues> &vars);
+
+
+            static unicorn::ScopeValues
+            __updateComponentData(WeexGlobalObjectV2 *nativeObject, const std::vector<unicorn::ScopeValues> &vars);
 
         };
     }

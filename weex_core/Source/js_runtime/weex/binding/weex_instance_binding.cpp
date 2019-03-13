@@ -76,7 +76,8 @@ namespace weex {
         }
 
         WeexInstanceBinding::~WeexInstanceBinding() {
-            LOG_WEEX_BINDING("WeexInstanceBinding delete");
+          //  LOGE("[release] WeexInstanceBinding delete");
+            this->nativeObject = nullptr;
 
         }
 
@@ -109,13 +110,13 @@ namespace weex {
 
         unicorn::ScopeValues WeexInstanceBinding::setNativeTimeout(
                 std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("instanceConteext: setNativeTimeout this:%p,nativeObject:%p", this,nativeObject.get());
+            LOG_WEEX_BINDING("instanceConteext: setNativeTimeout this:%p,nativeObject:%p", this,nativeObject);
             return WeexBindingUtils::setNativeTimeout(nativeObject, vars, false);
         }
 
         unicorn::ScopeValues WeexInstanceBinding::setNativeInterval(
                 std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("instanceConteext: setNativeInterval this:%p,nativeObject:%p", this,nativeObject.get());
+            LOG_WEEX_BINDING("instanceConteext: setNativeInterval this:%p,nativeObject:%p", this,nativeObject);
             return WeexBindingUtils::setNativeTimeout(nativeObject, vars, true);
         }
 
@@ -131,6 +132,9 @@ namespace weex {
 
         unicorn::ScopeValues WeexInstanceBinding::console() {
             LOG_WEEX_BINDING("[console] WeexInstanceBinding  console :%p",this->consoleBinding.get());
+            if (nullptr == nativeObject || nullptr == this->consoleBinding.get()){
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
             return unicorn::RuntimeValues::MakeCommonObject(
                     static_cast<void *>(this->consoleBinding.get()),
                     new unicorn::RuntimeClass(consoleBinding->GetJSClass())

@@ -52,7 +52,7 @@ class RuntimeObject {
     else
       context_ = js_ctx;
   }
-  virtual ~RuntimeObject() {}
+  virtual ~RuntimeObject();
 
   virtual void SetEngineContext(EngineContext* context) {
     engine_context_ = context;

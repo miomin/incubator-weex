@@ -112,6 +112,7 @@ namespace weex {
 
         WeexGlobalBinding::~WeexGlobalBinding() {
             LOG_WEEX_BINDING("WeexGlobalBinding delete");
+            this->nativeObject = nullptr;
         }
 
         WeexGlobalBinding::WeexGlobalBinding(unicorn::EngineContext *context, const OpaqueJSContext *js_ctx)
@@ -122,6 +123,9 @@ namespace weex {
 
         unicorn::ScopeValues
         WeexGlobalBinding::setIntervalWeex(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
 
             std::string page_id;
             std::string task_str;
@@ -141,7 +145,9 @@ namespace weex {
 
         unicorn::ScopeValues WeexGlobalBinding::clearIntervalWeex(
                 const std::vector<unicorn::ScopeValues> &vars) {
-
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeBool(false);
+            }
 
             std::string page_id;
             std::string callback_str;
@@ -160,6 +166,10 @@ namespace weex {
 
         unicorn::ScopeValues
         WeexGlobalBinding::callNative(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             std::string page_id;
             std::string task;
             std::string callback_str;
@@ -190,6 +200,10 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callNativeModule(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             std::string instanceId;
             std::string module;
             std::string method;
@@ -226,6 +240,10 @@ namespace weex {
         unicorn::ScopeValues WeexGlobalBinding::callNativeComponent(
                 const std::vector<unicorn::ScopeValues> &vars) {
 
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             std::string instanceId;
             std::string module;
             std::string method;
@@ -254,6 +272,10 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callAddElement(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             std::string page_id;
             std::string parent_ref;
             Args dom_str;
@@ -276,6 +298,11 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callCreateBody(const std::vector<unicorn::ScopeValues> &vars) {
+
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             std::string page_id;
             Args dom_str;
 
@@ -293,6 +320,10 @@ namespace weex {
         unicorn::ScopeValues WeexGlobalBinding::callUpdateFinish(const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexGlobalBinding method :callUpdateFinish");
 
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             std::string page_id;
             Args task_str;
             Args call_back_str;
@@ -309,6 +340,11 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callCreateFinish(const std::vector<unicorn::ScopeValues> &vars) {
+
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             std::string page_id;
             WeexConversionUtils::GetStringFromArgsDefaultEmpty(vars, 0, page_id);
             LOG_WEEX_BINDING("[WeexGlobalBinding] [sendCreateFinish] doc:%s, ", page_id.c_str());
@@ -317,6 +353,11 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callRefreshFinish(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
+
             std::string page_id;
             std::string task;
             std::string callBack;
@@ -337,6 +378,10 @@ namespace weex {
 
 
         unicorn::ScopeValues WeexGlobalBinding::callUpdateAttrs(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             LOG_WEEX_BINDING("WeexGlobalBinding method :callUpdateAttrs");
 
             std::string page_id;
@@ -357,6 +402,11 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callUpdateStyle(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
+
             LOG_WEEX_BINDING("WeexGlobalBinding method :callUpdateStyle");
 
             std::string page_id;
@@ -376,6 +426,11 @@ namespace weex {
 
 
         unicorn::ScopeValues WeexGlobalBinding::callRemoveElement(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
+
             LOG_WEEX_BINDING("WeexGlobalBinding method :callRemoveElement");
 
             std::string page_id;
@@ -391,6 +446,11 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callMoveElement(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
+
             LOG_WEEX_BINDING("WeexGlobalBinding method :callMoveElement");
 
             std::string page_id;
@@ -414,6 +474,11 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callAddEvent(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
+
             LOG_WEEX_BINDING("WeexGlobalBinding method :callAddEvent");
 
             std::string page_id;
@@ -433,6 +498,11 @@ namespace weex {
         }
 
         unicorn::ScopeValues WeexGlobalBinding::callRemoveEvent(const std::vector<unicorn::ScopeValues> &vars) {
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
+
             LOG_WEEX_BINDING("WeexGlobalBinding method :callRemoveEvent");
             std::string page_id;
             std::string node_ref;
@@ -454,6 +524,11 @@ namespace weex {
 
         unicorn::ScopeValues WeexGlobalBinding::setTimeoutNative(
                 const std::vector<unicorn::ScopeValues> &vars) {
+
+            if (nullptr == nativeObject) {
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
+
             std::string callback_str;
             std::string time_str;
 
@@ -508,7 +583,7 @@ namespace weex {
         unicorn::ScopeValues WeexGlobalBinding::__updateComponentData(
                 const std::vector<unicorn::ScopeValues> &vars) {
 
-            return WeexBindingUtils::__updateComponentData(this->nativeObject,vars);
+            return WeexBindingUtils::__updateComponentData(this->nativeObject, vars);
 
         }
     }

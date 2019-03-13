@@ -17,8 +17,16 @@
 #include "js_runtime/runtime/runtime_object.h"
 
 #include "js_runtime/runtime/jsc/jsc_utils.h"
+#include "js_runtime/utils/log_utils.h"
 
 namespace unicorn {
+
+RuntimeObject::~RuntimeObject() {
+   if (nullptr != this->object_ && nullptr != this->context_){
+     JSObjectSetPrivate(object_,nullptr);
+   }
+  LOGE("[release] ~RuntimeObject() this:%p", this);
+}
 
 void RuntimeObject::SetParentJSClass(JSRunTimeClass parent_class) {
   parent_class_ = parent_class;

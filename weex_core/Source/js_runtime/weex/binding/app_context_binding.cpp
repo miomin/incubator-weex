@@ -20,11 +20,12 @@
 // Created by 陈佩翰 on 2019/1/23.
 //
 
-#include <js_runtime/weex/utils/weex_conversion_utils.h>
+
 #include "app_context_binding.h"
 #include "weex_binding_utils.h"
 #include "core/bridge/script_bridge.h"
 #include "js_runtime/weex/object/weex_global_object_v2.h"
+#include "js_runtime/weex/utils/weex_conversion_utils.h"
 
 namespace weex {
     namespace jsengine {
@@ -67,7 +68,7 @@ namespace weex {
         }
 
         AppWorkerBinding::~AppWorkerBinding() {
-
+            this->nativeObject = nullptr;
         }
 
         unicorn::ScopeValues
@@ -79,6 +80,9 @@ namespace weex {
                 const std::vector<unicorn::ScopeValues> &vars) {
 
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__");
+            if (nullptr == this->nativeObject){
+                return unicorn::RuntimeValues::MakeInt(0);
+            }
 
             std::string client_id;
             std::string data;
@@ -108,6 +112,9 @@ namespace weex {
         AppWorkerBinding::__dispatch_message_sync__(
                 const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message_sync__");
+            if (nullptr == this->nativeObject){
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
 
             std::string client_id;
             std::string data;
@@ -118,14 +125,15 @@ namespace weex {
             const char *data_char = succeed ? data.c_str() : nullptr;
             vm_id = this->nativeObject->id;
 
-            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ , cliend:%s, vm:%s,data:%s", client_id.c_str(),vm_id.c_str(),data_char);
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ , cliend:%s, vm:%s,data:%s", client_id.c_str(),
+                             vm_id.c_str(), data_char);
 
             auto result = this->nativeObject->js_bridge()->core_side()->DispatchMessageSync(client_id.c_str(),
                                                                                             data_char,
                                                                                             succeed ? data.length() : 0,
                                                                                             vm_id.c_str());
 
-            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ , result:%s",result->data.get());
+            LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ , result:%s", result->data.get());
 
             if (result->length == 0) {
                 return unicorn::RuntimeValues::MakeUndefined();
@@ -138,6 +146,9 @@ namespace weex {
         unicorn::ScopeValues
         AppWorkerBinding::postMessage(const std::vector<unicorn::ScopeValues> &vars) {
             LOG_WEEX_BINDING("WeexRuntime: postMessage");
+            if (nullptr == this->nativeObject){
+                return unicorn::RuntimeValues::MakeInt(0);
+            }
 
             std::string data;
             std::string vm_id;
@@ -151,20 +162,21 @@ namespace weex {
             vm_id = this->nativeObject->id;
             LOG_WEEX_BINDING("WeexRuntime: __dispatch_message__ vm_id is %s", vm_id.c_str());
 
-            this->nativeObject->js_bridge()->core_side()->PostMessage(vm_id.c_str(), data_char, succeed?data.length():0);
+            this->nativeObject->js_bridge()->core_side()->PostMessage(vm_id.c_str(), data_char,
+                                                                      succeed ? data.length() : 0);
 
             return unicorn::RuntimeValues::MakeInt(0);
         }
 
         unicorn::ScopeValues
         AppWorkerBinding::setNativeTimeout(std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("appConteext: setNativeTimeout this:%p,nativeObject:%p", this, nativeObject.get());
+            LOG_WEEX_BINDING("appConteext: setNativeTimeout this:%p,nativeObject:%p", this, nativeObject);
             return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars, false);
         }
 
         unicorn::ScopeValues AppWorkerBinding::setNativeInterval(
                 std::vector<unicorn::ScopeValues> &vars) {
-            LOG_WEEX_BINDING("appConteext: setNativeInterval this:%p,nativeObject:%p", this, nativeObject.get());
+            LOG_WEEX_BINDING("appConteext: setNativeInterval this:%p,nativeObject:%p", this, nativeObject);
             return WeexBindingUtils::setNativeTimeout(this->nativeObject, vars, true);
         }
 
@@ -180,6 +192,9 @@ namespace weex {
 
         unicorn::ScopeValues
         AppWorkerBinding::console() {
+            if(nullptr == nativeObject || nullptr == this->consoleBinding.get()){
+                return unicorn::RuntimeValues::MakeUndefined();
+            }
             return unicorn::RuntimeValues::MakeCommonObject(
                     static_cast<void *>(this->consoleBinding.get()),
                     new unicorn::RuntimeClass(consoleBinding->GetJSClass())

@@ -37,6 +37,8 @@ namespace unicorn {
 
         if (delegate_) delegate_->OnEngineContextFinalized();
         delegate_ = nullptr;
+
+        LOGE("[release] release ctx :%p", context_);
     }
 
     void EngineContextJSC::InitializeContext(JSClassRef globalClassRef) {

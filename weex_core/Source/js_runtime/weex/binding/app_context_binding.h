@@ -68,7 +68,7 @@ namespace weex {
             unicorn::ScopeValues console();
 
         public:
-            std::unique_ptr<WeexGlobalObjectV2> nativeObject;
+            WeexGlobalObjectV2* nativeObject = nullptr;
             std::unique_ptr<WeexConsoleBinding> consoleBinding;
         };
     }

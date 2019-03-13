@@ -26,7 +26,9 @@
 
 #include <include/WeexApiHeader.h>
 #include <task/timer_queue.h>
-#include <js_runtime/runtime/runtime_context.h>
+#include "js_runtime/runtime/runtime_context.h"
+#include "js_runtime/runtime/runtime_object.h"
+
 
 enum WeexGlobalObjectType {
     WeexInstance,
@@ -41,12 +43,13 @@ public:
     std::string id = "";
     TimerQueue *timeQueue = nullptr;
     std::unique_ptr<unicorn::RuntimeContext> context;
+    std::unique_ptr<unicorn::RuntimeObject> global_object_binding;
 
 private:
     WeexCore::ScriptBridge *script_bridge_;
     WeexGlobalObjectType object_type_;
     uint32_t function_id_;
-    std::map<uint32_t, unicorn::RuntimeValues*> function_maps_;
+    std::map<uint32_t, unicorn::RuntimeValues *> function_maps_;
 
 
 public:
@@ -66,19 +69,23 @@ public:
 
     void setScriptBridge(WeexCore::ScriptBridge *script_bridge);
 
-    // store js timer function
-    void addTimer(uint32_t function_id, unicorn::RuntimeValues*  func);
 
-    unicorn::RuntimeValues* removeTimer(uint32_t function_id);
+    unicorn::RuntimeValues *removeTimer(uint32_t function_id);
 
-    uint32_t genFunctionID();
 
-    unicorn::RuntimeValues* getTimerFunction(uint32_t function_id) ;
+    int setNativeTimeout(unicorn::RuntimeValues *func, int timeOut, bool interval);
+    void clearNativeTimeout(int timer_task_id);
+
+    unicorn::RuntimeValues *getTimerFunction(uint32_t function_id);
 
     inline WeexGlobalObjectType getObjectType() {
         return this->object_type_;
     }
 
+private:
+    // uint32_t genFunctionID();
+
+    //void addTimer(uint32_t function_id, unicorn::RuntimeValues *func);
 };
 
 

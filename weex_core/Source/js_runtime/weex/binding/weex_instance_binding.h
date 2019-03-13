@@ -71,7 +71,7 @@ namespace weex {
             __updateComponentData(const std::vector<unicorn::ScopeValues> &vars);
 
         public:
-            std::unique_ptr<WeexGlobalObjectV2> nativeObject;
+            WeexGlobalObjectV2* nativeObject = nullptr;
             std::unique_ptr<WeexConsoleBinding> consoleBinding;
         };
     }
