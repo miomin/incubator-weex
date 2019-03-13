@@ -22,35 +22,37 @@
 
 namespace unicorn {
 
-static std::once_flag gVMInitialization;
-static RuntimeVM* gRVM;
-void* RuntimeVM::vm_ = nullptr;
+//static std::once_flag gVMInitialization;
+//static RuntimeVM* gRVM;
+//
+//RuntimeVM* RuntimeVM::ForProcess() {
+//  std::call_once(gVMInitialization, []() mutable { gRVM = new RuntimeVM(); });
+//
+//  return gRVM;
+//}
 
-RuntimeVM* RuntimeVM::ForProcess() {
-  std::call_once(gVMInitialization, []() mutable { gRVM = new RuntimeVM(); });
+    RuntimeVM::RuntimeVM() {
+        this->vm_ = RuntimeVM::CreateEngineVM();
+    }
 
-  return gRVM;
-}
+    RuntimeVM::~RuntimeVM() {
+        if (this->vm_) {
+            RuntimeVM::ReleaseEngineVM(this->vm_);
+            this->vm_ = nullptr;
+        }
+    }
 
-RuntimeVM::RuntimeVM() {
-  RuntimeVM::vm_ = RuntimeVM::CreateEngineVM();
-}
+    void *RuntimeVM::EngineVM() { return RuntimeVM::vm_; }
 
-RuntimeVM::~RuntimeVM() {
-  if (RuntimeVM::vm_) RuntimeVM::ReleaseEngineVM(RuntimeVM::vm_);
-}
-
-void* RuntimeVM::EngineVM() { return RuntimeVM::vm_; }
-
-bool RuntimeVM::Shutdown() {
-  RuntimeVM::ReleaseEngineVM(RuntimeVM::vm_);
-  RuntimeVM::vm_ = nullptr;
-  return true;
-}
+    bool RuntimeVM::Shutdown() {
+        RuntimeVM::ReleaseEngineVM(this->vm_);
+        this->vm_ = nullptr;
+        return true;
+    }
 
 // private
-void RuntimeVM::Initialize() {
-  // TODO(zhangxiao): for vm initializing
-}
+    void RuntimeVM::Initialize() {
+        // TODO(zhangxiao): for vm initializing
+    }
 
 }  // namespace unicorn

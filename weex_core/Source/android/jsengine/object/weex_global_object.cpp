@@ -355,7 +355,6 @@ JSFUNCTION functionCallNative(ExecState *state) {
     JSValue callback_js = state->argument(2);
     String callback_str = callback_js.toWTFString(state);
 
-
     globalObject->js_bridge()->core_side()->CallNative(id_str.utf8().data(), task.get(),
                                                        callback_str.utf8().data());
     return JSValue::encode(jsNumber(0));
@@ -689,10 +688,8 @@ JSFUNCTION functionNativeLog(ExecState *state) {
 
     if (!sb.isEmpty()) {
 
-       // WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
-        //globalObject->js_bridge()->core_side()->NativeLog(sb.toString().utf8().data());
-        auto log_char = sb.toString().utf8().data();
-        LOGW("[JS_LOG][GlobalObject] :%s ",log_char);
+        WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
+        globalObject->js_bridge()->core_side()->NativeLog(sb.toString().utf8().data());
     }
     return JSValue::encode(jsBoolean(true));
 }
@@ -707,10 +704,7 @@ JSFUNCTION functionNativeLogContext(ExecState *state) {
     if (!sb.isEmpty()) {
 
         WeexGlobalObject *globalObject = static_cast<WeexGlobalObject *>(state->lexicalGlobalObject());
-
-        auto log_char = sb.toString().utf8().data();
-        LOGW("[JS_LOG][GlobalObject] :%s ",log_char);
-       // globalObject->js_bridge()->core_side()->NativeLog(log_char);
+        globalObject->js_bridge()->core_side()->NativeLog(sb.toString().utf8().data());
     }
     return JSValue::encode(jsBoolean(true));
 }

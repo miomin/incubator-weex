@@ -44,7 +44,7 @@ class RuntimeContext;
 
 class RuntimeVM {
  public:
-  static RuntimeVM* ForProcess();
+  //static RuntimeVM* ForProcess();
 
   RuntimeVM();
   ~RuntimeVM();
@@ -60,7 +60,7 @@ class RuntimeVM {
   bool Shutdown();
 
  private:
-  static void* vm_;
+    void* vm_;
 
   void Initialize();
 };

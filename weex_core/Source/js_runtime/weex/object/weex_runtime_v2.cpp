@@ -34,32 +34,24 @@ WeexRuntimeV2::WeexRuntimeV2(TimerQueue *timeQueue, bool isMultiProgress)
 
 }
 
-WeexRuntimeV2::WeexRuntimeV2(TimerQueue *timeQueue, WeexCore::ScriptBridge *script_bridge, bool isMultiProgress,
-                             bool isBack)
+WeexRuntimeV2::WeexRuntimeV2(TimerQueue *timeQueue, WeexCore::ScriptBridge *script_bridge, bool isMultiProgress)
         : WeexRuntimeV2(timeQueue, isMultiProgress) {
     this->script_bridge_ = script_bridge;
-    this->isBack = isBack;
-    //static std::once_flag g_init_jsc;
-    //  std::call_once(g_init_jsc, [isMultiProgress,isBack]() mutable {
-    if (!isBack) {
-        if (!WEEXICU::initICUEnv(isMultiProgress)) {
-            LOG_RUNTIME("failed to init ICUEnv single process");
-            // return false;
-        }
+    if (!WEEXICU::initICUEnv(isMultiProgress)) {
+        LOG_RUNTIME("[initICUEnv]failed to init ICUEnv single process");
     }
-        LOG_RUNTIME("WeexRuntime is running and mode is %s ， isBackQuene? : %d",
-                    isMultiProgress ? "multiProcess" : "singleProcess", isBack);
-        //todo if delete ,will crash
-        WTF::initializeMainThread();
-        initHeapTimer();
+    //todo if delete ,will crash
+    WTF::initializeMainThread();
+    initHeapTimer();
 
-    // });
+    //  });
+    //WeexEnv::getEnv()->jsc_init_finished();
+    //WeexEnv::getEnv()->locker()->signal();
     //create vm
     this->vm_ = new unicorn::RuntimeVM();
     //code
     weex_object_holder_v2_.reset(new WeexObjectHolderV2(this->vm_, timeQueue, isMultiProgress));
-    // WeexEnv::getEnv()->jsc_init_finished();
-    // WeexEnv::getEnv()->locker()->signal();
+
 }
 
 bool WeexRuntimeV2::hasInstanceId(String &id) {
@@ -521,7 +513,7 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
     }
 
     std::string js_exception;
-    if (!extendsApi.length() > 0) {
+    if (extendsApi.length() > 0) {
         if (!globalObject->context->ExecuteJavaScript(std::string(extendsApi.utf8().data()), &js_exception)) {
             LOGE("before createInstanceContext run rax api Error :%s", js_exception.c_str());
             if (!js_exception.empty()) {
