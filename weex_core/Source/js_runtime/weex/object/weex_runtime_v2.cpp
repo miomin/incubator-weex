@@ -514,7 +514,7 @@ WeexRuntimeV2::createInstance(const String &instanceId, const String &func, cons
 
     std::string js_exception;
     if (!extendsApi.isEmpty()) {
-        LOGE("[runtime2] run rax api :%s",extendsApi.utf8().data());
+        LOGE("[runtime2] run rax api ,length:%d",extendsApi.length());
         if (!globalObject->context->ExecuteJavaScript(std::string(extendsApi.utf8().data()), &js_exception)) {
             LOGE("before createInstanceContext run rax api Error :%s", js_exception.c_str());
             if (!js_exception.empty()) {

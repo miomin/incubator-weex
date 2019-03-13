@@ -76,7 +76,7 @@ namespace weex {
         }
 
         WeexInstanceBinding::~WeexInstanceBinding() {
-          //  LOGE("[release] WeexInstanceBinding delete");
+            LOG_WEEX_BINDING("[release] WeexInstanceBinding delete");
             this->nativeObject = nullptr;
 
         }

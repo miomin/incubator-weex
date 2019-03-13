@@ -1,6 +1,6 @@
 cd ../android
-rm -rf sdk/build/intermediates/bundles/default/jni/*
-./gradlew clean assembleRelease
+#rm -rf sdk/build/intermediates/bundles/default/jni/*
+./gradlew  assembleRelease
 
 #cp weexcore
 cp sdk/build/intermediates/bundles/default/jni/armeabi/libweexcore.so sdk/libs/armeabi/libweexcore.so
